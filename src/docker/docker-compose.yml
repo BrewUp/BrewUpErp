@@ -1,0 +1,66 @@
+services:
+
+  sales-eventstore:
+    container_name: sales-eventstore
+    image: eventstore/eventstore:23.10.1-jammy
+    environment:
+      - EVENTSTORE_CLUSTER_SIZE=1
+      - EVENTSTORE_RUN_PROJECTIONS=All
+      - EVENTSTORE_START_STANDARD_PROJECTIONS=true
+      - EVENTSTORE_HTTP_PORT=2113
+      - EVENTSTORE_INSECURE=true
+      - EVENTSTORE_ENABLE_EXTERNAL_TCP=true
+      - EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP=true
+    ports:
+      - "4113:2113"
+    volumes:
+      - sales-eventstore-data:/var/lib/eventstore
+      - sales-eventstore-logs:/var/log/eventstore
+    networks:
+      - blazar-network
+    restart: unless-stopped
+
+  sagas-mongodb:
+    container_name: sagas-mongodb
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - sagas-mongodb-data:/data/db
+    networks:
+      - blazar-network
+    restart: unless-stopped
+
+  sales-mongodb:
+    container_name: sales-mongodb
+    image: mongo:latest
+    ports:
+      - "37017:27017"
+    volumes:
+      - sales-mongodb-data:/data/db
+    networks:
+      - blazar-network
+    restart: unless-stopped
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:4.0-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - blazar-network
+    restart: unless-stopped
+
+networks:
+  blazar-network:
+    driver: bridge
+
+volumes:
+  sales-eventstore-data:
+  sales-eventstore-logs:
+  sagas-mongodb-data:
+  sales-mongodb-data:

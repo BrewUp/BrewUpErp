@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/30 Shared/">
+    <Project Path="BrewUp.Shared/BrewUp.Shared.csproj" />
+  </Folder>
+  <Folder Name="/50 Modules/" />
+  <Folder Name="/50 Modules/Sales/">
+    <Project Path="Sales/BrewUp.Sales.Domain/BrewUp.Sales.Domain.csproj" />
+    <Project Path="Sales/BrewUp.Sales.Facade/BrewUp.Sales.Facade.csproj" />
+    <Project Path="Sales/BrewUp.Sales.Infrastructure/BrewUp.Sales.Infrastructure.csproj" />
+    <Project Path="Sales/BrewUp.Sales.ReadModel/BrewUp.Sales.ReadModel.csproj" />
+    <Project Path="Sales/BrewUp.Sales.SharedKernel/BrewUp.Sales.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/90 Presentation/">
+    <Project Path="BrewUp.Rest/BrewUp.Rest.csproj" />
+  </Folder>
+</Solution>

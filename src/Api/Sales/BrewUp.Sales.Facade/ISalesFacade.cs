@@ -1,0 +1,11 @@
+using BrewUp.Shared.ExternalContracts;
+using BrewUp.Shared.ReadModel;
+using Lena.Core;
+
+namespace BrewUp.Sales.Facade;
+
+public interface ISalesFacade
+{
+    Task<Result<string>> CreateSalesOrderAsync(CreateSalesOrderJson body, CancellationToken cancellationToken);
+    Task<Result<PagedResult<SalesOrderJson>>> GetSalesOrdersAsync(int page, int pageSize, CancellationToken cancellationToken);
+}

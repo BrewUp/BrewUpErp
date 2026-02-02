@@ -1,0 +1,18 @@
+﻿using BrewUp.Sales.ReadModel.EventHandlers;
+using BrewUp.Sales.ReadModel.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Muflone;
+
+namespace BrewUp.Sales.ReadModel;
+
+public static class SalesReadModelHelper
+{
+    public static IServiceCollection AddSalesReadModel(this IServiceCollection services)
+    {
+        services.AddScoped<ISalesOrderService, SalesOrderService>();
+
+        services.AddDomainEventHandler<SalesOrderCreatedEventHandler>();
+
+        return services;
+    }
+}
