@@ -1,14 +1,13 @@
-﻿namespace BrewUp.Shared.ExternalContracts;
+namespace BrewApp.Models.Sales;
 
-public class CreateSalesOrderJson
+public class SalesOrder
 {
+    public string Id { get; set; } = string.Empty;
     public string OrderNumber { get; set; } = string.Empty;
     public DateTime OrderDate { get; set; }
-    
     public string CustomerId { get; set; } = string.Empty;
     public string CustomerName { get; set; } = string.Empty;
-    
     public DateTime DeliveryDate { get; set; }
-    
-    public IEnumerable<SalesOrderRowJson> Rows { get; set; } = [];
+    public List<SalesOrderRow> Rows { get; set; } = new();
+    public string Status { get; set; } = string.Empty;
 }

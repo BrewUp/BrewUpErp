@@ -1,6 +1,7 @@
 ﻿using BrewUp.Sales.SharedKernel.CustomTypes;
 using BrewUp.Sales.SharedKernel.Messages.Commands;
 using BrewUp.Shared.ExternalContracts;
+using BrewUp.Shared.ExternalContracts.Sales;
 using Lena.Core;
 using Muflone.Persistence;
 

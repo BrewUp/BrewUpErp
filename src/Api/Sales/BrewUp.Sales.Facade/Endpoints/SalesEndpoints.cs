@@ -1,7 +1,7 @@
 using BrewUp.Shared.ExternalContracts;
+using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ReadModel;
-using BrewUp.Shared.Validation;
-using FluentValidation;
+using BrewUp.Shared.Validators;
 using Lena.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -16,6 +16,7 @@ public static class SalesEndpoints
         .WithTags("Sales");
 
     group.MapPost("/", HandlePostCreateSalesOrder)
+        .AddEndpointFilter<ValidationFilter<CreateSalesOrderJson>>()
         .Produces(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status500InternalServerError)
         .WithSummary("Create a new sales order")
@@ -44,16 +45,10 @@ public static class SalesEndpoints
 
   private static async Task<IResult> HandlePostCreateSalesOrder(
       ISalesFacade salesFacade,
-      IValidator<CreateSalesOrderJson> validator,
-      ValidationHandler validationHandler,
       CreateSalesOrderJson body,
       CancellationToken cancellationToken)
   {
     cancellationToken.ThrowIfCancellationRequested();
-
-    await validationHandler.ValidateAsync(validator, body);
-    if (!validationHandler.IsValid)
-      return Results.BadRequest(validationHandler.Errors);
 
     var createResult = await salesFacade.CreateSalesOrderAsync(body, cancellationToken);
 

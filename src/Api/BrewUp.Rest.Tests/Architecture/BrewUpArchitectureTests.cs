@@ -13,6 +13,11 @@ public class BrewUpArchitectureTests
 
         var forbiddenAssemblies = new List<string>
         {
+            "BrewUp.MasterData.Domain",
+            "BrewUp.MasterData.Infrastructure",
+            "BrewUp.MasterData.ReadModel",
+            "BrewUp.MasterData.SharedKernel",
+            
             "BrewUp.Sales.Domain",
             "BrewUp.Sales.Infrastructure",
             "BrewUp.Sales.ReadModel",

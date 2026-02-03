@@ -15,6 +15,12 @@ public class SalesArchitectureTests
 
         var forbiddenAssemblies = new List<string>
         {
+            "BrewUp.MasterData.Domain",
+            "BrewUp.MasterData.Facade",
+            "BrewUp.MasterData.Infrastructure",
+            "BrewUp.MasterData.ReadModel",
+            "BrewUp.MasterData.SharedKernel",
+            
             "BrewUp.Warehouse.Domain",
             "BrewUp.Warehouse.Facade",
             "BrewUp.Warehouse.Infrastructure",

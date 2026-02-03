@@ -1,4 +1,5 @@
 ﻿using BrewUp.Shared.ExternalContracts;
+using BrewUp.Shared.ExternalContracts.Sales;
 using Lena.Core;
 
 namespace BrewUp.Sales.Domain;

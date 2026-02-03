@@ -1,5 +1,6 @@
 ﻿using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.ExternalContracts;
+using BrewUp.Shared.ExternalContracts.Sales;
 
 namespace BrewUp.Sales.ReadModel.Dtos;
 

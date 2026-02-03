@@ -3,6 +3,10 @@
     <Project Path="BrewUp.Shared/BrewUp.Shared.csproj" />
   </Folder>
   <Folder Name="/50 Modules/" />
+  <Folder Name="/50 Modules/MasterData/">
+    <Project Path="MasterData/BrewUp.MasterData.Domain/BrewUp.MasterData.Domain.csproj" />
+    <Project Path="MasterData/BrewUp.MasterData.Facade/BrewUp.MasterData.Facade.csproj" />
+  </Folder>
   <Folder Name="/50 Modules/Sales/">
     <Project Path="Sales/BrewUp.Sales.Domain/BrewUp.Sales.Domain.csproj" />
     <Project Path="Sales/BrewUp.Sales.Facade/BrewUp.Sales.Facade.csproj" />

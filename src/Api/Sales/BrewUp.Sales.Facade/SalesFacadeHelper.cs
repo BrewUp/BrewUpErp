@@ -1,10 +1,8 @@
+using System.Globalization;
 using BrewUp.Sales.Domain;
-using BrewUp.Sales.Facade.Validators;
 using BrewUp.Sales.Infrastructure;
 using BrewUp.Sales.ReadModel;
-using BrewUp.Shared.Validation;
-using FluentValidation;
-using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,9 +15,21 @@ public static class SalesFacadeHelper
         ILoggerFactory loggerFactory,
         IConfigurationManager configurationManager)
     {
-        services.AddFluentValidationAutoValidation();
-        services.AddValidatorsFromAssemblyContaining<CreateSalesOrderValidator>();
-        services.AddSingleton<ValidationHandler>();
+        services.AddValidation();
+        services.AddProblemDetails(options =>
+        {
+            options.CustomizeProblemDetails = context =>
+            {
+                if (context.ProblemDetails is HttpValidationProblemDetails validationProblemDetails)
+                {
+                    context.ProblemDetails.Detail =
+                        $"Error(s) occurred: {validationProblemDetails.Errors.Values.Sum(x => x.Length)}";
+                }
+
+                context.ProblemDetails.Extensions.TryAdd("timestamp",
+                    DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+            };
+        });
         
         services.AddScoped<ISalesFacade, SalesFacade>();
 
