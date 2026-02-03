@@ -1,5 +1,7 @@
 ﻿using BrewUp.Sales.Infrastructure.MongoDb;
 using BrewUp.Sales.Infrastructure.RabbitMq;
+using BrewUp.Sales.ReadModel.Dtos;
+using BrewUp.Shared.ReadModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -33,6 +35,9 @@ public static class InfrastructureHelper
             rabbitMqSettings.ExchangeEventName,
             rabbitMqSettings.ClientId);
         services.AddMufloneTransportRabbitMQ(loggerFactory, rabbitMqConfiguration);
+        
+        services.AddKeyedScoped<IPersister, SalesPersister>("sales");
+        services.AddScoped<IQueries<SalesOrder>, SalesOrderQueries>();
 
         return services;
     }

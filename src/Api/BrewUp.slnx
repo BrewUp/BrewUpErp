@@ -9,8 +9,10 @@
     <Project Path="Sales/BrewUp.Sales.Infrastructure/BrewUp.Sales.Infrastructure.csproj" />
     <Project Path="Sales/BrewUp.Sales.ReadModel/BrewUp.Sales.ReadModel.csproj" />
     <Project Path="Sales/BrewUp.Sales.SharedKernel/BrewUp.Sales.SharedKernel.csproj" />
+    <Project Path="Sales/BrewUp.Sales.Tests/BrewUp.Sales.Tests.csproj" />
   </Folder>
   <Folder Name="/90 Presentation/">
+    <Project Path="BrewUp.Rest.Tests/BrewUp.Rest.Tests.csproj" />
     <Project Path="BrewUp.Rest/BrewUp.Rest.csproj" />
   </Folder>
 </Solution>

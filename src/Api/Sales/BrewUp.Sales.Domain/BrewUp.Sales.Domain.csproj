@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Lena" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2" />
-    <PackageReference Include="Muflone" Version="10.0.2" />
+    <PackageReference Include="Muflone" Version="10.0.3" />
   </ItemGroup>
 
   <ItemGroup>

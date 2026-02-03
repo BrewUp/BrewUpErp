@@ -1,0 +1,21 @@
+{
+  "orderNumber": "20260203-1000",
+  "orderDate": "2026-02-06",
+  "customerId": "2bc5ece6-1fa2-4b08-9161-3f3e8d782945",
+  "customerName": "Il Grottino del Muflone",
+  "deliveryDate": "2026-02-09",
+  "rows": [
+    {
+      "beerId": "41b5f587-02bf-4965-9332-af85284a8646",
+      "beerName": "Muflone IPA",
+      "quantity": {
+        "value": 12,
+        "unitOfMeasure": "Bottles"
+      },
+      "price": {
+        "value": 5,
+        "currency": "EUR"
+      }
+    }
+  ]
+}

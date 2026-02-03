@@ -31,4 +31,8 @@
       <ProjectReference Include="..\Sales\BrewUp.Sales.Facade\BrewUp.Sales.Facade.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="BrewUp.Rest.Tests" />
+    </ItemGroup>
+
 </Project>
