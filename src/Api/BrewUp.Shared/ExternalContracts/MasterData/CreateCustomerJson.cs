@@ -8,7 +8,5 @@ public class CreateCustomerJson
     public string RagioneSociale { get; set; } = string.Empty;
     [Required]
     public string PartitaIva { get; set; } = string.Empty;
-    [Required]
-    public string CodiceFiscale { get; set; } = string.Empty;
     public IndirizzoJson Indirizzo { get; set; } = new ();
 }

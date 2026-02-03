@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using BrewUp.MasterData.Domain;
+using BrewUp.MasterData.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,6 +29,7 @@ public static class MasterDataHelper
         services.AddScoped<IMasterDataFacade, MasterDataFacade>();
 
         services.AddMasterDataDomain();
+        services.AddMasterDataInfrastructure();
         
         return services;
     }

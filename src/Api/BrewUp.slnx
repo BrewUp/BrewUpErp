@@ -4,8 +4,11 @@
   </Folder>
   <Folder Name="/50 Modules/" />
   <Folder Name="/50 Modules/MasterData/">
+    <Project Path="BrewUp.MasterData.Tests/BrewUp.MasterData.Tests.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Domain/BrewUp.MasterData.Domain.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Facade/BrewUp.MasterData.Facade.csproj" />
+    <Project Path="MasterData/BrewUp.MasterData.Infrastructure/BrewUp.MasterData.Infrastructure.csproj" />
+    <Project Path="MasterData/BrewUp.MasterData.SharedKernel/BrewUp.MasterData.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Sales/">
     <Project Path="Sales/BrewUp.Sales.Domain/BrewUp.Sales.Domain.csproj" />
@@ -14,6 +17,9 @@
     <Project Path="Sales/BrewUp.Sales.ReadModel/BrewUp.Sales.ReadModel.csproj" />
     <Project Path="Sales/BrewUp.Sales.SharedKernel/BrewUp.Sales.SharedKernel.csproj" />
     <Project Path="Sales/BrewUp.Sales.Tests/BrewUp.Sales.Tests.csproj" />
+  </Folder>
+  <Folder Name="/80 Infrastructure/">
+    <Project Path="BrewUp.Infrastructure/BrewUp.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/90 Presentation/">
     <Project Path="BrewUp.Rest.Tests/BrewUp.Rest.Tests.csproj" />

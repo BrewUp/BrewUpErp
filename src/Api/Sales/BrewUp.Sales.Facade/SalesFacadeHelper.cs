@@ -5,14 +5,12 @@ using BrewUp.Sales.ReadModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace BrewUp.Sales.Facade;
 
 public static class SalesFacadeHelper
 {
     public static IServiceCollection AddSalesFacade(this IServiceCollection services,
-        ILoggerFactory loggerFactory,
         IConfigurationManager configurationManager)
     {
         services.AddValidation();
@@ -35,7 +33,7 @@ public static class SalesFacadeHelper
 
         services.AddSalesDomain();
         services.AddSalesReadModel();
-        services.AddSalesInfrastructure(loggerFactory, configurationManager);
+        services.AddSalesInfrastructure(configurationManager);
 
         return services;
     }

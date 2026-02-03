@@ -6,13 +6,11 @@ namespace BrewUp.Rest.Module;
 public class SalesModule : IModule
 {
     public bool IsEnabled => true;
-    public int Order => 10;
+    public int Order => 0;
     
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
-        using var serviceProvider = builder.Services.BuildServiceProvider();
-        var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
-        builder.Services.AddSalesFacade(loggerFactory, builder.Configuration);
+        builder.Services.AddSalesFacade(builder.Configuration);
         
         return builder.Services;
     }

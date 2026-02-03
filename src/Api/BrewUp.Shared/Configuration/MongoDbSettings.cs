@@ -1,4 +1,4 @@
-﻿namespace BrewUp.Sales.Infrastructure.MongoDb;
+﻿namespace BrewUp.Shared.Configuration;
 
 public class MongoDbSettings
 {

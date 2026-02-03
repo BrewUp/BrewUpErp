@@ -1,37 +1,25 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using BrewUp.Sales.Facade;
+using BrewUp.MasterData.Facade;
 using NetArchTest.Rules;
 
-namespace BrewUp.Sales.Tests.Architecture;
+namespace BrewUp.MasterData.Tests.Architecture;
 
 [ExcludeFromCodeCoverage]
-public class SalesArchitectureTests
+public class MasterDataArchitectureTests
 {
     [Fact]
-    public void Should_SalesArchitecture_BeCompliant()
+    public void Should_MasterDataArchitecture_BeCompliant()
     {
-        var types = Types.InAssembly(typeof(SalesFacadeHelper).Assembly);
+        var types = Types.InAssembly(typeof(MasterDataHelper).Assembly);
 
         var forbiddenAssemblies = new List<string>
         {
-            "BrewUp.MasterData.Domain",
-            "BrewUp.MasterData.Facade",
-            "BrewUp.MasterData.Infrastructure",
-            "BrewUp.MasterData.ReadModel",
-            "BrewUp.MasterData.SharedKernel",
-            
-            "BrewUp.Warehouse.Domain",
-            "BrewUp.Warehouse.Facade",
-            "BrewUp.Warehouse.Infrastructure",
-            "BrewUp.Warehouse.ReadModel",
-            "BrewUp.Warehouse.SharedKernel",
-            
-            "BrewUp.Purchase.Domain",
-            "BrewUp.Purchase.Facade",
-            "BrewUp.Purchase.Infrastructure",
-            "BrewUp.Purchase.ReadModel",
-            "BrewUp.Purchase.SharedKernel"
+            "BrewUp.Sales.Domain",
+            "BrewUp.Sales.Facade",
+            "BrewUp.Sales.Infrastructure",
+            "BrewUp.Sales.ReadModel",
+            "BrewUp.Sales.SharedKernel"
         };
         
         var result = types
@@ -44,9 +32,9 @@ public class SalesArchitectureTests
     }
     
     [Fact]
-    public void SalesProjects_Should_Having_Namespace_StartingWith_Sales()
+    public void MasterDataProjects_Should_Having_Namespace_StartingWith_MasterData()
     {
-        var modulePath = Path.Combine(VisualStudioProvider.TryGetSolutionDirectoryInfo().FullName, "Sales");
+        var modulePath = Path.Combine(VisualStudioProvider.TryGetSolutionDirectoryInfo().FullName, "MasterData");
         var subFolders = Directory.GetDirectories(modulePath);
 
         var netVersion = Environment.Version;
@@ -70,21 +58,21 @@ public class SalesArchitectureTests
         
         var typesWithCorrectNamespace = Types.InAssemblies(moduleAssemblies)
             .That()
-            .ResideInNamespaceStartingWith("BrewUp.Sales")
+            .ResideInNamespaceStartingWith("BrewUp.MasterData")
             .And()
             .AreNotNested()
             .GetTypes();
         
         // Find types with incorrect namespace (difference between the two sets)
-        var moduleTypeArray = moduleTypes as Type[] ?? moduleTypes.ToArray();
-        var typesWithIncorrectNamespace = moduleTypeArray.Except(typesWithCorrectNamespace).ToList();
+        var modulesTypeArray = moduleTypes as Type[] ?? moduleTypes.ToArray();
+        var typesWithIncorrectNamespace = modulesTypeArray.Except(typesWithCorrectNamespace).ToList();
 
         foreach (var type in typesWithIncorrectNamespace)
         {
             if (type.Namespace != null)
                 Assert.Fail(
                     $"Namespace violation detected: {type.FullName} in assembly {type.Assembly.GetName().Name} should start " +
-                    $"with 'BrewUp.Sales' but is in namespace '{type.Namespace}'");
+                    $"with 'BrewUp.MasterData' but is in namespace '{type.Namespace}'");
         }
     }
     

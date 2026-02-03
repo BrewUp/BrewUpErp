@@ -39,6 +39,6 @@ public static class MasterDataEndpoints
                 createResult.TryGetValue(out string customerId);
                 return Results.Created($"/v1/masterdata/{customerId}", success);
             }, 
-            failure => Results.Problem("An error occurred while creating the customer.", statusCode: StatusCodes.Status500InternalServerError));
+            error => Results.Problem(error.Message, statusCode: StatusCodes.Status500InternalServerError));
     }
 }

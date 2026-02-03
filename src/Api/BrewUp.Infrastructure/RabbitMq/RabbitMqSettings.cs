@@ -1,4 +1,4 @@
-﻿namespace BrewUp.Sales.Infrastructure.RabbitMq;
+﻿namespace BrewUp.Infrastructure.RabbitMq;
 
 public class RabbitMqSettings
 {

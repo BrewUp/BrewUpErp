@@ -12,4 +12,9 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
+      <ProjectReference Include="..\BrewUp.MasterData.SharedKernel\BrewUp.MasterData.SharedKernel.csproj" />
+    </ItemGroup>
+
 </Project>
