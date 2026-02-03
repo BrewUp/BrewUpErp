@@ -8,4 +8,5 @@ public interface ISalesFacade
 {
     Task<Result<string>> CreateSalesOrderAsync(CreateSalesOrderJson body, CancellationToken cancellationToken);
     Task<Result<PagedResult<SalesOrderJson>>> GetSalesOrdersAsync(int page, int pageSize, CancellationToken cancellationToken);
+    Task<Result<SalesOrderJson>> GetSalesOrderByIdAsync(string orderId, CancellationToken cancellationToken);
 }

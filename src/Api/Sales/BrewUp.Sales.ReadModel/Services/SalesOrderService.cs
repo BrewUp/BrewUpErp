@@ -18,17 +18,16 @@ internal sealed class SalesOrderService(ILoggerFactory loggerFactory,
     {
         cancellationToken.ThrowIfCancellationRequested();
         
-        try
-        {
-            var salesOrder = SalesOrder.CreateSalesOrder(salesOrderId, salesOrderNumber, customerId, customerName, orderDate, rows);
-            await Persister.InsertAsync(salesOrder, cancellationToken);
-            return Result<bool>.Success(true);
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Error creating sales order");
-            return Result<bool>.Error($"Error creating sales order: {ex.Message}");
-        }
+        var salesOrder = SalesOrder.CreateSalesOrder(salesOrderId, salesOrderNumber, customerId, customerName, orderDate, rows);
+        var insertResult = await Persister.InsertAsync(salesOrder, cancellationToken);
+
+        return insertResult.Match(
+            _ => Result<bool>.Success(true),
+            error =>
+            {
+                Logger.LogError("Error creating sales order: {Error}", error);
+                return Result<bool>.Error($"Error creating sales order: {error}");
+            });
     }
 
     public async Task<Result<PagedResult<SalesOrderJson>>> GetSalesOrdersAsync(int page, int pageSize, CancellationToken cancellationToken)
@@ -46,5 +45,20 @@ internal sealed class SalesOrderService(ILoggerFactory loggerFactory,
                 pagedResult.Page, pagedResult.PageSize, pagedResult.TotalRecords))
             : Result<PagedResult<SalesOrderJson>>.Success(
             new PagedResult<SalesOrderJson>([], 0, 0, 0));
+    }
+
+    public async Task<Result<SalesOrderJson>> GetSalesOrderByIdAsync(string salesOrderId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var queryResult = await orderQueries.GetByIdAsync(salesOrderId, cancellationToken);
+        
+        return queryResult.Match(
+            _ =>
+            {
+                queryResult.TryGetValue(out SalesOrder salesOrder);
+                return Result<SalesOrderJson>.Success(salesOrder.ToJson());
+            },
+            _ => Result<SalesOrderJson>.Error("Error retrieving sales order"));
     }
 }

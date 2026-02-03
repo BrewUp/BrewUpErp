@@ -15,4 +15,7 @@ internal class SalesFacade(ISalesDomainService salesDomainService,
     public Task<Result<PagedResult<SalesOrderJson>>> GetSalesOrdersAsync(int page, int pageSize,
         CancellationToken cancellationToken) =>
         salesOrderService.GetSalesOrdersAsync(page, pageSize, cancellationToken);
+
+    public Task<Result<SalesOrderJson>> GetSalesOrderByIdAsync(string orderId, CancellationToken cancellationToken) =>
+        salesOrderService.GetSalesOrderByIdAsync(orderId, cancellationToken);
 }

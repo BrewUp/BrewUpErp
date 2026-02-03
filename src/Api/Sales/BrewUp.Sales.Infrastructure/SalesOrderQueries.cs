@@ -15,9 +15,10 @@ public sealed class SalesOrderQueries(IMongoClient mongoClient) : IQueries<Sales
     {
         var collection = _database.GetCollection<SalesOrder>(nameof(SalesOrder));
         var filter = Builders<SalesOrder>.Filter.Eq("_id", id);
-        return (await collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken) > 0
-            ? Result<SalesOrder>.Success((await collection.FindAsync(filter, cancellationToken: cancellationToken)).First())
-            : Result<SalesOrder>.Success(ConstructAggregate<SalesOrder>()));
+        
+        return await collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken) > 0
+            ? Result<SalesOrder>.Success((await collection.FindAsync(filter, cancellationToken: cancellationToken)).First(cancellationToken: cancellationToken))
+            : Result<SalesOrder>.Success(ConstructAggregate<SalesOrder>());
     }
 
     public async Task<Result<PagedResult<SalesOrder>>> GetByFilterAsync(Expression<Func<SalesOrder, bool>>? query, int page, int pageSize, CancellationToken cancellationToken)
@@ -27,7 +28,8 @@ public sealed class SalesOrderQueries(IMongoClient mongoClient) : IQueries<Sales
 
         var collection = _database.GetCollection<SalesOrder>(nameof(SalesOrder));
         var queryable = query != null
-            ? collection.AsQueryable().Where(query)
+            ? collection.AsQueryable()
+                .Where(query)
             : collection.AsQueryable();
 
         var count = await queryable.CountAsync(cancellationToken: cancellationToken);

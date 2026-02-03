@@ -30,6 +30,14 @@ public static class SalesEndpoints
         .WithDescription(
             "Get a list of sales orders.")
         .WithName("GetSalesOrder");
+    
+    group.MapGet("/{orderId}", HandleGetSalesOrderDetails)
+        .Produces<PagedResult<SalesOrderJson>>()
+        .Produces(StatusCodes.Status500InternalServerError)
+        .WithSummary("Get sales order details")
+        .WithDescription(
+            "Get the full details of a sales order.")
+        .WithName("GetSalesOrderDetails");
 
     return app;
   }
@@ -76,5 +84,24 @@ public static class SalesEndpoints
             return Results.Ok(result);
         }, 
         Results.BadRequest);
+  }
+  
+  private static async Task<IResult> HandleGetSalesOrderDetails(
+      ISalesFacade salesFacade,
+      string orderId,
+      CancellationToken cancellationToken = default)
+  {
+      cancellationToken.ThrowIfCancellationRequested();
+
+      Result<SalesOrderJson> getResult =
+          await salesFacade.GetSalesOrderByIdAsync(orderId, cancellationToken);
+    
+      return getResult.Match<IResult>(
+          _ =>
+          {
+              getResult.TryGetValue(out SalesOrderJson result);
+              return Results.Ok(result);
+          }, 
+          Results.BadRequest);
   }
 }
