@@ -1,6 +1,6 @@
 ﻿namespace BrewUp.Shared.Helpers;
 
-public class OrderState: Enumeration
+public sealed class OrderState(int id, string name) : Enumeration(id, name)
 {
     public static OrderState Created = new (1, nameof(Created).ToLowerInvariant());
     public static OrderState Sent = new (1, nameof(Sent).ToLowerInvariant());
@@ -8,11 +8,6 @@ public class OrderState: Enumeration
     public static OrderState Cancelled = new (3, nameof(Cancelled).ToLowerInvariant());
 
     public static IEnumerable<OrderState> List() => new[] { Sent, Completed, Cancelled };
-
-    public OrderState(int id, string name)
-        : base(id, name)
-    {
-    }
 
     public static OrderState FromName(string name)
     {
