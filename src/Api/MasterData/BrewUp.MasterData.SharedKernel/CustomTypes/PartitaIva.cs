@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace BrewUp.MasterData.Domain.ValueObjects;
+namespace BrewUp.MasterData.SharedKernel.CustomTypes;
 
 public record PartitaIva
 {

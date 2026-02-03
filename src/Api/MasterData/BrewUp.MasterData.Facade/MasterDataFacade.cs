@@ -1,5 +1,5 @@
 ﻿using BrewUp.MasterData.Domain;
-using BrewUp.MasterData.Domain.ValueObjects;
+using BrewUp.MasterData.SharedKernel.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.MasterData;
 using Lena.Core;
