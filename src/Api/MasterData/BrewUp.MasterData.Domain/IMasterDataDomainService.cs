@@ -1,4 +1,4 @@
-﻿using BrewUp.MasterData.SharedKernel.CustomTypes;
+﻿using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using Lena.Core;
 

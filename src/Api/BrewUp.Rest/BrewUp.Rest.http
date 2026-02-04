@@ -1,6 +1,6 @@
-@Blazar.Rest_HostAddress = http://localhost:5094
+@BrewUp.Rest_HostAddress = http://localhost:5094
 
-GET {{Blazar.Rest_HostAddress}}/weatherforecast/
+GET {{BrewUp.Rest_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###

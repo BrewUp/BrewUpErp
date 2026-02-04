@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/BrewApp.Module.MasterData/BrewApp.Module.MasterData.csproj" />
+    <Project Path="src/BrewApp.Module.Purchase/BrewApp.Module.Purchase.csproj" />
+    <Project Path="src/BrewApp.Module.Sales/BrewApp.Module.Sales.csproj" />
+    <Project Path="src/BrewApp.Module.Warehouse/BrewApp.Module.Warehouse.csproj" />
+    <Project Path="src/BrewApp.Shared.Core/BrewApp.Shared.Core.csproj" />
+    <Project Path="src/BrewApp.Shared.UI/BrewApp.Shared.UI.csproj" />
+    <Project Path="src/BrewApp.Shell/BrewApp.Shell.csproj" />
+  </Folder>
+</Solution>

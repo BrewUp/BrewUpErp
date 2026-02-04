@@ -1,5 +1,8 @@
 ﻿using BrewUp.Sales.ReadModel.Dtos;
+using BrewUp.Sales.SharedKernel.CustomTypes;
+using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.ExternalContracts;
+using BrewUp.Shared.ExternalContracts.MasterData;
 using BrewUp.Shared.ExternalContracts.Sales;
 
 namespace BrewUp.Sales.ReadModel.Helpers;
@@ -17,4 +20,14 @@ public static class ReadModelHelpers
                 Price = dto.Price
             });
     }
+    
+    public static IndirizzoJson ToIndirizzoJson(this Indirizzo indirizzo) =>
+        new()
+        {
+            Via = indirizzo.Via.Value,
+            Citta = indirizzo.Citta.Value,
+            Cap = indirizzo.Cap.Value,
+            Provincia = indirizzo.Provincia.Value,
+            Nazione = indirizzo.Nazione.Value
+        };
 }

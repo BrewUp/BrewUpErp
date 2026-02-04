@@ -9,7 +9,7 @@ namespace BrewUp.MasterData.Facade;
 
 public static class MasterDataHelper
 {
-    public static IServiceCollection AddMasterData(this IServiceCollection services)
+    public static IServiceCollection AddMasterDataFacade(this IServiceCollection services)
     {
         services.AddValidation();
         services.AddProblemDetails(options =>

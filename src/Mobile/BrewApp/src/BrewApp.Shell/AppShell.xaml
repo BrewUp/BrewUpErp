@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="BrewApp.Shell.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:BrewApp.Shell"
+    xmlns:masterdata="clr-namespace:BrewApp.Module.MasterData.Views;assembly=BrewApp.Module.MasterData"
+    xmlns:sales="clr-namespace:BrewApp.Module.Sales.Views;assembly=BrewApp.Module.Sales"
+    xmlns:warehouse="clr-namespace:BrewApp.Module.Warehouse.Views;assembly=BrewApp.Module.Warehouse"
+    xmlns:purchase="clr-namespace:BrewApp.Module.Purchase.Views;assembly=BrewApp.Module.Purchase"
+    Title="BrewUp ERP Mobile"
+    FlyoutBehavior="Flyout">
+
+    <FlyoutItem Title="Home" Route="landing">
+        <ShellContent
+            Title="Home"
+            ContentTemplate="{DataTemplate local:LandingPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Master Data" Route="modules/masterdata">
+        <ShellContent
+            Title="Master Data"
+            ContentTemplate="{DataTemplate masterdata:MasterDataPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Sales" Route="modules/sales">
+        <ShellContent
+            Title="Sales"
+            ContentTemplate="{DataTemplate sales:SalesPage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Warehouse" Route="modules/warehouse">
+        <ShellContent
+            Title="Warehouse"
+            ContentTemplate="{DataTemplate warehouse:WarehousePage}" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Purchase" Route="modules/purchase">
+        <ShellContent
+            Title="Purchase"
+            ContentTemplate="{DataTemplate purchase:PurchasePage}" />
+    </FlyoutItem>
+
+</Shell>

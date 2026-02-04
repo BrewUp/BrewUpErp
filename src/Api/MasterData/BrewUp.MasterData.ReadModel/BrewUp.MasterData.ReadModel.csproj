@@ -15,4 +15,8 @@
       <ProjectReference Include="..\BrewUp.MasterData.SharedKernel\BrewUp.MasterData.SharedKernel.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="EventHandlers\" />
+    </ItemGroup>
+
 </Project>

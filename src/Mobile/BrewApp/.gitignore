@@ -1,0 +1,31 @@
+# .gitignore for BrewApp mobile workspace (C#/.NET, MAUI-friendly)
+
+# Build outputs
+bin/
+obj/
+
+# Visual Studio / IDE
+.vs/
+*.user
+*.suo
+
+# Packages
+packages/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor settings (kept local)
+.idea/
+
+# Environment and secrets
+.env*
+
+# VS Code settings (keep folder but ignore workspace-specific files if any)
+# .vscode/  # commented: keep settings in repo for this workspace

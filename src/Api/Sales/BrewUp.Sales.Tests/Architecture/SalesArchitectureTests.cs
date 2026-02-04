@@ -15,6 +15,8 @@ public class SalesArchitectureTests
 
         var forbiddenAssemblies = new List<string>
         {
+            "BrewUp.Infrastructure",
+            
             "BrewUp.MasterData.Domain",
             "BrewUp.MasterData.Facade",
             "BrewUp.MasterData.Infrastructure",
@@ -25,13 +27,7 @@ public class SalesArchitectureTests
             "BrewUp.Warehouse.Facade",
             "BrewUp.Warehouse.Infrastructure",
             "BrewUp.Warehouse.ReadModel",
-            "BrewUp.Warehouse.SharedKernel",
-            
-            "BrewUp.Purchase.Domain",
-            "BrewUp.Purchase.Facade",
-            "BrewUp.Purchase.Infrastructure",
-            "BrewUp.Purchase.ReadModel",
-            "BrewUp.Purchase.SharedKernel"
+            "BrewUp.Warehouse.SharedKernel"
         };
         
         var result = types

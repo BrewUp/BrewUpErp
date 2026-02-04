@@ -1,4 +1,6 @@
-﻿using BrewUp.Shared.ExternalContracts.MasterData;
+﻿using BrewUp.Shared.CustomTypes;
+using BrewUp.Shared.DomainIds;
+using BrewUp.Shared.ExternalContracts.MasterData;
 using BrewUp.Shared.Helpers;
 using BrewUp.Shared.ReadModel;
 
@@ -17,8 +19,8 @@ public class Customer : DtoBase
     { }
 
     public static Customer
-        Create(string customerId, string ragioneSociale, string partitaIva, IndirizzoJson indirizzo) =>
-            new (customerId, ragioneSociale, partitaIva, indirizzo);
+        Create(CustomerId customerId, RagioneSociale ragioneSociale, PartitaIva partitaIva, IndirizzoJson indirizzo) =>
+            new (customerId.Value, ragioneSociale.Value, partitaIva.Value, indirizzo);
 
     private Customer(string customerId, string ragioneSociale, string partitaIva, IndirizzoJson indirizzo)
     {

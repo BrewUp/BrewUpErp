@@ -10,7 +10,7 @@ public class MasterDataModule : IModule
     
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
-        builder.Services.AddMasterData();
+        builder.Services.AddMasterDataFacade();
 
         return builder.Services;
     }

@@ -1,6 +1,6 @@
 ﻿using BrewUp.MasterData.Domain.Helpers;
-using BrewUp.MasterData.SharedKernel.CustomTypes;
 using BrewUp.MasterData.SharedKernel.Dtos;
+using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ReadModel;
 using Lena.Asyncs;
@@ -16,7 +16,7 @@ internal sealed class MasterDataDomainService([FromKeyedServices("masterdata")] 
     public async Task<Result<string>> CreateCustomerAsync(CustomerId customerId, RagioneSociale ragioneSociale, PartitaIva partitaIva,
         Indirizzo indirizzo, CancellationToken cancellationToken = default)
     {
-        Customer customer = Customer.Create(customerId.Value, ragioneSociale.Value, partitaIva.Value,
+        Customer customer = Customer.Create(customerId, ragioneSociale, partitaIva,
             indirizzo.ToIndirizzoJson());
 
         // Railway-Oriented Programming pattern

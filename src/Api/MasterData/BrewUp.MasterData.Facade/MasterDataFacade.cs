@@ -1,6 +1,6 @@
 ﻿using BrewUp.MasterData.Domain;
 using BrewUp.MasterData.ReadModel.Services;
-using BrewUp.MasterData.SharedKernel.CustomTypes;
+using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.MasterData;
 using BrewUp.Shared.ReadModel;
