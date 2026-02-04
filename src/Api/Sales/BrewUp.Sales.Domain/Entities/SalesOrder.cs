@@ -1,6 +1,6 @@
 ﻿using BrewUp.Sales.SharedKernel.CustomTypes;
 using BrewUp.Sales.SharedKernel.Messages.Events;
-using BrewUp.Shared.ExternalContracts;
+using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using Muflone.Core;
 
@@ -8,11 +8,11 @@ namespace BrewUp.Sales.Domain.Entities;
 
 public class SalesOrder : AggregateRoot
 {
-    private SalesOrderNumber _salesOrderNumber;
-    private SalesOrderDate _salesOrderDate;
-    private CustomerId _customerId;
-    private CustomerName _customerName;
-    private SalesOrderDeliveryDate _salesOrderDeliveryDate;
+    private SalesOrderNumber _salesOrderNumber = null!;
+    private SalesOrderDate _salesOrderDate = null!;
+    private CustomerId _customerId = null!;
+    private CustomerName _customerName = null!;
+    private SalesOrderDeliveryDate _salesOrderDeliveryDate = null!;
     private List<SalesOrderRowJson> _rows = [];
     
     protected SalesOrder()

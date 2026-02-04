@@ -8,6 +8,7 @@
     <Project Path="MasterData/BrewUp.MasterData.Domain/BrewUp.MasterData.Domain.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Facade/BrewUp.MasterData.Facade.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Infrastructure/BrewUp.MasterData.Infrastructure.csproj" />
+    <Project Path="MasterData/BrewUp.MasterData.ReadModel/BrewUp.MasterData.ReadModel.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.SharedKernel/BrewUp.MasterData.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Sales/">

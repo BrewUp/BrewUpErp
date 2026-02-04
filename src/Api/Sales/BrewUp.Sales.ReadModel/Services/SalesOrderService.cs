@@ -1,6 +1,6 @@
 ﻿using BrewUp.Sales.ReadModel.Dtos;
 using BrewUp.Sales.SharedKernel.CustomTypes;
-using BrewUp.Shared.ExternalContracts;
+using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ReadModel;
 using Lena.Core;
@@ -36,16 +36,21 @@ internal sealed class SalesOrderService(ILoggerFactory loggerFactory,
         cancellationToken.ThrowIfCancellationRequested();
         
         var queryResult = await orderQueries.GetByFilterAsync(null, page, pageSize, cancellationToken);
-        if (!queryResult.IsSuccess)
-            return Result<PagedResult<SalesOrderJson>>.Error("Error retrieving sales orders");
         
-        queryResult.TryGetValue(out PagedResult<SalesOrder> pagedResult);
-
-        return pagedResult.TotalRecords > 0
-            ? Result<PagedResult<SalesOrderJson>>.Success(new PagedResult<SalesOrderJson>(pagedResult.Results.Select(r => r.ToJson()), 
-                pagedResult.Page, pagedResult.PageSize, pagedResult.TotalRecords))
-            : Result<PagedResult<SalesOrderJson>>.Success(
-            new PagedResult<SalesOrderJson>([], 0, 0, 0));
+        return queryResult.Match(
+            _ =>
+            {
+                queryResult.TryGetValue(out PagedResult<SalesOrder> pagedResult);
+                
+                return pagedResult.TotalRecords > 0
+                    ? Result<PagedResult<SalesOrderJson>>.Success(new PagedResult<SalesOrderJson>(
+                        pagedResult.Results.Select(r => r.ToJson()), 
+                        pagedResult.Page, 
+                        pagedResult.PageSize, 
+                        pagedResult.TotalRecords))
+                    : Result<PagedResult<SalesOrderJson>>.Success(new PagedResult<SalesOrderJson>([], 0, 0, 0));
+            },
+            _ => Result<PagedResult<SalesOrderJson>>.Error("Error retrieving sales orders"));
     }
 
     public async Task<Result<SalesOrderJson>> GetSalesOrderByIdAsync(string salesOrderId, CancellationToken cancellationToken)

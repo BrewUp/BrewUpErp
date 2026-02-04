@@ -32,8 +32,7 @@ internal sealed class MasterDataDomainService([FromKeyedServices("masterdata")] 
     {
         try
         {
-            var customerCreatedEvent = customer.ToCustomerCreated();
-            await eventBus.PublishAsync(customerCreatedEvent, cancellationToken);
+            await eventBus.PublishAsync(customer.ToCustomerCreated(), cancellationToken);
             return Result<bool>.Success(true);
         }
         catch (Exception ex)

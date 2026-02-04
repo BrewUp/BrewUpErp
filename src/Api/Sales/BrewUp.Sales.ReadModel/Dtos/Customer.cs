@@ -2,7 +2,7 @@
 using BrewUp.Shared.Helpers;
 using BrewUp.Shared.ReadModel;
 
-namespace BrewUp.MasterData.SharedKernel.Dtos;
+namespace BrewUp.Sales.ReadModel.Dtos;
 
 public class Customer : DtoBase
 {
@@ -30,7 +30,4 @@ public class Customer : DtoBase
 
         Indirizzo = indirizzo;
     }
-    
-    public CustomerJson ToJson() =>
-        new (Id, RagioneSociale, PartitaIva, ConsumerLevel, Indirizzo);
 }

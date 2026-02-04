@@ -1,4 +1,3 @@
-using BrewUp.Shared.ExternalContracts;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ReadModel;
 using BrewUp.Shared.Validators;
@@ -63,22 +62,18 @@ public static class SalesEndpoints
 
   private static async Task<IResult> HandleGetSalesOrder(
       ISalesFacade salesFacade,
-      int page = 1,
+      int pageNumber = 1,
       int pageSize = 10,
       CancellationToken cancellationToken = default)
   {
     cancellationToken.ThrowIfCancellationRequested();
 
-    Result<PagedResult<SalesOrderJson>> getResult =
-        await salesFacade.GetSalesOrdersAsync(page, pageSize, cancellationToken);
+    var queryResult =
+        await salesFacade.GetSalesOrdersAsync(pageNumber, pageSize, cancellationToken);
     
-    return getResult.Match<IResult>(
-        _ =>
-        {
-            getResult.TryGetValue(out PagedResult<SalesOrderJson> result);
-            return Results.Ok(result);
-        }, 
-        Results.BadRequest);
+    return queryResult.Match<IResult>(
+        Results.Ok,
+        error => Results.Problem(error.Message, statusCode: StatusCodes.Status500InternalServerError));
   }
   
   private static async Task<IResult> HandleGetSalesOrderDetails(
@@ -88,15 +83,11 @@ public static class SalesEndpoints
   {
       cancellationToken.ThrowIfCancellationRequested();
 
-      Result<SalesOrderJson> getResult =
+      Result<SalesOrderJson> queryResult =
           await salesFacade.GetSalesOrderByIdAsync(orderId, cancellationToken);
-    
-      return getResult.Match<IResult>(
-          _ =>
-          {
-              getResult.TryGetValue(out SalesOrderJson result);
-              return Results.Ok(result);
-          }, 
-          Results.BadRequest);
+      
+      return queryResult.Match<IResult>(
+          Results.Ok,
+          error => Results.Problem(error.Message, statusCode: StatusCodes.Status500InternalServerError));
   }
 }

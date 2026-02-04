@@ -19,6 +19,7 @@
       <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
       <ProjectReference Include="..\BrewUp.MasterData.Domain\BrewUp.MasterData.Domain.csproj" />
       <ProjectReference Include="..\BrewUp.MasterData.Infrastructure\BrewUp.MasterData.Infrastructure.csproj" />
+      <ProjectReference Include="..\BrewUp.MasterData.ReadModel\BrewUp.MasterData.ReadModel.csproj" />
     </ItemGroup>
 
 </Project>

@@ -2,12 +2,10 @@
 using BrewUp.Shared.ReadModel;
 using Lena.Core;
 
-namespace BrewUp.MasterData.Facade;
+namespace BrewUp.MasterData.ReadModel.Services;
 
-public interface IMasterDataFacade
+public interface IMasterDataQueryService
 {
-    Task<Result<string>> CreateCustomerAsync(CreateCustomerJson body, CancellationToken cancellationToken);
-
     Task<Result<PagedResult<CustomerJson>>> GetCustomersAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken);
 }
