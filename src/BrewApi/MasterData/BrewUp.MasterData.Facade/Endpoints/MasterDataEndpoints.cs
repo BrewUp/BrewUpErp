@@ -29,6 +29,14 @@ public static class MasterDataEndpoints
             .WithDescription(
                 "Get a list of customers.")
             .WithName("GetCustomers");
+        
+        group.MapGet("/customers/{customerId}", HandleGetCustomerById)
+            .Produces<CustomerJson>()
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get a customer details")
+            .WithDescription(
+                "Get full details of a customer.")
+            .WithName("GetCustomerById");
 
         return app;
     }
@@ -60,6 +68,20 @@ public static class MasterDataEndpoints
         cancellationToken.ThrowIfCancellationRequested();
 
         var queryResult = await masterDataFacade.GetCustomersAsync(pageNumber, pageSize, cancellationToken);
+
+        return queryResult.Match<IResult>(
+            Results.Ok,
+            error => Results.Problem(error.Message, statusCode: StatusCodes.Status500InternalServerError));
+    }
+    
+    private static async Task<IResult> HandleGetCustomerById(
+        IMasterDataFacade masterDataFacade,
+        string customerId,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var queryResult = await masterDataFacade.GetCustomerByIdAsync(customerId, cancellationToken);
 
         return queryResult.Match<IResult>(
             Results.Ok,

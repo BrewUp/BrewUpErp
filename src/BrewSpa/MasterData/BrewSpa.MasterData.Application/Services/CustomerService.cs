@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Text;
 using BrewSpa.MasterData.Application.Models;
+using BrewSpa.Shared.Models;
 using Lena.Core;
 
 namespace BrewSpa.MasterData.Application.Services;
@@ -45,7 +46,8 @@ internal class CustomerService(HttpClient httpClient) : ICustomerService
         }
         catch (Exception ex)
         {
-            return Result<CustomerJson>.Error($"Customer with ID {customerId} not found");
+            return Result<CustomerJson>.Error(
+                $"Customer with ID {customerId} not found. [CustomerService] Exception:: {ex.Message}");
         }
     }
 

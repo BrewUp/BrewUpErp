@@ -43,4 +43,20 @@ internal sealed class MasterDataQueryService(ILoggerFactory loggerFactory,
             },
             _ => Result<PagedResult<CustomerJson>>.Error("Error retrieving customers"));
     }
+
+    public async Task<Result<CustomerJson>> GetCustomerByIdAsync(string customerId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        var queryResult = await customerQueries.GetByIdAsync(customerId, cancellationToken);
+        
+        return queryResult.Match(
+            _ =>
+            {
+                queryResult.TryGetValue(out Customer result);
+                
+                return Result<CustomerJson>.Success(result.ToJson());
+            },
+            _ => Result<CustomerJson>.Error($"Error retrieving customer with ID {customerId}"));
+    }
 }

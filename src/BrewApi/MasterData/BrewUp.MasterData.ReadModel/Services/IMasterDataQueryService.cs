@@ -8,4 +8,5 @@ public interface IMasterDataQueryService
 {
     Task<Result<PagedResult<CustomerJson>>> GetCustomersAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken);
+    Task<Result<CustomerJson>> GetCustomerByIdAsync(string customerId, CancellationToken cancellationToken);
 }

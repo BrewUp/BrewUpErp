@@ -1,0 +1,15 @@
+meta {
+  name: GetCustomers
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:5094/v1/masterdata/customers
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,4 +1,5 @@
 ﻿using BrewSpa.MasterData.Application.Models;
+using BrewSpa.Shared.Models;
 using Lena.Core;
 
 namespace BrewSpa.MasterData.Application.Services;

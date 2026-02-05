@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/30 Shared/">
+    <Project Path="BrewSpa.Shared/BrewSpa.Shared.csproj" />
+  </Folder>
   <Folder Name="/50 Modules/" />
   <Folder Name="/50 Modules/DataMaster/">
     <Project Path="MasterData/BrewSpa.MasterData.Application/BrewSpa.MasterData.Application.csproj" />

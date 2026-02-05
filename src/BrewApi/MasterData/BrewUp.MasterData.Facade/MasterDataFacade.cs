@@ -30,4 +30,7 @@ internal sealed class MasterDataFacade(IMasterDataDomainService masterDataDomain
     public Task<Result<PagedResult<CustomerJson>>> GetCustomersAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken) =>
         masterDataQueryService.GetCustomersAsync(pageNumber, pageSize, cancellationToken);
+
+    public Task<Result<CustomerJson>> GetCustomerByIdAsync(string customerId, CancellationToken cancellationToken) =>
+        masterDataQueryService.GetCustomerByIdAsync(customerId, cancellationToken);
 }

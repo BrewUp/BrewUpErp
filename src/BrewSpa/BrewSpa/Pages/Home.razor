@@ -1,7 +1,18 @@
 ﻿@page "/"
+@using BitBlazor.Components
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<BitCard>
+    <CardTitle>
+        <a href="#">Active Customers</a>
+    </CardTitle>
+    <CardBody>
+        <CardText>42</CardText>
+    </CardBody>
+    <CardFooter>
+        <CardDate Date="@(new DateTime())"
+                  DatetimeFormat="yyyy-MM-dd"
+                  DisplayFormat="yyyy-MM-dd" />
+    </CardFooter>
+</BitCard>

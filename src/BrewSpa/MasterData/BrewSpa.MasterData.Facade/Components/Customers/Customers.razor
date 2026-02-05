@@ -1,0 +1,203 @@
+@page "/masterdata/customers"
+
+<div class="customers-container">
+    <div class="header-section">
+        <h1 class="page-title">Customer Management</h1>
+        @* <p class="page-subtitle">Manage customer information and contacts</p> *@
+    </div>
+    
+    <div class="toolbar">
+        <button class="btn btn-primary" @onclick="@AddCustomer">
+            <i class="fas fa-plus"></i> Add
+        </button>
+        <button class="btn btn-success" @onclick="@SaveCustomers" disabled="@(!HasChanges)">
+            <i class="fas fa-save"></i> Save
+        </button>
+        <button class="btn btn-danger" @onclick="@DeleteCustomer" disabled="@(_selectedCustomer == null)">
+            <i class="fas fa-trash"></i> Delete
+        </button>
+        <button class="btn btn-secondary" @onclick="@RefreshData">
+            <i class="fas fa-sync"></i> Refresh
+        </button>
+        <button class="btn btn-secondary" @onclick="@Close">
+            <i class="fas fa-times"></i> Close
+        </button>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading customers...</p>
+        </div>
+    }
+    else if (_customers.Any())
+    {
+        <div class="grid-container">
+            <table class="data-grid">
+                <thead>
+                    <tr>
+                        <th class="select-column">Select</th>
+                        <th>Company Name</th>
+                        <th>VAT Number</th>
+                        <th>Consumer Level</th>
+                        <th>Address</th>
+                        <th>City</th>
+                        <th>Province</th>
+                        <th>CAP</th>
+                        <th class="actions-column">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customer in _customers)
+                    {
+                        <tr class="@(_selectedCustomer?.CustomerId == customer.CustomerId ? "selected" : "")">
+                            <td>
+                                <input type="radio" name="customerSelect" 
+                                       @onchange="@(() => SelectCustomer(customer))" 
+                                       checked="@(_selectedCustomer?.CustomerId == customer.CustomerId)" />
+                            </td>
+                            <td>
+                                @if (_editingCustomer?.CustomerId == customer.CustomerId)
+                                {
+                                    <input @bind="_editingCustomer.RagioneSociale" class="form-control" required />
+                                }
+                                else
+                                {
+                                    @customer.RagioneSociale
+                                }
+                            </td>
+                            <td>
+                                @if (_editingCustomer?.CustomerId == customer.CustomerId)
+                                {
+                                    <input @bind="_editingCustomer.PartitaIva" class="form-control" placeholder="IT00000000000" />
+                                }
+                                else
+                                {
+                                    @customer.PartitaIva
+                                }
+                            </td>
+                            <td>
+                                @if (_editingCustomer?.CustomerId == customer.CustomerId)
+                                {
+                                    <select @bind="_editingCustomer.ConsumerLevel" class="form-control">
+                                        <option value="">Select Level</option>
+                                        <option value="teetotaler">Teetotaler</option>
+                                        <option value="moderate">Moderate</option>
+                                        <option value="regular">Regular</option>
+                                        <option value="enthusiast">Enthusiast</option>
+                                    </select>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-@GetConsumerLevelClass(customer.ConsumerLevel)">
+                                        @customer.ConsumerLevel
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                @if (_editingCustomer?.CustomerId == customer.CustomerId)
+                                {
+                                    <div class="address-inputs">
+                                        <input @bind="_editingCustomer.Indirizzo.Via" class="form-control mb-1" placeholder="Via" />
+                                        <input @bind="_editingCustomer.Indirizzo.NumeroCivico" class="form-control" placeholder="Numero" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    @($"{customer.Indirizzo.Via} {customer.Indirizzo.NumeroCivico}")
+                                }
+                            </td>
+                            <td>
+                                @if (_editingCustomer?.CustomerId == customer.CustomerId)
+                                {
+                                    <input @bind="_editingCustomer.Indirizzo.Citta" class="form-control" placeholder="City" />
+                                }
+                                else
+                                {
+                                    @customer.Indirizzo.Citta
+                                }
+                            </td>
+                            <td>
+                                @if (_editingCustomer?.CustomerId == customer.CustomerId)
+                                {
+                                    <input @bind="_editingCustomer.Indirizzo.Provincia" class="form-control" placeholder="PR" maxlength="2" />
+                                }
+                                else
+                                {
+                                    @customer.Indirizzo.Provincia
+                                }
+                            </td>
+                            <td>
+                                @if (_editingCustomer?.CustomerId == customer.CustomerId)
+                                {
+                                    <input @bind="_editingCustomer.Indirizzo.Cap" class="form-control" placeholder="00000" />
+                                }
+                                else
+                                {
+                                    @customer.Indirizzo.Cap
+                                }
+                            </td>
+                            <td>
+                                @if (_editingCustomer?.CustomerId == customer.CustomerId)
+                                {
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-success" @onclick="SaveEdit" title="Save">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-secondary" @onclick="CancelEdit" title="Cancel">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-sm btn-primary" @onclick="@(() => EditCustomer(customer))" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <button class="btn btn-sm btn-secondary" @onclick="PreviousPage" disabled="@(_currentPage == 0)">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <span class="page-info">
+                    Page @(_currentPage + 1) of @TotalPages (@_totalRecords total records)
+                </span>
+                <button class="btn btn-sm btn-secondary" @onclick="NextPage" disabled="@(_currentPage >= TotalPages - 1)">
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
+                
+                <div class="page-size-selector">
+                    <label>Show:</label>
+                    <select value="@_pageSize" @onchange="OnPageSizeChanged" class="form-control">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <span>records per page</span>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="no-data">
+            <i class="fas fa-users fa-3x"></i>
+            <h3>No customers found</h3>
+            <p>Click the Add button to create your first customer.</p>
+        </div>
+    }
+</div>
+
+<AddCustomer 
+    IsVisible="_showDialog" 
+    Customer="_dialogCustomer"
+    OnSubmit="OnDialogSubmit"
+    OnCancel="OnDialogCancel" />
