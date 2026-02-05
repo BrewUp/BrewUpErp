@@ -1,0 +1,111 @@
+﻿@page "/masterdata"
+
+<div class="masterdata-container">
+    <div class="header-section">
+        <h1 class="page-title">Master Data Management</h1>
+        <p class="page-subtitle">Manage your business entities and core data</p>
+    </div>
+
+    <div class="tiles-grid">
+        <div class="tile tile-customers" @onclick="@(() => NavigateToSection("customers"))">
+            <div class="tile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            <h2 class="tile-title">Customers</h2>
+            <p class="tile-description">Manage customer information and contacts</p>
+        </div>
+
+        <div class="tile tile-suppliers" @onclick="@(() => NavigateToSection("suppliers"))">
+            <div class="tile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <polyline points="16 11 18 13 22 9"></polyline>
+                </svg>
+            </div>
+            <h2 class="tile-title">Suppliers</h2>
+            <p class="tile-description">Manage supplier relationships and details</p>
+        </div>
+
+        <div class="tile tile-beers" @onclick="@(() => NavigateToSection("beers"))">
+            <div class="tile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 11h1a3 3 0 0 1 0 6h-1"></path>
+                    <path d="M9 12v6"></path>
+                    <path d="M13 12v6"></path>
+                    <path d="M14 7.5c-1 0-1.44.5-3 .5s-2-.5-3-.5-1.72.5-2.5.5a2.5 2.5 0 0 1 0-5c.78 0 1.5.5 2.5.5s2-.5 3-.5 2 .5 3 .5 1.72-.5 2.5-.5a2.5 2.5 0 0 1 0 5c-.78 0-1.5-.5-2.5-.5Z"></path>
+                    <path d="M5 8v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8"></path>
+                </svg>
+            </div>
+            <h2 class="tile-title">Beers</h2>
+            <p class="tile-description">Manage beer products and recipes</p>
+        </div>
+
+        <div class="tile tile-products" @onclick="@(() => NavigateToSection("products"))">
+            <div class="tile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            </div>
+            <h2 class="tile-title">Products</h2>
+            <p class="tile-description">Manage all product catalog items</p>
+        </div>
+
+        <div class="tile tile-categories" @onclick="@(() => NavigateToSection("categories"))">
+            <div class="tile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+            </div>
+            <h2 class="tile-title">Categories</h2>
+            <p class="tile-description">Organize products into categories</p>
+        </div>
+
+        <div class="tile tile-inventory" @onclick="@(() => NavigateToSection("inventory"))">
+            <div class="tile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line>
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+            </div>
+            <h2 class="tile-title">Inventory</h2>
+            <p class="tile-description">Track stock levels and locations</p>
+        </div>
+
+        <div class="tile tile-settings" @onclick="@(() => NavigateToSection("settings"))">
+            <div class="tile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 1v6m0 6v6m-6-6h6m6 0h6"></path>
+                    <path d="M19.07 4.93l-4.24 4.24m-5.66 5.66L4.93 19.07m14.14 0l-4.24-4.24m-5.66-5.66L4.93 4.93"></path>
+                </svg>
+            </div>
+            <h2 class="tile-title">Settings</h2>
+            <p class="tile-description">Configure master data settings</p>
+        </div>
+
+        <div class="tile tile-reports" @onclick="@(() => NavigateToSection("reports"))">
+            <div class="tile-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+            </div>
+            <h2 class="tile-title">Reports</h2>
+            <p class="tile-description">View analytics and reports</p>
+        </div>
+    </div>
+</div>

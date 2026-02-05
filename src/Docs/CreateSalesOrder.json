@@ -19,3 +19,17 @@
     }
   ]
 }
+
+{
+  "ragioneSociale": "Il Grottino del Muflone",
+  "partitaIva": "IT01234567890",
+  "consumerLevel": "teetotaler",
+  "indirizzo": {
+    "via": "Del Bosco",
+    "numeroCivico": "42",
+    "citta": "Brescia",
+    "provincia": "BS",
+    "cap": "20100",
+    "nazione": "ITA"
+  }
+}

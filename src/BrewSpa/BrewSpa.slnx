@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/50 Modules/" />
+  <Folder Name="/50 Modules/DataMaster/">
+    <Project Path="MasterData/BrewSpa.MasterData.Application/BrewSpa.MasterData.Application.csproj" />
+    <Project Path="MasterData/BrewSpa.MasterData.Facade/BrewSpa.MasterData.Facade.csproj" />
+  </Folder>
+  <Folder Name="/50 Modules/Sales/" />
+  <Folder Name="/90 Presentation/">
+    <Project Path="BrewSpa/BrewSpa.csproj" />
+  </Folder>
+</Solution>
