@@ -14,12 +14,16 @@
     </ItemGroup>
 
     <ItemGroup>
+        <BlazorWebAssemblyLazyLoad Include="BrewSpa.Dashboards.Facade.wasm" />
         <BlazorWebAssemblyLazyLoad Include="BrewSpa.MasterData.Facade.wasm" />
+        <BlazorWebAssemblyLazyLoad Include="BrewSpa.Sales.Facade.wasm" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\BrewSpa.Shared.Components\BrewSpa.Shared.Components.csproj" />
+      <ProjectReference Include="..\Dashboards\BrewSpa.Dashboards.Facade\BrewSpa.Dashboards.Facade.csproj" />
       <ProjectReference Include="..\MasterData\BrewSpa.MasterData.Facade\BrewSpa.MasterData.Facade.csproj" />
+      <ProjectReference Include="..\Sales\BrewSpa.Sales.Facade\BrewSpa.Sales.Facade.csproj" />
     </ItemGroup>
 
 </Project>

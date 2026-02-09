@@ -1,0 +1,25 @@
+﻿@page "/"
+@page "/dashboard"
+
+@using ApexCharts
+@using BrewSpa.Dashboards.Facade.Models
+
+<PageTitle>Dashboard</PageTitle>
+
+<ApexChart TItem="SummaryData"
+           Title="Summary Data">
+
+    <ApexPointSeries TItem="SummaryData"
+                     Items="Data"
+                     Name="Net Profit"
+                     SeriesType="SeriesType.Bar"
+                     XValue="e => e.Category"
+                     YValue="e=> e.NetProfit" />
+
+    <ApexPointSeries TItem="SummaryData"
+                     Items="Data"
+                     Name="Revenue"
+                     SeriesType="SeriesType.Bar"
+                     XValue="e => e.Category"
+                     YValue="e=> e.Revenue" />
+</ApexChart>

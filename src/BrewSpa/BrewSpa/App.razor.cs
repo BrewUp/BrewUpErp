@@ -7,11 +7,22 @@ namespace BrewSpa;
 
 public class AppBase : ComponentBase, IDisposable
 {
-    [Inject] private LazyAssemblyLoader AssemblyLoader { get; set; } = default!;
-    [Inject] private ILogger<App> Logger { get; set; } = default!;
+    [Inject] private LazyAssemblyLoader AssemblyLoader { get; set; } = null!;
+    [Inject] private ILogger<App> Logger { get; set; } = null!;
 
-    protected readonly List<Assembly> LazyLoadedAssemblies = new();
-    
+    protected readonly List<Assembly> LazyLoadedAssemblies = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>
+        {
+            "BrewSpa.Dashboards.Facade.wasm"
+        });
+        LazyLoadedAssemblies.AddRange(assemblies);
+        
+        await base.OnInitializedAsync();
+    }
+
     protected async Task OnNavigateAsync(NavigationContext args)
     {
         try
