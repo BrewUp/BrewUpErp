@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/30 Shared/">
+    <Project Path="BrewSpa.Shared.Components/BrewSpa.Shared.Components.csproj" />
     <Project Path="BrewSpa.Shared/BrewSpa.Shared.csproj" />
   </Folder>
   <Folder Name="/50 Modules/" />

@@ -1,28 +1,15 @@
 @page "/masterdata/customers"
+@using BrewSpa.Shared.Components.Components
+
+<PageTitle>Customers</PageTitle>
 
 <div class="customers-container">
-    <div class="header-section">
-        <h1 class="page-title">Customer Management</h1>
-        @* <p class="page-subtitle">Manage customer information and contacts</p> *@
-    </div>
+    @* <div class="header-section"> *@
+    @*     <h1 class="page-title">Customers</h1> *@
+    @*     <p class="page-subtitle">Manage customer information and contacts</p> *@
+    @* </div> *@
     
-    <div class="toolbar">
-        <button class="btn btn-primary" @onclick="@AddCustomer">
-            <i class="fas fa-plus"></i> Add
-        </button>
-        <button class="btn btn-success" @onclick="@SaveCustomers" disabled="@(!HasChanges)">
-            <i class="fas fa-save"></i> Save
-        </button>
-        <button class="btn btn-danger" @onclick="@DeleteCustomer" disabled="@(_selectedCustomer == null)">
-            <i class="fas fa-trash"></i> Delete
-        </button>
-        <button class="btn btn-secondary" @onclick="@RefreshData">
-            <i class="fas fa-sync"></i> Refresh
-        </button>
-        <button class="btn btn-secondary" @onclick="@Close">
-            <i class="fas fa-times"></i> Close
-        </button>
-    </div>
+    <Toolbar CurrentContext="@_currentContext"/>
 
     @if (_isLoading)
     {

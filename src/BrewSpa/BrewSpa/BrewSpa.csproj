@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\BrewSpa.Shared.Components\BrewSpa.Shared.Components.csproj" />
       <ProjectReference Include="..\MasterData\BrewSpa.MasterData.Facade\BrewSpa.MasterData.Facade.csproj" />
     </ItemGroup>
 

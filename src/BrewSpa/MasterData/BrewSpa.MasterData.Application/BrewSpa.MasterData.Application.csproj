@@ -14,6 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\BrewSpa.Shared.Components\BrewSpa.Shared.Components.csproj" />
       <ProjectReference Include="..\..\BrewSpa.Shared\BrewSpa.Shared.csproj" />
     </ItemGroup>
 

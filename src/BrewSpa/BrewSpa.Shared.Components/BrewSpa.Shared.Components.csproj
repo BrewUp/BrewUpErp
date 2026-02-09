@@ -15,12 +15,11 @@
         <PackageReference Include="BitBlazor" Version="0.2.2" />
         <PackageReference Include="Blazor.Messaging" Version="1.4.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.2"/>
-        <PackageReference Include="Muflone" Version="10.0.3" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\BrewSpa.Shared.Components\BrewSpa.Shared.Components.csproj" />
-      <ProjectReference Include="..\BrewSpa.MasterData.Application\BrewSpa.MasterData.Application.csproj" />
+      <ProjectReference Include="..\BrewSpa.Shared\BrewSpa.Shared.csproj" />
     </ItemGroup>
 
 </Project>

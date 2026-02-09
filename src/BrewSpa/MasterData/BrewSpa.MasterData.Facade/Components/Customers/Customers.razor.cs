@@ -1,5 +1,8 @@
+using Blazor.Messaging;
 using BrewSpa.MasterData.Application.Models;
 using BrewSpa.MasterData.Application.Services;
+using BrewSpa.Shared.Components.CustomTypes;
+using BrewSpa.Shared.Components.Messages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -10,6 +13,7 @@ public partial class Customers : ComponentBase, IDisposable
     [Inject] private ICustomerService CustomerService { get; set; } = null!;
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject] private NavigationManager Navigation { get; set; } = null!;
+    [Inject] private IMessagingService MessagingService { get; set; } = null!;
 
     private IEnumerable<CustomerJson> _customers = [];
     private CustomerJson? _selectedCustomer;
@@ -20,6 +24,8 @@ public partial class Customers : ComponentBase, IDisposable
     private bool _showDialog = false;
     private CreateCustomerJson _dialogCustomer = new();
     
+    private readonly CurrentContext _currentContext = new ("Customers");
+    
     private int _currentPage;
     private int _pageSize = 10;
     private int _totalRecords;
@@ -27,7 +33,24 @@ public partial class Customers : ComponentBase, IDisposable
 
     protected override async Task OnInitializedAsync()
     {
+        MessagingService.Subscribe<ToolbarItemClicked>(HandleToolbarClickAsync);
         await LoadCustomers();
+    }
+    
+    private void HandleToolbarClickAsync(ToolbarItemClicked message)
+    {
+        if (message.CurrentContext != _currentContext) return;
+
+        switch (message.ToolbarButton.Name)
+        {
+            case nameof(ToolbarButtons.AddNewItem):
+                AddCustomer();
+                break;
+            
+            case nameof(ToolbarButtons.SaveCurrentItem):
+                _ = SaveCustomers();
+                break;
+        }
     }
 
     private async Task LoadCustomers()
