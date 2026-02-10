@@ -26,6 +26,27 @@ internal sealed class MasterDataFacade(IMasterDataDomainService masterDataDomain
                 new Nazione(body.Indirizzo.Nazione)),
             cancellationToken);
     }
+    
+    public Task<Result<bool>> SaveCustomerAsync(EditCustomerJson body, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        return masterDataDomainService.SaveCustomerAsync(new CustomerId(body.CustomerId),
+            new RagioneSociale(body.RagioneSociale),
+            new PartitaIva(body.PartitaIva),
+            new Indirizzo(new Via(body.Indirizzo.Via),
+                new NumeroCivico(body.Indirizzo.NumeroCivico),
+                new Cap(body.Indirizzo.Cap),
+                new Citta(body.Indirizzo.Citta),
+                new Provincia(body.Indirizzo.Provincia),
+                new Nazione(body.Indirizzo.Nazione)),
+            cancellationToken);
+        
+        throw new NotImplementedException();
+    }
+
+    public Task<Result<bool>> DeleteCustomerAsync(string customerId, CancellationToken cancellationToken) =>
+        masterDataDomainService.DeleteCustomerAsync(new CustomerId(customerId), cancellationToken);
 
     public Task<Result<PagedResult<CustomerJson>>> GetCustomersAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken) =>

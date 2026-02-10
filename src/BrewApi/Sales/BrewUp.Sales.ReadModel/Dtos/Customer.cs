@@ -33,4 +33,28 @@ public class Customer : DtoBase
 
         Indirizzo = indirizzo;
     }
+    
+    public void UpdateRagioneSociale(RagioneSociale ragioneSociale)
+    {
+        if (RagioneSociale == ragioneSociale.Value)
+            return;
+        
+        RagioneSociale = ragioneSociale.Value;
+    }
+
+    public void UpdatePartitaIva(PartitaIva partitaIva)
+    {
+        if (PartitaIva == partitaIva.Value)
+            return;
+        
+        PartitaIva = partitaIva.Value;
+    }
+    
+    public void UpdateIndirizzo(IndirizzoJson indirizzo)
+    {
+        if (Indirizzo.Equals(indirizzo))
+            return;
+        
+        Indirizzo = indirizzo;
+    }
 }

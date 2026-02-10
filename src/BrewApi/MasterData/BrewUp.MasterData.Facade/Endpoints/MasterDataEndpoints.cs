@@ -1,9 +1,4 @@
-﻿using BrewUp.Shared.ExternalContracts.MasterData;
-using BrewUp.Shared.ReadModel;
-using BrewUp.Shared.Validators;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Builder;
 
 namespace BrewUp.MasterData.Facade.Endpoints;
 
@@ -11,86 +6,8 @@ public static class MasterDataEndpoints
 {
     public static WebApplication MapMasterDataEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/v1/masterdata")
-            .WithTags("MasterData");
-        
-        MapCustomersEndPoints(group);
+        CustomersEndpoint.MapCustomersEndPoints(app);
 
         return app;
-    }
-
-    private static void MapCustomersEndPoints(RouteGroupBuilder group)
-    {
-        group.MapPost("/customers", HandlePostCreateCustomer)
-            .AddEndpointFilter<ValidationFilter<CreateCustomerJson>>()
-            .Produces(StatusCodes.Status201Created)
-            .Produces(StatusCodes.Status500InternalServerError)
-            .WithSummary("Create a new customers")
-            .WithDescription(
-                "Creates a new customer. This endpoint is used to add a new customer.")
-            .WithName("CreateCustomer");
-        
-        group.MapGet("/customers", HandleGetCustomers)
-            .Produces<PagedResult<CustomerJson>>()
-            .Produces(StatusCodes.Status500InternalServerError)
-            .WithSummary("Get a list of customers")
-            .WithDescription(
-                "Get a list of customers.")
-            .WithName("GetCustomers");
-        
-        group.MapGet("/customers/{customerId}", HandleGetCustomerById)
-            .Produces<CustomerJson>()
-            .Produces(StatusCodes.Status500InternalServerError)
-            .WithSummary("Get a customer details")
-            .WithDescription(
-                "Get full details of a customer.")
-            .WithName("GetCustomerById");
-    }
-
-    private static async Task<IResult> HandlePostCreateCustomer(
-        IMasterDataFacade masterDataFacade,
-        CreateCustomerJson body,
-        CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var createResult = await masterDataFacade.CreateCustomerAsync(body, cancellationToken);
-
-        return createResult.Match<IResult>(
-            success =>
-            {
-                createResult.TryGetValue(out string customerId);
-                return Results.Created($"/v1/masterdata/{customerId}", success);
-            }, 
-            error => Results.Problem(error.Message, statusCode: StatusCodes.Status500InternalServerError));
-    }
-    
-    private static async Task<IResult> HandleGetCustomers(
-        IMasterDataFacade masterDataFacade,
-        int pageNumber = 1,
-        int pageSize = 10,
-        CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var queryResult = await masterDataFacade.GetCustomersAsync(pageNumber, pageSize, cancellationToken);
-
-        return queryResult.Match<IResult>(
-            Results.Ok,
-            error => Results.Problem(error.Message, statusCode: StatusCodes.Status500InternalServerError));
-    }
-    
-    private static async Task<IResult> HandleGetCustomerById(
-        IMasterDataFacade masterDataFacade,
-        string customerId,
-        CancellationToken cancellationToken = default)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-
-        var queryResult = await masterDataFacade.GetCustomerByIdAsync(customerId, cancellationToken);
-
-        return queryResult.Match<IResult>(
-            Results.Ok,
-            error => Results.Problem(error.Message, statusCode: StatusCodes.Status500InternalServerError));
     }
 }

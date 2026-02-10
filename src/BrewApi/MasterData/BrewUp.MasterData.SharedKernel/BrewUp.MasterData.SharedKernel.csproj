@@ -10,9 +10,4 @@
       <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="CustomTypes\" />
-      <Folder Include="Messagges\Events\" />
-    </ItemGroup>
-
 </Project>

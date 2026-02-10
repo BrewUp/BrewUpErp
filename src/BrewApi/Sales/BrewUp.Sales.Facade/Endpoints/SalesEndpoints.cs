@@ -14,7 +14,7 @@ public static class SalesEndpoints
     var group = app.MapGroup("/v1/sales")
         .WithTags("Sales");
 
-    group.MapPost("/", HandlePostCreateSalesOrder)
+    group.MapPost("/", HandlePostSalesOrder)
         .AddEndpointFilter<ValidationFilter<CreateSalesOrderJson>>()
         .Produces(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status500InternalServerError)
@@ -42,7 +42,7 @@ public static class SalesEndpoints
     return app;
   }
 
-  private static async Task<IResult> HandlePostCreateSalesOrder(
+  private static async Task<IResult> HandlePostSalesOrder(
       ISalesFacade salesFacade,
       CreateSalesOrderJson body,
       CancellationToken cancellationToken)

@@ -14,4 +14,12 @@ public interface ICustomerService
         BeerConsumerLevel consumerLevel,
         Indirizzo indirizzo,
         CancellationToken cancellationToken = default);
+    Task<Result<bool>> UpdateCustomerAsync(CustomerId customerId,
+        RagioneSociale ragioneSociale,
+        PartitaIva partitaIva,
+        BeerConsumerLevel consumerLevel,
+        Indirizzo indirizzo,
+        CancellationToken cancellationToken = default);
+
+    Task<Result<bool>> DeleteCustomerAsync(CustomerId eventAggregateId, CancellationToken cancellationToken);
 }

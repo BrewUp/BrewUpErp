@@ -12,4 +12,6 @@ public interface IMasterDataFacade
         CancellationToken cancellationToken);
 
     Task<Result<CustomerJson>> GetCustomerByIdAsync(string customerId, CancellationToken cancellationToken);
+    Task<Result<bool>> SaveCustomerAsync(EditCustomerJson body, CancellationToken cancellationToken);
+    Task<Result<bool>> DeleteCustomerAsync(string customerId, CancellationToken cancellationToken);
 }

@@ -32,4 +32,13 @@ public static class ValueObjectHelper
         new PartitaIva(customer.PartitaIva),
         BeerConsumerLevel.FromName(customer.ConsumerLevel),
         customer.Indirizzo.ToIndirizzo());
+    
+    public static CustomerUpdated ToCustomerUpdated(this Customer customer) => 
+        new (new CustomerId(customer.Id), new RagioneSociale(customer.RagioneSociale),
+            new PartitaIva(customer.PartitaIva),
+            BeerConsumerLevel.FromName(customer.ConsumerLevel),
+            customer.Indirizzo.ToIndirizzo());
+    
+    public static CustomerDeleted ToCustomerDeleted(this Customer customer) => 
+        new (new CustomerId(customer.Id));
 }
