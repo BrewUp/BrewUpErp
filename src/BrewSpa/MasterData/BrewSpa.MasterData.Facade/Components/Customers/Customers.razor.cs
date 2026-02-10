@@ -23,16 +23,14 @@ public partial class Customers : ComponentBase, IDisposable
     private CustomerJson? _selectedCustomer = new();
     private CustomerJson? _editingCustomer;
     private bool _isLoading = true;
-    private bool HasChanges => _editingCustomer != null;
     
     private bool _showDialog;
     
     private readonly CurrentContext _currentContext = new ("Customers");
     
     private int _currentPage;
-    private int _pageSize = 10;
+    private readonly int _pageSize = 10;
     private int _totalRecords;
-    private int TotalPages => (int)Math.Ceiling((double)_totalRecords / _pageSize);
 
     protected override async Task OnInitializedAsync()
     {
@@ -91,6 +89,14 @@ public partial class Customers : ComponentBase, IDisposable
                 AddCustomer();
                 break;
             
+            case nameof(ToolbarButtons.EditCurrentItem):
+                EditCustomer();
+                break;
+            
+            case nameof(ToolbarButtons.DeleteCurrentItem):
+                await DeleteCustomer();
+                break;
+            
             case nameof(ToolbarButtons.Refresh):
                 await RefreshData();
                 break;
@@ -101,16 +107,26 @@ public partial class Customers : ComponentBase, IDisposable
         }
     }
 
-    private void SelectCustomer(string customerId)
+    private void SelectCustomer(CustomerJson customer)
     {
         if (_editingCustomer != null)
         {
             // Don't allow selection change while editing
             return;
         }
-        _selectedCustomer = _customers.FirstOrDefault(c => c.CustomerId.Equals(customerId));
+        _selectedCustomer = customer;
         Console.WriteLine($"Selected customer: {_selectedCustomer?.RagioneSociale ?? "null"}");
         StateHasChanged();
+    }
+
+    private string GetRowClass(CustomerJson customer)
+    {
+        var baseClass = "grid-row";
+        if (_selectedCustomer != null && _selectedCustomer.CustomerId == customer.CustomerId)
+        {
+            return $"{baseClass} selected-row";
+        }
+        return baseClass;
     }
 
     private void AddCustomer()
@@ -133,22 +149,29 @@ public partial class Customers : ComponentBase, IDisposable
         _showDialog = true;
         StateHasChanged();
     }
+    
+    private void EditCustomer()
+    {
+        if (_selectedCustomer == null)
+            return;
+    
+        _showDialog = true;
+        StateHasChanged();
+    }
 
     private async Task OnDialogSubmit(CustomerJson customer)
     {
         _showDialog = false;
+        await SaveEdit();
+        
         StateHasChanged();
     }
     
     private void OnDialogCancel()
     {
+        _editingCustomer = null;
         _showDialog = false;
-        StateHasChanged();
-    }
-
-    private void EditCustomer(CustomerJson customer)
-    {
-        _editingCustomer = customer;
+        
         StateHasChanged();
     }
 
@@ -164,18 +187,37 @@ public partial class Customers : ComponentBase, IDisposable
 
         try
         {
-            CustomerJson savedCustomer;
-            var existingCustomer = _customers.FirstOrDefault(c => c.CustomerId == _editingCustomer.CustomerId);
-            
-            if (existingCustomer != null && !string.IsNullOrEmpty(existingCustomer.RagioneSociale))
+            if (!string.IsNullOrEmpty(_editingCustomer.CustomerId))
             {
                 // Update existing customer
                 var updateResult = await CustomerService.UpdateCustomerAsync(_editingCustomer);
+                updateResult.Match(
+                    success =>
+                    {
+                        _ = LoadCustomers();
+                        return true;
+                    },
+                    error =>
+                    {
+                        _ = ShowError($"Error Update customer: {error.Message}");
+                        return false;
+                    });
             }
             else
             {
                 // Create new customer
                 var saveResult = await CustomerService.CreateCustomerAsync(_editingCustomer);
+                saveResult.Match(
+                    success =>
+                    {
+                        _ = LoadCustomers();
+                        return true;
+                    },
+                    error =>
+                    {
+                        _ = ShowError($"Error creating customer: {error.Message}");
+                        return false;
+                    });
             }
 
             // if (existingCustomer != null)
@@ -195,38 +237,10 @@ public partial class Customers : ComponentBase, IDisposable
         StateHasChanged();
     }
 
-    private void CancelEdit()
-    {
-        if (_editingCustomer != null)
-        {
-            // If it's a new customer (not saved yet), remove it from the list
-            var existingInOriginal = _customers.FirstOrDefault(c => c.CustomerId == _editingCustomer.CustomerId);
-            if (existingInOriginal != null && string.IsNullOrEmpty(existingInOriginal.RagioneSociale))
-                _customers = _customers.Where(c => c.CustomerId != existingInOriginal.CustomerId);
-        }
-        
-        _editingCustomer = null;
-        StateHasChanged();
-    }
-
-    private async Task SaveCustomers()
-    {
-        Console.WriteLine("SaveCustomers button clicked");
-        await JsRuntime.InvokeVoidAsync("alert", "Save button clicked!");
-        try
-        {
-            // TODO: Implement bulk save logic here
-            await ShowSuccess("All changes saved!");
-        }
-        catch (Exception ex)
-        {
-            await ShowError($"Error saving changes: {ex.Message}");
-        }
-    }
-
     private async Task DeleteCustomer()
     {
-        if (_selectedCustomer == null) return;
+        if (_selectedCustomer == null || string.IsNullOrWhiteSpace(_selectedCustomer.CustomerId))
+            return;
 
         var confirmed = await JsRuntime.InvokeAsync<bool>("confirm", 
             $"Are you sure you want to delete customer '{_selectedCustomer.RagioneSociale}'?");
@@ -267,49 +281,9 @@ public partial class Customers : ComponentBase, IDisposable
         await LoadCustomers();
     }
 
-    private async Task PreviousPage()
-    {
-        if (_currentPage > 0)
-        {
-            _currentPage--;
-            await LoadCustomers();
-        }
-    }
-
-    private async Task NextPage()
-    {
-        if (_currentPage < TotalPages - 1)
-        {
-            _currentPage++;
-            await LoadCustomers();
-        }
-    }
-
-    private async Task OnPageSizeChanged(ChangeEventArgs e)
-    {
-        if (int.TryParse(e.Value?.ToString(), out var newPageSize))
-        {
-            _pageSize = newPageSize;
-            _currentPage = 0;
-            await LoadCustomers();
-        }
-    }
-
     private void Close()
     {
         Navigation.NavigateTo("/masterdata");
-    }
-
-    private static string GetConsumerLevelClass(string level)
-    {
-        return level?.ToLower() switch
-        {
-            "teetotaler" => "Teetotaler",
-            "gold" => "Gold",
-            "silver" => "Silver",
-            "bronze " => "Bronze",
-            _ => "light"
-        };
     }
 
     private async Task ShowSuccess(string message)

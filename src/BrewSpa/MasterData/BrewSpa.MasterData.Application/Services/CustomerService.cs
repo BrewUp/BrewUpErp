@@ -85,9 +85,8 @@ internal class CustomerService(HttpClient httpClient) : ICustomerService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[CustomerService] UpdateCustomerAsync failed, using mock response: {ex.Message}");
-            // For mock mode, just return the updated customer
-            return Result<CustomerJson>.Success(customer);
+            return Result<CustomerJson>.Error(
+                $"[CustomerService] UpdateCustomerAsync failed, using mock response: {ex.Message}");
         }
     }
 
@@ -100,9 +99,8 @@ internal class CustomerService(HttpClient httpClient) : ICustomerService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[CustomerService] DeleteCustomerAsync failed, using mock response: {ex.Message}");
-            // For mock mode, always return success
-            return Result<bool>.Success(true);
+            return Result<bool>.Error(
+                $"[CustomerService] DeleteCustomerAsync failed, using mock response: {ex.Message}");
         }
     }
 }

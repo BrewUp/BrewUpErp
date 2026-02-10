@@ -5,12 +5,12 @@ namespace BrewSpa.Shared.Components.CustomTypes;
 public class ToolbarButtons(int id, string name) : Enumeration(id, name)
 {
     public static ToolbarButtons AddNewItem = new (1, nameof(AddNewItem));
-    public static ToolbarButtons SaveCurrentItem = new (2, nameof(SaveCurrentItem));
+    public static ToolbarButtons EditCurrentItem = new (2, nameof(EditCurrentItem));
     public static ToolbarButtons DeleteCurrentItem = new (3, nameof(DeleteCurrentItem));
     public static ToolbarButtons Refresh = new (4, nameof(Refresh));
     public static ToolbarButtons Close = new (5, nameof(Close));
     
-    public static IEnumerable<ToolbarButtons> List() => new[] { AddNewItem, SaveCurrentItem, DeleteCurrentItem, Refresh, Close };
+    public static IEnumerable<ToolbarButtons> List() => [AddNewItem, EditCurrentItem, DeleteCurrentItem, Refresh, Close];
     
     public static ToolbarButtons FromName(string name)
     {

@@ -7,6 +7,12 @@
         <BitButton Color="Color.Primary" OnClick="@(async () => await ButtonClicked(ToolbarButtons.AddNewItem))">
             <i class="fas fa-plus"></i> Add
         </BitButton>
+        <BitButton Color="Color.Primary" OnClick="@(async () => await ButtonClicked(ToolbarButtons.EditCurrentItem))">
+            <i class="fas fa-edit"></i> Edit
+        </BitButton>
+        <BitButton Color="Color.Danger" OnClick="@(async () => await ButtonClicked(ToolbarButtons.DeleteCurrentItem))">
+            <i class="fas fa-edit"></i> Delete
+        </BitButton>
         <BitButton Color="Color.Secondary" Icon="fa-sync" OnClick="@(async () => await ButtonClicked(ToolbarButtons.Refresh))">
             <i class="fas fa-sync"></i> Refresh
         </BitButton>

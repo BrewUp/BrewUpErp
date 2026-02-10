@@ -1,9 +1,11 @@
-﻿@using Microsoft.AspNetCore.Components.Forms
+﻿@using BitBlazor
+@using BitBlazor.Components
+@using BitBlazor.Form
+@using Microsoft.AspNetCore.Components.Forms
 
 <div class="modal-overlay" style="display: @(_isVisible ? "block" : "none")">
     <div class="modal-content">
         <div class="modal-header">
-            <h3>Add New Customer</h3>
             <button type="button" class="close-button" @onclick="Cancel">&times;</button>
         </div>
         
@@ -13,49 +15,45 @@
             
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Company Name:</label>
-                    <InputText @bind-Value="_customer.RagioneSociale" class="form-control" />
+                    <BitTextAreaField Label="Ragione Sociale"
+                                      @bind-Value="_customer.RagioneSociale"/>
                 </div>
                 
                 <div class="form-group">
-                    <label>VAT Number:</label>
-                    <InputText @bind-Value="_customer.PartitaIva" class="form-control" />
-                </div>
-                
-                <h4>Address</h4>
-                <div class="form-group">
-                    <label>Street:</label>
-                    <InputText @bind-Value="_customer.Indirizzo.Via" class="form-control" />
+                    <BitTextAreaField Label="VAT Number"
+                                      @bind-Value="_customer.PartitaIva"/>
                 </div>
                 
                 <div class="form-group">
-                    <label>Street Number:</label>
-                    <InputText @bind-Value="_customer.Indirizzo.NumeroCivico" class="form-control" />
+                    <BitTextAreaField Label="Street"
+                                      @bind-Value="_customer.Indirizzo.Via"/>
                 </div>
                 
                 <div class="form-group">
-                    <label>City:</label>
-                    <InputText @bind-Value="_customer.Indirizzo.Citta" class="form-control" />
+                    <BitTextAreaField Label="City"
+                                      @bind-Value="_customer.Indirizzo.Citta"/>
                 </div>
                 
                 <div class="form-group">
-                    <label>Province:</label>
-                    <InputText @bind-Value="_customer.Indirizzo.Provincia" class="form-control" />
+                    <BitTextAreaField Label="Province"
+                                      @bind-Value="_customer.Indirizzo.Provincia"/>
                 </div>
                 
                 <div class="form-group">
-                    <label>ZIP Code:</label>
-                    <InputText @bind-Value="_customer.Indirizzo.Cap" class="form-control" />
+                    <BitTextAreaField Label="ZIP Code"
+                                      @bind-Value="_customer.Indirizzo.Cap"/>
                 </div>
                 
                 <div class="form-group">
-                    <label>Country:</label>
-                    <InputText @bind-Value="_customer.Indirizzo.Nazione" class="form-control" />
+                    <BitTextAreaField Label="Country"
+                                      @bind-Value="_customer.Indirizzo.Nazione"/>
                 </div>
             </div>
             
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Save</button>
+                <BitButton Color="Color.Primary">Save</BitButton>
+                @* <BitButton Color="Color.Secondary" @OnClick="@( async () => await Cancel())">Cancel</BitButton> *@
+                @* <button type="submit" class="btn btn-primary">Save</button> *@
                 <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
             </div>
         </EditForm>

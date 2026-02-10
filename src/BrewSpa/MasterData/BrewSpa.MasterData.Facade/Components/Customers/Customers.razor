@@ -22,7 +22,10 @@
     else if (_customers.Any())
     {
         <div class="grid-container">
-            <QuickGrid ItemsProvider="@_gridItemsProvider" Pagination="@_pagination" ItemKey="@(c => c.CustomerId)">
+            <QuickGrid ItemsProvider="@_gridItemsProvider" 
+                       Pagination="@_pagination"
+                       ItemKey="@(c => c.CustomerId)"
+                       RowClass="@(customer => GetRowClass(customer))">
                 <PropertyColumn Title="ID" Property="@(c => c.CustomerId)" />
                 <PropertyColumn Title="Ragione Sociale" Property="@(c => c.RagioneSociale)" Sortable="true">
                     <ColumnOptions>
@@ -33,6 +36,11 @@
                 </PropertyColumn>
                 <PropertyColumn Title="Partita IVA" Property="@(c => c.PartitaIva)"/>
                 <PropertyColumn Title="Consumer Level" Property="@(c => c.ConsumerLevel)" Sortable="true"/>
+                <TemplateColumn Title="Actions">
+                    <button class="btn btn-sm btn-primary" @onclick="() => SelectCustomer(context)">
+                        Select
+                    </button>
+                </TemplateColumn>
             </QuickGrid>
         </div>
         <Paginator State="@_pagination" />
