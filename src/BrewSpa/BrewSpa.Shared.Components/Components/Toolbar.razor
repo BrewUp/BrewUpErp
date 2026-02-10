@@ -1,21 +1,16 @@
 ﻿@using BitBlazor
 @using BitBlazor.Components
+@using BrewSpa.Shared.Components.CustomTypes
 
 <div class="py-2 px-2">
     <div class="mb-2">
-        <BitButton Color="Color.Primary" OnClick="@(async () => await AddNewItem())">
+        <BitButton Color="Color.Primary" OnClick="@(async () => await ButtonClicked(ToolbarButtons.AddNewItem))">
             <i class="fas fa-plus"></i> Add
         </BitButton>
-        <BitButton Color="Color.Success" OnClick="@(async () => await SaveCurrentItem())">
-            <i class="fas fa-save"></i> Save
-        </BitButton>
-        <BitButton Color="Color.Danger">
-            <i class="fas fa-trash"></i> Delete
-        </BitButton>
-        <BitButton Color="Color.Secondary">
+        <BitButton Color="Color.Secondary" Icon="fa-sync" OnClick="@(async () => await ButtonClicked(ToolbarButtons.Refresh))">
             <i class="fas fa-sync"></i> Refresh
         </BitButton>
-        <BitButton Color="Color.Secondary">
+        <BitButton Color="Color.Secondary" OnClick="@(async () => await ButtonClicked(ToolbarButtons.Close))">
             <i class="fas fa-times"></i> Close
         </BitButton>
     </div>

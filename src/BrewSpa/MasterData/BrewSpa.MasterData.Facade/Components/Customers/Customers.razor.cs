@@ -4,6 +4,7 @@ using BrewSpa.MasterData.Application.Services;
 using BrewSpa.Shared.Components.CustomTypes;
 using BrewSpa.Shared.Components.Messages;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.QuickGrid;
 using Microsoft.JSInterop;
 
 namespace BrewSpa.MasterData.Facade.Components.Customers;
@@ -16,13 +17,15 @@ public partial class Customers : ComponentBase, IDisposable
     [Inject] private IMessagingService MessagingService { get; set; } = null!;
 
     private IEnumerable<CustomerJson> _customers = [];
-    private CustomerJson? _selectedCustomer;
+    private GridItemsProvider<CustomerJson>? _gridItemsProvider;
+    private readonly PaginationState _pagination = new()  { ItemsPerPage = 10 };
+    private string _nameFilter = "";
+    private CustomerJson? _selectedCustomer = new();
     private CustomerJson? _editingCustomer;
     private bool _isLoading = true;
     private bool HasChanges => _editingCustomer != null;
     
-    private bool _showDialog = false;
-    private CreateCustomerJson _dialogCustomer = new();
+    private bool _showDialog;
     
     private readonly CurrentContext _currentContext = new ("Customers");
     
@@ -37,7 +40,48 @@ public partial class Customers : ComponentBase, IDisposable
         await LoadCustomers();
     }
     
-    private void HandleToolbarClickAsync(ToolbarItemClicked message)
+    private async Task LoadCustomers()
+    {
+        _isLoading = true;
+        StateHasChanged();
+            
+        var result = await CustomerService.GetCustomersAsync(_currentPage, _pageSize);
+
+        result.Match(
+            success =>
+            {
+                _customers = success.Results;
+                _totalRecords = success.TotalRecords;
+                _isLoading = false;
+                
+                // Create the GridItemsProvider from the customers data
+                _gridItemsProvider = _ => ValueTask.FromResult(GridItemsProviderResult.From(
+                    items: _customers.ToArray(),
+                    totalItemCount: _totalRecords
+                ));
+                
+                return true;
+            },
+            error =>
+            {
+                _ = ShowError($"Error loading customers: {error.Message}");
+                _customers = [];
+                _totalRecords = 0;
+                _isLoading = false;
+                
+                // Create an empty GridItemsProvider for error case
+                _gridItemsProvider = _ => ValueTask.FromResult(GridItemsProviderResult.From(
+                    items: Array.Empty<CustomerJson>(),
+                    totalItemCount: 0
+                ));
+                
+                return false;
+            });
+
+        StateHasChanged();
+    }
+    
+    private async Task HandleToolbarClickAsync(ToolbarItemClicked message)
     {
         if (message.CurrentContext != _currentContext) return;
 
@@ -47,53 +91,31 @@ public partial class Customers : ComponentBase, IDisposable
                 AddCustomer();
                 break;
             
-            case nameof(ToolbarButtons.SaveCurrentItem):
-                _ = SaveCustomers();
+            case nameof(ToolbarButtons.Refresh):
+                await RefreshData();
+                break;
+            
+            case nameof(ToolbarButtons.Close):
+                Close();
                 break;
         }
     }
 
-    private async Task LoadCustomers()
+    private void SelectCustomer(string customerId)
     {
-        _isLoading = true;
-        StateHasChanged();
-            
-        var result = await CustomerService.GetCustomersAsync(_currentPage, _pageSize);
-
-        _isLoading = result.Match(
-            success =>
-            {
-                _customers = success.Results;
-                _totalRecords = success.TotalRecords;
-                return false;
-            },error =>
-            {
-                _ = ShowError($"Error loading customers: {error.Message}");
-                _customers = [];
-                _totalRecords = 0;
-                return true;
-            });
-        
-        StateHasChanged();
-    }
-
-    private void SelectCustomer(CustomerJson customer)
-    {
-        Console.WriteLine($"SelectCustomer called with customer: {customer?.RagioneSociale ?? "null"}");
         if (_editingCustomer != null)
         {
-            Console.WriteLine("Cannot select customer while editing");
             // Don't allow selection change while editing
             return;
         }
-        _selectedCustomer = customer;
+        _selectedCustomer = _customers.FirstOrDefault(c => c.CustomerId.Equals(customerId));
         Console.WriteLine($"Selected customer: {_selectedCustomer?.RagioneSociale ?? "null"}");
         StateHasChanged();
     }
 
     private void AddCustomer()
     {
-        _dialogCustomer = new CreateCustomerJson
+        _selectedCustomer = new CustomerJson
         {
             RagioneSociale = "",
             PartitaIva = "",
@@ -112,7 +134,7 @@ public partial class Customers : ComponentBase, IDisposable
         StateHasChanged();
     }
 
-    private async Task OnDialogSubmit(CreateCustomerJson customer)
+    private async Task OnDialogSubmit(CustomerJson customer)
     {
         _showDialog = false;
         StateHasChanged();
@@ -126,22 +148,7 @@ public partial class Customers : ComponentBase, IDisposable
 
     private void EditCustomer(CustomerJson customer)
     {
-        // _editingCustomer = new Customer
-        // {
-        //     CustomerId = customer.CustomerId,
-        //     RagioneSociale = customer.RagioneSociale,
-        //     PartitaIva = customer.PartitaIva,
-        //     ConsumerLevel = customer.ConsumerLevel,
-        //     Indirizzo = new Address
-        //     {
-        //         Via = customer.Indirizzo.Via,
-        //         NumeroCivico = customer.Indirizzo.NumeroCivico,
-        //         Citta = customer.Indirizzo.Citta,
-        //         Provincia = customer.Indirizzo.Provincia,
-        //         Cap = customer.Indirizzo.Cap,
-        //         Nazione = customer.Indirizzo.Nazione
-        //     }
-        // };
+        _editingCustomer = customer;
         StateHasChanged();
     }
 
@@ -297,10 +304,10 @@ public partial class Customers : ComponentBase, IDisposable
     {
         return level?.ToLower() switch
         {
-            "teetotaler" => "teetotaler",
-            "gold" => "teetotaler",
-            "silver" => "silver",
-            "bronze " => "bronze",
+            "teetotaler" => "Teetotaler",
+            "gold" => "Gold",
+            "silver" => "Silver",
+            "bronze " => "Bronze",
             _ => "light"
         };
     }
@@ -320,7 +327,7 @@ public partial class Customers : ComponentBase, IDisposable
     {
         if (disposing)
         {
-            // Cleanup resources if needed
+            MessagingService.Unsubscribe<ToolbarItemClicked>(HandleToolbarClickAsync);
         }
     }
 

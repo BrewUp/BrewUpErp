@@ -6,30 +6,17 @@ namespace BrewSpa.MasterData.Facade.Components.Customers;
 public partial class AddCustomer : ComponentBase, IDisposable
 {
     [Parameter] public bool IsVisible { get; set; }
-    [Parameter] public CreateCustomerJson Customer { get; set; } = new();
-    [Parameter] public EventCallback<CreateCustomerJson> OnSubmit { get; set; }
+    [Parameter] public CustomerJson Customer { get; set; } = new();
+    [Parameter] public EventCallback<CustomerJson> OnSubmit { get; set; }
     [Parameter] public EventCallback OnCancel { get; set; }
 
-    private CreateCustomerJson _customer = new();
+    private CustomerJson _customer = new();
     private bool _isVisible;
 
     protected override void OnParametersSet()
     {
         _isVisible = IsVisible;
-        _customer = new CreateCustomerJson
-            {
-                RagioneSociale = Customer.RagioneSociale,
-                PartitaIva = Customer.PartitaIva,
-                Indirizzo = new IndirizzoJson
-                {
-                    Via = Customer.Indirizzo.Via,
-                    NumeroCivico = Customer.Indirizzo.NumeroCivico,
-                    Citta = Customer.Indirizzo.Citta,
-                    Provincia = Customer.Indirizzo.Provincia,
-                    Cap = Customer.Indirizzo.Cap,
-                    Nazione = Customer.Indirizzo.Nazione
-                }
-            };
+        _customer = Customer;
     }
 
     private async Task Submit()

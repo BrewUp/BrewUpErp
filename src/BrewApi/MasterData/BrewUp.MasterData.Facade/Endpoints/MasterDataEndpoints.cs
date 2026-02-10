@@ -3,6 +3,7 @@ using BrewUp.Shared.ReadModel;
 using BrewUp.Shared.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace BrewUp.MasterData.Facade.Endpoints;
 
@@ -13,6 +14,13 @@ public static class MasterDataEndpoints
         var group = app.MapGroup("/v1/masterdata")
             .WithTags("MasterData");
         
+        MapCustomersEndPoints(group);
+
+        return app;
+    }
+
+    private static void MapCustomersEndPoints(RouteGroupBuilder group)
+    {
         group.MapPost("/customers", HandlePostCreateCustomer)
             .AddEndpointFilter<ValidationFilter<CreateCustomerJson>>()
             .Produces(StatusCodes.Status201Created)
@@ -37,10 +45,8 @@ public static class MasterDataEndpoints
             .WithDescription(
                 "Get full details of a customer.")
             .WithName("GetCustomerById");
-
-        return app;
     }
-    
+
     private static async Task<IResult> HandlePostCreateCustomer(
         IMasterDataFacade masterDataFacade,
         CreateCustomerJson body,

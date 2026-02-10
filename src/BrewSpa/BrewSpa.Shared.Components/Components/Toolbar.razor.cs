@@ -13,14 +13,9 @@ public partial class Toolbar : ComponentBase, IDisposable
     [Parameter]
     public CurrentContext CurrentContext { get; set; } = new("None");
 
-    private async Task AddNewItem()
+    private async Task ButtonClicked(ToolbarButtons button)
     {
-        await MessagingService.Publish(new ToolbarItemClicked(CurrentContext, ToolbarButtons.AddNewItem));
-    }
-    
-    private async Task SaveCurrentItem()
-    {
-        await MessagingService.Publish(new ToolbarItemClicked(CurrentContext, ToolbarButtons.SaveCurrentItem));
+        await MessagingService.Publish(new ToolbarItemClicked(CurrentContext, button));
     }
     
     #region Dispose
