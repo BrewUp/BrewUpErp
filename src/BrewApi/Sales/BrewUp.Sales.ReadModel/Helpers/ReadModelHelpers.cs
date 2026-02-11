@@ -3,6 +3,7 @@ using BrewUp.Sales.SharedKernel.CustomTypes;
 using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.ExternalContracts;
 using BrewUp.Shared.ExternalContracts.MasterData;
+using BrewUp.Shared.ExternalContracts.MasterData.Customers;
 using BrewUp.Shared.ExternalContracts.Sales;
 
 namespace BrewUp.Sales.ReadModel.Helpers;

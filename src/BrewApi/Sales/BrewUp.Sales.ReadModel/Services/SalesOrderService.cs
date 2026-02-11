@@ -9,10 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BrewUp.Sales.ReadModel.Services;
 
-internal sealed class SalesOrderService(ILoggerFactory loggerFactory, 
-    [FromKeyedServices("sales")] IPersister persister,
-    IQueries<SalesOrder> orderQueries) 
-    : ServiceBase(loggerFactory, persister), ISalesOrderService
+internal sealed class SalesOrderService([FromKeyedServices("sales")] IPersister persister,
+    IQueries<SalesOrder> orderQueries,
+    ILoggerFactory loggerFactory) : ServiceBase(persister, loggerFactory), ISalesOrderService
 {
     public async Task<Result<bool>> CreateSalesOrderAsync(SalesOrderId salesOrderId, SalesOrderNumber salesOrderNumber, CustomerId customerId,
         CustomerName customerName, SalesOrderDate orderDate, IEnumerable<SalesOrderRowJson> rows, CancellationToken cancellationToken)

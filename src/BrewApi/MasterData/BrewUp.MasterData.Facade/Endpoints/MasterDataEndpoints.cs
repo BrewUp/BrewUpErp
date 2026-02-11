@@ -7,6 +7,7 @@ public static class MasterDataEndpoints
     public static WebApplication MapMasterDataEndpoints(this WebApplication app)
     {
         CustomersEndpoint.MapCustomersEndPoints(app);
+        BeersEndpoints.MapBeersEndPoints(app);
 
         return app;
     }

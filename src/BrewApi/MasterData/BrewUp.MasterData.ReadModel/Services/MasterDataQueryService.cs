@@ -1,5 +1,6 @@
 ﻿using BrewUp.MasterData.SharedKernel.Dtos;
 using BrewUp.Shared.ExternalContracts.MasterData;
+using BrewUp.Shared.ExternalContracts.MasterData.Customers;
 using BrewUp.Shared.ReadModel;
 using Lena.Core;
 using Microsoft.Extensions.Logging;

@@ -48,11 +48,9 @@ description: "Task list template for feature implementation"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create module structure per Constitution Principle I (each feature as separate project)
-- [ ] T002 Initialize [platform] project with dependencies (specify iOS/Android/cross-platform)
-- [ ] T003 [P] Configure linting tools (SwiftLint/ESLint/etc.) - Constitution Principle IV
-- [ ] T004 [P] Setup code coverage reporting (minimum 80% target)
-- [ ] T005 [P] Configure CI pipeline for quality gates (tests, linting, coverage, performance)
+- [ ] T001 Create project structure per implementation plan
+- [ ] T002 Initialize [language] project with [framework] dependencies
+- [ ] T003 [P] Configure linting and formatting tools
 
 ---
 
@@ -62,17 +60,14 @@ description: "Task list template for feature implementation"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-**⚠️ TEST-FIRST REQUIRED**: Per Constitution Principle II, tests for foundation components MUST be written and approved BEFORE implementation
-
 Examples of foundational tasks (adjust based on your project):
 
-- [ ] T006 [P] Setup shared design system module (Constitution Principle III - UX Consistency)
-- [ ] T007 [P] Create networking/API client module with mocking support for tests
-- [ ] T008 [P] Setup local persistence module (if needed)
-- [ ] T009 [P] Configure performance monitoring and baseline benchmarks (Constitution Principle V)
-- [ ] T010 [P] Implement error handling and logging infrastructure
-- [ ] T011 [P] Setup accessibility testing framework (WCAG 2.1 AA compliance)
-- [ ] T012 Create base entities/models that all stories depend on (with unit tests)
+- [ ] T004 Setup database schema and migrations framework
+- [ ] T005 [P] Implement authentication/authorization framework
+- [ ] T006 [P] Setup API routing and middleware structure
+- [ ] T007 Create base models/entities that all stories depend on
+- [ ] T008 Configure error handling and logging infrastructure
+- [ ] T009 Setup environment configuration management
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -82,42 +77,25 @@ Examples of foundational tasks (adjust based on your project):
 
 **Goal**: [Brief description of what this story delivers]
 
-**Module**: [Specify which module this story belongs to per modular architecture]
-
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 1 (NON-NEGOTIABLE per Constitution Principle II) ⚠️
+### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
 
-> **CRITICAL - TEST-FIRST DEVELOPMENT MANDATORY**: 
-> 1. Write tests FIRST and get user/stakeholder approval
-> 2. Run tests - they MUST FAIL (red)
-> 3. Only then implement (green)
-> 4. Refactor (refactor)
+> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T013 [P] [US1] Unit tests for [Module] models in modules/[Module]/tests/unit/test_[name].[ext]
-- [ ] T014 [P] [US1] Integration tests for [cross-module interaction] in modules/[Module]/tests/integration/test_[name].[ext]
-- [ ] T015 [P] [US1] UI/UX tests for [screen/flow] in modules/[Module]/tests/ui/test_[name].[ext]
-- [ ] T016 [P] [US1] Performance tests for [critical path] - verify <200ms response, 60fps, memory baseline
-- [ ] T017 [P] [US1] Accessibility tests - verify screen reader, dynamic type, contrast compliance
+- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
+- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
 
 ### Implementation for User Story 1
 
-- [ ] T018 [P] [US1] Create [Entity1] model in modules/[Module]/src/models/[entity1].[ext]
-- [ ] T019 [P] [US1] Create [Entity2] model in modules/[Module]/src/models/[entity2].[ext]
-- [ ] T020 [US1] Implement [Service] in modules/[Module]/src/services/[service].[ext] (depends on T018, T019)
-- [ ] T021 [US1] Implement [View/Screen] using design system components in modules/[Module]/src/views/[view].[ext]
-- [ ] T022 [US1] Add validation and error handling following standard patterns
-- [ ] T023 [US1] Add logging and performance instrumentation
-- [ ] T024 [US1] Document public APIs with usage examples (Constitution Principle IV)
+- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
+- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
+- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
+- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T016 [US1] Add validation and error handling
+- [ ] T017 [US1] Add logging for user story 1 operations
 
-### Code Quality Gate for User Story 1 (Constitution Principle IV)
-
-- [ ] T025 [US1] Run static analysis - confirm zero warnings
-- [ ] T026 [US1] Verify code coverage ≥80% (100% for critical paths)
-- [ ] T027 [US1] Peer review with constitution compliance check
-- [ ] T028 [US1] Performance benchmark validation (no regression from baselines)
-
-**Checkpoint**: At this point, User Story 1 should be fully functional, tested, and constitution-compliant
+**Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
 ---
 

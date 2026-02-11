@@ -1,4 +1,5 @@
 ﻿using BrewUp.Shared.ExternalContracts.MasterData;
+using BrewUp.Shared.ExternalContracts.MasterData.Customers;
 using BrewUp.Shared.ReadModel;
 using BrewUp.Shared.Validators;
 using Microsoft.AspNetCore.Builder;
@@ -17,7 +18,7 @@ internal static class CustomersEndpoint
             .AddEndpointFilter<ValidationFilter<CreateCustomerJson>>()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status500InternalServerError)
-            .WithSummary("Create a new customers")
+            .WithSummary("Create a new customer")
             .WithDescription(
                 "Creates a new customer. This endpoint is used to add a new customer.")
             .WithName("CreateCustomer");
@@ -56,7 +57,7 @@ internal static class CustomersEndpoint
     }
     
     private static async Task<IResult> HandlePostCustomer(
-        IMasterDataFacade masterDataFacade,
+        ICustomerFacade masterDataFacade,
         CreateCustomerJson body,
         CancellationToken cancellationToken)
     {
@@ -74,7 +75,7 @@ internal static class CustomersEndpoint
     }
     
     private static async Task<IResult> HandlePutCustomer(
-        IMasterDataFacade masterDataFacade,
+        ICustomerFacade masterDataFacade,
         string customerId,
         EditCustomerJson body,
         CancellationToken cancellationToken)
@@ -89,7 +90,7 @@ internal static class CustomersEndpoint
     }
     
     private static async Task<IResult> HandleDeleteCustomer(
-        IMasterDataFacade masterDataFacade,
+        ICustomerFacade masterDataFacade,
         string customerId,
         CancellationToken cancellationToken)
     {
@@ -98,12 +99,12 @@ internal static class CustomersEndpoint
         var createResult = await masterDataFacade.DeleteCustomerAsync(customerId, cancellationToken);
 
         return createResult.Match<IResult>(
-            success => Results.Accepted(), 
+            _ => Results.Accepted(), 
             error => Results.Problem(error.Message, statusCode: StatusCodes.Status500InternalServerError));
     }
     
     private static async Task<IResult> HandleGetCustomers(
-        IMasterDataFacade masterDataFacade,
+        ICustomerFacade masterDataFacade,
         int pageNumber = 1,
         int pageSize = 10,
         CancellationToken cancellationToken = default)
@@ -118,7 +119,7 @@ internal static class CustomersEndpoint
     }
     
     private static async Task<IResult> HandleGetCustomerById(
-        IMasterDataFacade masterDataFacade,
+        ICustomerFacade masterDataFacade,
         string customerId,
         CancellationToken cancellationToken = default)
     {

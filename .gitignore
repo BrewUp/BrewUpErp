@@ -353,3 +353,21 @@ MigrationBackup/
 .ionide/
 .cr/
 src/.idea
+
+# .NET MAUI / Xamarin / Mobile development
+**/Resource.designer.cs
+**/AndroidManifest.xml.bak
+**/iOS/Info.plist.bak
+AppPackages/
+*.appx
+*.appxbundle
+*.appxupload
+*.ipa
+*.dSYM.zip
+*.dSYM
+!**/Platforms/
+
+# Mobile app secrets and environment-specific config
+mobile/**/apiSettings.json
+**/apiSettings.Development.json
+**/apiSettings.Production.json

@@ -12,11 +12,14 @@ public static class SalesReadModelHelper
     {
         services.AddScoped<ISalesOrderService, SalesOrderService>();
         services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IBeerService, BeerService>();
 
         services.AddDomainEventHandler<SalesOrderCreatedEventHandler>();
         services.AddIntegrationEventHandler<CustomerCreatedEventHandler>();
         services.AddIntegrationEventHandler<CustomerUpdatedEventHandler>();
         services.AddIntegrationEventHandler<CustomerDeletedEventHandler>();
+
+        services.AddIntegrationEventHandler<BeerCreatedEventHandler>();
 
         return services;
     }

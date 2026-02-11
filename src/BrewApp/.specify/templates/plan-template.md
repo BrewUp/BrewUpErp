@@ -31,15 +31,7 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-Review compliance with BrewApp Mobile Constitution principles:
-
-- [ ] **Modular Architecture**: Is this feature scoped as a separate module/project with clear boundaries?
-- [ ] **Test-First Development**: Are test scenarios defined and approved before implementation begins?
-- [ ] **UX Consistency**: Does design follow established patterns from shared design system?
-- [ ] **Code Quality**: Are linting, documentation, and review requirements clear in approach?
-- [ ] **Performance Requirements**: Are performance baselines (startup time, frame rate, memory) defined and measurable?
-
-**Violations**: [Document any justified exceptions with rationale and remediation plan]
+[Gates determined based on constitution file]
 
 ## Project Structure
 
@@ -59,48 +51,16 @@ specs/[###-feature]/
 <!--
   ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
   for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., modules/authentication, modules/inventory). The delivered 
-  plan must not include Option labels.
-  
-  MOBILE ARCHITECTURE REQUIREMENT: Per Constitution Principle I (Modular Architecture),
-  each module MUST be a separate project with clear boundaries and independent compilation.
+  real paths (e.g., apps/admin, packages/something). The delivered plan must
+  not include Option labels.
 -->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Mobile Multi-Module (RECOMMENDED for BrewApp per Constitution)
-# Each feature is a separate module/project
-
-modules/
-├── [FeatureModule1]/               # e.g., modules/Authentication/
-│   ├── src/
-│   │   ├── models/
-│   │   ├── views/
-│   │   ├── services/
-│   │   └── Module.swift (iOS) or module.gradle (Android)
-│   ├── tests/
-│   │   ├── unit/
-│   │   ├── integration/
-│   │   └── ui/
-│   └── README.md                   # Module contract and API documentation
-├── [FeatureModule2]/
-│   └── [same structure]
-└── shared/                         # Shared utilities, design system, networking
-    ├── ui-components/
-    ├── networking/
-    └── tests/
-
-app/                                # Main application shell
-├── src/
-│   ├── AppDelegate/
-│   ├── config/
-│   └── main/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 2: Single project (NOT RECOMMENDED - violates Modular Architecture principle)
+# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
 ├── models/
 ├── services/
-├── views/
+├── cli/
 └── lib/
 
 tests/
@@ -108,20 +68,31 @@ tests/
 ├── integration/
 └── unit/
 
-# [REMOVE IF UNUSED] Option 3: Mobile + Backend API
-api/                                # Backend services
+# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
+backend/
 ├── src/
 │   ├── models/
 │   ├── services/
-│   └── endpoints/
+│   └── api/
 └── tests/
 
-modules/                            # Mobile modules (same as Option 1)
-└── [as above]
+frontend/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   └── services/
+└── tests/
+
+# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
+api/
+└── [same as backend above]
+
+ios/ or android/
+└── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**Structure Decision**: [Document the selected structure. For BrewApp, justify if NOT using 
-multi-module architecture as it may violate Constitution Principle I unless exception approved]
+**Structure Decision**: [Document the selected structure and reference the real
+directories captured above]
 
 ## Complexity Tracking
 

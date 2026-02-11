@@ -1,10 +1,10 @@
 namespace BrewUp.Rest.Module;
 
-public static class ModuleExtensions
+internal static class ModuleExtensions
 {
     private static IList<IModule> _registeredModules = new List<IModule>();
 
-    public static WebApplicationBuilder RegisterModules(this WebApplicationBuilder builder)
+    internal static WebApplicationBuilder RegisterModules(this WebApplicationBuilder builder)
     {
         DiscoverModules();
         foreach (var module in _registeredModules)
@@ -15,7 +15,7 @@ public static class ModuleExtensions
         return builder;
     }
 
-    public static WebApplication ConfigureModules(this WebApplication app)
+    internal static WebApplication ConfigureModules(this WebApplication app)
     {
         foreach (var module in _registeredModules)
         {

@@ -9,7 +9,8 @@ public abstract class ServiceBase
     protected readonly IPersister Persister;
     protected readonly ILogger Logger;
 
-    protected ServiceBase(ILoggerFactory loggerFactory, [FromKeyedServices("sales")] IPersister persister)
+    protected ServiceBase([FromKeyedServices("sales")] IPersister persister,
+        ILoggerFactory loggerFactory)
     {
         Persister = persister;
         Logger = loggerFactory.CreateLogger(GetType());

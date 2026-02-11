@@ -10,9 +10,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BrewUp.Sales.ReadModel.Services;
 
-internal sealed class CustomerService (ILoggerFactory loggerFactory, 
-    [FromKeyedServices("sales")] IPersister persister) 
-    : ServiceBase(loggerFactory, persister),ICustomerService
+internal sealed class CustomerService ([FromKeyedServices("sales")] IPersister persister,
+    ILoggerFactory loggerFactory) 
+    : ServiceBase(persister, loggerFactory),ICustomerService
 {
     public async Task<Result<bool>> AddCustomerAsync(CustomerId customerId, RagioneSociale ragioneSociale, PartitaIva partitaIva,
         BeerConsumerLevel consumerLevel, Indirizzo indirizzo, CancellationToken cancellationToken = default)
