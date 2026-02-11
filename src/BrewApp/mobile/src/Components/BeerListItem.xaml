@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:BrewApp.Mobile.Models"
+             x:Class="BrewApp.Mobile.Components.BeerListItem"
+             x:DataType="models:Beer">
+    <Border Padding="12" 
+            Margin="8,4"
+            BackgroundColor="{DynamicResource CardBackground}"
+            Stroke="{DynamicResource CardBorder}"
+            StrokeThickness="1">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="8" />
+        </Border.StrokeShape>
+        
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12">
+            <!-- Beer Name -->
+            <Label Grid.Row="0" Grid.Column="0"
+                   Text="{Binding Name}"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="{DynamicResource Primary}" />
+            
+            <!-- ABV Badge -->
+            <Border Grid.Row="0" Grid.Column="1"
+                    Padding="8,4"
+                    BackgroundColor="{DynamicResource Secondary}"
+                    StrokeThickness="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="4" />
+                </Border.StrokeShape>
+                <Label Text="{Binding Abv, StringFormat='{0:F1}% ABV'}"
+                       FontSize="12"
+                       TextColor="White" />
+            </Border>
+            
+            <!-- Beer Style -->
+            <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                   Text="{Binding Style}"
+                   FontSize="14"
+                   TextColor="{DynamicResource Gray600}"
+                   Margin="0,4,0,0" />
+            
+            <!-- Description -->
+            <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                   Text="{Binding Description}"
+                   FontSize="13"
+                   TextColor="{DynamicResource Gray500}"
+                   LineBreakMode="TailTruncation"
+                   MaxLines="2"
+                   Margin="0,4,0,0" />
+        </Grid>
+    </Border>
+</ContentView>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:BrewApp.Mobile.Components"
+             xmlns:local="clr-namespace:BrewApp.Mobile.Features.Catalog"
+             x:Class="BrewApp.Mobile.Features.Catalog.CatalogPage"
+             x:DataType="local:CatalogViewModel"
+             Title="Catalog"
+             Shell.NavBarIsVisible="True">
+    
+    <Grid RowDefinitions="Auto,*">
+        
+        <!-- Page Header with Search -->
+        <VerticalStackLayout Grid.Row="0" Padding="16" Spacing="12">
+            
+            <Border Padding="16" BackgroundColor="{DynamicResource Primary}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="🍺" FontSize="32" VerticalOptions="Center" />
+                    <VerticalStackLayout VerticalOptions="Center">
+                        <Label Text="Beers Catalog" 
+                               FontSize="24" 
+                               FontAttributes="Bold" 
+                               TextColor="White" />
+                        <Label Text="Browse and search your brewery's beers" 
+                               FontSize="14" 
+                               TextColor="White" 
+                               Opacity="0.9" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Search Bar -->
+            <Border Padding="12" 
+                    BackgroundColor="{DynamicResource CardBackground}"
+                    Stroke="{DynamicResource CardBorder}"
+                    StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <HorizontalStackLayout Spacing="8">
+                    <Entry Text="{Binding SearchTerm}" 
+                           Placeholder="Search by name or style..." 
+                           Completed="OnSearchCompleted"
+                           HorizontalOptions="FillAndExpand"
+                           ClearButtonVisibility="WhileEditing" />
+                    <Button Text="Search" 
+                            Command="{Binding SearchCommand}"
+                            BackgroundColor="{DynamicResource Primary}"
+                            TextColor="White"
+                            WidthRequest="100" />
+                </HorizontalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+
+        <!-- Content Area -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,16">
+                
+                <!-- Loading Indicator -->
+                <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                                   IsVisible="{Binding IsLoading}"
+                                   Color="{DynamicResource Primary}"
+                                   WidthRequest="48"
+                                   HeightRequest="48"
+                                   HorizontalOptions="Center"
+                                   Margin="0,48,0,48" />
+
+                <!-- Beers List (visible when data is loaded) -->
+                <CollectionView ItemsSource="{Binding Beers}" 
+                                IsVisible="{Binding HasData}"
+                                SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <components:BeerListItem />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Empty State (visible when no data and not loading) -->
+                <components:EmptyState 
+                    Icon="🍺"
+                    Title="No Beers Available"
+                    Message="Your beer catalog will be displayed here. Use the search to filter by name or style."
+                    ActionText="Reload"
+                    ActionClicked="OnReloadClicked"
+                    IsVisible="{Binding HasData, Converter={StaticResource InvertedBoolConverter}}"
+                    Margin="0,48,0,0" />
+                
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Inverted Bool Converter -->
+            <local:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+</ContentPage>

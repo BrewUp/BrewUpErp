@@ -1,0 +1,242 @@
+openapi: 3.0.3
+info:
+  title: BrewUp Mobile App APIs
+  version: 0.1.0
+  description: >-
+    Expected external API surface for the brewery mobile app. The backend remains
+    the system of record; this contract documents the endpoints the mobile app
+    depends on for Sales, Catalog, Orders, and Warehouse.
+servers:
+  - url: https://api.example.com
+    description: Default environment (override via configuration)
+paths:
+  /sales/summary:
+    get:
+      summary: Get sales summary for a period
+      parameters:
+        - in: query
+          name: period
+          schema:
+            type: string
+            enum: [today, last7days, last30days, custom]
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Sales summary for the requested period
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesSummary'
+  /catalog/beers:
+    get:
+      summary: List beers in the catalog
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: style
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of beers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Beer'
+  /orders:
+    get:
+      summary: List orders
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+        - in: query
+          name: from
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: to
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+    post:
+      summary: Create a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreateRequest'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /orders/{id}:
+    get:
+      summary: Get order by id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /warehouse/stock:
+    get:
+      summary: Get stock snapshot
+      parameters:
+        - in: query
+          name: locationId
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Stock items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockItem'
+
+components:
+  schemas:
+    Beer:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        style:
+          type: string
+        abv:
+          type: number
+        packaging:
+          type: string
+        basePrice:
+          type: number
+        isActive:
+          type: boolean
+    SalesSummary:
+      type: object
+      properties:
+        period:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        totalRevenue:
+          type: number
+        totalVolume:
+          type: number
+        topBeers:
+          type: array
+          items:
+            type: object
+            properties:
+              beerId:
+                type: string
+              beerName:
+                type: string
+              quantity:
+                type: number
+              revenue:
+                type: number
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        customerId:
+          type: string
+        customerName:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderLineItem'
+        totalQuantity:
+          type: number
+        totalAmount:
+          type: number
+    OrderLineItem:
+      type: object
+      properties:
+        beerId:
+          type: string
+        beerName:
+          type: string
+        quantity:
+          type: number
+        unitPrice:
+          type: number
+        lineTotal:
+          type: number
+    OrderCreateRequest:
+      type: object
+      properties:
+        customerId:
+          type: string
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderLineItem'
+    StockItem:
+      type: object
+      properties:
+        beerId:
+          type: string
+        locationId:
+          type: string
+        locationName:
+          type: string
+        onHand:
+          type: number
+        reserved:
+          type: number

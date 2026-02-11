@@ -1,0 +1,5 @@
+/speckit.constitution Create principles focused on code quality, modular architecture, testing standards, user experience consistency and performance requirements. I need a product easy to maintain even for new developers into the team
+
+/speckit.specify Build a mobile application that can help me organize a brewery. The app has to manage different contexts (sales, masterdata, purchases,warehouse, dashboard). The UI/UX experience has to be modern and allow an easy navigation through the different contexts. I'd like to access to sales summaries, beers catalog, allows to create new orders and have a look to current and past orders as well.
+
+/speckit.plan The application will be developed using .NET MAUI. All the data will be uploaded through external API, so all the data to visualize will come from different external API as well. Provide a configuration file to memorize all the API settings.

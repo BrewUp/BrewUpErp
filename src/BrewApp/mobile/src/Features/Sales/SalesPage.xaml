@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:BrewApp.Mobile.Components"
+             xmlns:local="clr-namespace:BrewApp.Mobile.Features.Sales"
+             x:Class="BrewApp.Mobile.Features.Sales.SalesPage"
+             x:DataType="local:SalesSummaryViewModel"
+             Title="Sales"
+             Shell.NavBarIsVisible="True">
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            
+            <!-- Page Header -->
+            <Border Padding="16" BackgroundColor="{DynamicResource Primary}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="💰" FontSize="32" VerticalOptions="Center" />
+                    <VerticalStackLayout VerticalOptions="Center">
+                        <Label Text="Sales Overview" 
+                               FontSize="24" 
+                               FontAttributes="Bold" 
+                               TextColor="White" />
+                        <Label Text="Track revenue and sales performance" 
+                               FontSize="14" 
+                               TextColor="White" 
+                               Opacity="0.9" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Period Selector -->
+            <Border Padding="12" 
+                    BackgroundColor="{DynamicResource CardBackground}"
+                    Stroke="{DynamicResource CardBorder}"
+                    StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Period" FontSize="14" FontAttributes="Bold" TextColor="{DynamicResource Gray600}" />
+                    <Picker ItemsSource="{Binding Periods}" 
+                            SelectedItem="{Binding SelectedPeriod}" 
+                            Title="Select Period"
+                            TextColor="{DynamicResource Primary}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Loading Indicator -->
+            <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                               IsVisible="{Binding IsLoading}"
+                               Color="{DynamicResource Primary}"
+                               WidthRequest="48"
+                               HeightRequest="48"
+                               HorizontalOptions="Center"
+                               Margin="0,24,0,24" />
+
+            <!-- Sales Summary Cards (visible when data is loaded) -->
+            <VerticalStackLayout Spacing="12" IsVisible="{Binding HasData}">
+                
+                <!-- Total Revenue Card -->
+                <components:SummaryCard 
+                    Title="Total Revenue" 
+                    Value="{Binding SalesSummary.TotalRevenue, StringFormat='${0:N2}'}"
+                    Subtitle="{Binding SalesSummary.Period, StringFormat='For {0}'}" />
+                
+                <!-- Orders Count Card -->
+                <components:SummaryCard 
+                    Title="Orders" 
+                    Value="{Binding SalesSummary.OrdersCount}"
+                    Subtitle="Orders placed" />
+                
+                <!-- Average Order Value Card -->
+                <components:SummaryCard 
+                    Title="Average Order Value" 
+                    Value="{Binding SalesSummary.AverageOrderValue, StringFormat='${0:N2}'}"
+                    Subtitle="Per order" />
+                
+                <!-- Top Selling Beers -->
+                <Border Padding="16" 
+                        BackgroundColor="{DynamicResource CardBackground}"
+                        Stroke="{DynamicResource CardBorder}"
+                        StrokeThickness="1"
+                        Margin="8">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Top Selling Beers" 
+                               FontSize="14" 
+                               FontAttributes="Bold" 
+                               TextColor="{DynamicResource Gray600}" />
+                        <CollectionView ItemsSource="{Binding SalesSummary.TopSellingBeers}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <Label Text="{Binding .}" 
+                                           FontSize="14" 
+                                           TextColor="{DynamicResource Primary}"
+                                           Margin="0,2" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+                
+            </VerticalStackLayout>
+
+            <!-- Empty State (visible when no data and not loading) -->
+            <components:EmptyState 
+                Icon="💰"
+                Title="No Sales Data"
+                Message="Sales summaries for different periods will be displayed here once data is loaded."
+                ActionText="Reload"
+                ActionClicked="OnReloadClicked"
+                IsVisible="{Binding HasData, Converter={StaticResource InvertedBoolConverter}}"
+                Margin="0,48,0,0" />
+            
+        </VerticalStackLayout>
+    </ScrollView>
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Inverted Bool Converter -->
+            <local:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
+</ContentPage>

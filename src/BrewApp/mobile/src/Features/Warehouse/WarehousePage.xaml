@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:BrewApp.Mobile.Components"
+             x:Class="BrewApp.Mobile.Features.Warehouse.WarehousePage"
+             Title="Warehouse"
+             Shell.NavBarIsVisible="True">
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            
+            <!-- Page Header -->
+            <Border Padding="16" BackgroundColor="{DynamicResource Primary}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="📦" FontSize="32" VerticalOptions="Center" />
+                    <VerticalStackLayout VerticalOptions="Center">
+                        <Label Text="Warehouse" 
+                               FontSize="24" 
+                               FontAttributes="Bold" 
+                               TextColor="White" />
+                        <Label Text="View stock levels and inventory" 
+                               FontSize="14" 
+                               TextColor="White" 
+                               Opacity="0.9" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Empty State (will be replaced with stock list in Phase 7) -->
+            <components:EmptyState 
+                Icon="📦"
+                Title="No Stock Data"
+                Message="Current inventory levels for each beer and location will be displayed here."
+                Margin="0,48,0,0" />
+            
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

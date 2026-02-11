@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:BrewApp.Mobile.Components"
+             x:Class="BrewApp.Mobile.Features.Orders.OrdersPage"
+             Title="Orders"
+             Shell.NavBarIsVisible="True">
+    
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+            
+            <!-- Page Header -->
+            <Border Padding="16" BackgroundColor="{DynamicResource Primary}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="📋" FontSize="32" VerticalOptions="Center" />
+                    <VerticalStackLayout VerticalOptions="Center">
+                        <Label Text="Orders" 
+                               FontSize="24" 
+                               FontAttributes="Bold" 
+                               TextColor="White" />
+                        <Label Text="Create and track sales orders" 
+                               FontSize="14" 
+                               TextColor="White" 
+                               Opacity="0.9" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </Border>
+
+            <!-- Empty State (will be replaced with order list in Phase 6) -->
+            <components:EmptyState 
+                Icon="📋"
+                Title="No Orders Found"
+                Message="Your current and past orders will appear here. Create your first order to get started."
+                ActionText="Create Order"
+                Margin="0,48,0,0" />
+            
+        </VerticalStackLayout>
+    </ScrollView>
+    
+</ContentPage>

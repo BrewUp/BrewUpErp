@@ -1,0 +1,11 @@
+{
+  "ApiSettings": {
+    "Environment": "Development",
+    "SalesBaseUrl": "https://dev-api.example.com/sales",
+    "CatalogBaseUrl": "https://dev-api.example.com/catalog",
+    "OrdersBaseUrl": "https://dev-api.example.com/orders",
+    "WarehouseBaseUrl": "https://dev-api.example.com/warehouse",
+    "ApiKey": "CHANGE-ME",
+    "TimeoutSeconds": 30
+  }
+}

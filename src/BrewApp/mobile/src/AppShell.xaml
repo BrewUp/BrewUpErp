@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="BrewApp.Mobile.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:BrewApp.Mobile"
+    xmlns:sales="clr-namespace:BrewApp.Mobile.Features.Sales"
+    xmlns:catalog="clr-namespace:BrewApp.Mobile.Features.Catalog"
+    xmlns:orders="clr-namespace:BrewApp.Mobile.Features.Orders"
+    xmlns:warehouse="clr-namespace:BrewApp.Mobile.Features.Warehouse"
+    xmlns:dashboard="clr-namespace:BrewApp.Mobile.Features.Dashboard"
+    Shell.FlyoutBehavior="Disabled">
+
+    <!-- Main tabs representing the 5 contexts -->
+    <TabBar>
+        <ShellContent
+            Title="Dashboard"
+            Icon="icon_dashboard.png"
+            ContentTemplate="{DataTemplate dashboard:DashboardPage}"
+            Route="dashboard" />
+
+        <ShellContent
+            Title="Sales"
+            Icon="icon_sales.png"
+            ContentTemplate="{DataTemplate sales:SalesPage}"
+            Route="sales" />
+
+        <ShellContent
+            Title="Catalog"
+            Icon="icon_catalog.png"
+            ContentTemplate="{DataTemplate catalog:CatalogPage}"
+            Route="catalog" />
+
+        <ShellContent
+            Title="Orders"
+            Icon="icon_orders.png"
+            ContentTemplate="{DataTemplate orders:OrdersPage}"
+            Route="orders" />
+
+        <ShellContent
+            Title="Warehouse"
+            Icon="icon_warehouse.png"
+            ContentTemplate="{DataTemplate warehouse:WarehousePage}"
+            Route="warehouse" />
+    </TabBar>
+
+</Shell>

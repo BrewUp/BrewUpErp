@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BrewApp.Mobile.Components.SummaryCard">
+    
+    <Border Padding="16" 
+            Margin="8"
+            BackgroundColor="{DynamicResource CardBackground}"
+            Stroke="{DynamicResource CardBorder}"
+            StrokeThickness="1">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="12" />
+        </Border.StrokeShape>
+        
+        <VerticalStackLayout Spacing="8">
+            <!-- Title -->
+            <Label x:Name="TitleLabel"
+                   FontSize="14"
+                   TextColor="{DynamicResource Gray600}"
+                   FontAttributes="Bold" />
+            
+            <!-- Value -->
+            <Label x:Name="ValueLabel"
+                   FontSize="28"
+                   TextColor="{DynamicResource Primary}"
+                   FontAttributes="Bold" />
+            
+            <!-- Subtitle (optional) -->
+            <Label x:Name="SubtitleLabel"
+                   FontSize="12"
+                   TextColor="{DynamicResource Gray500}"
+                   IsVisible="False" />
+        </VerticalStackLayout>
+    </Border>
+</ContentView>
