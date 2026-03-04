@@ -1,5 +1,4 @@
-﻿using BrewUp.Sales.Infrastructure.MongoDb;
-using BrewUp.Shared.Configuration;
+﻿using BrewUp.Shared.Configuration;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Muflone.Eventstore.gRPC;

@@ -2,7 +2,15 @@ using BrewUp.Rest.Module;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.RegisterModules();
+// Explicit composition-root pattern for better control and visibility of module registration and configuration
+builder.RegisterModules([
+    new CorsModule(),
+    new LoggingModule(),
+    new InfrastructureModule(),
+    new OpenApiModule(),
+    new MasterDataModule(),
+    new SalesModule()
+]);
 
 var app = builder.Build();
 

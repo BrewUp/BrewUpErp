@@ -2,14 +2,24 @@ namespace BrewUp.Rest.Module;
 
 internal static class ModuleExtensions
 {
-    private static IList<IModule> _registeredModules = new List<IModule>();
+    private static readonly IList<IModule> RegisteredModules = new List<IModule>();
 
-    internal static WebApplicationBuilder RegisterModules(this WebApplicationBuilder builder)
+    internal static WebApplicationBuilder RegisterModules(
+        this WebApplicationBuilder builder,
+        IEnumerable<IModule> modules)
     {
-        DiscoverModules();
-        foreach (var module in _registeredModules)
+        // Clear & re‑add in case of multiple calls (defensive)
+        RegisteredModules.Clear();
+
+        var activeModules = modules
+            .Where(m => m is not null && m.IsEnabled)
+            .OrderBy(m => m.Order)
+            .ToList();
+
+        foreach (var module in activeModules)
         {
             module.Register(builder);
+            RegisteredModules.Add(module);
         }
 
         return builder;
@@ -17,25 +27,11 @@ internal static class ModuleExtensions
 
     internal static WebApplication ConfigureModules(this WebApplication app)
     {
-        foreach (var module in _registeredModules)
+        foreach (var module in RegisteredModules)
         {
             module.Configure(app);
         }
 
         return app;
-    }
-
-    private static void DiscoverModules()
-    {
-        var modules =  typeof(IModule).Assembly
-            .GetTypes()
-            .Where(p => p.IsClass && p.IsAssignableTo(typeof(IModule)))
-            .Select(Activator.CreateInstance)
-            .Cast<IModule>();
-
-        _registeredModules = modules
-            .Where(m => m.IsEnabled)
-            .OrderBy(m => m.Order)
-            .ToList();
     }
 }
