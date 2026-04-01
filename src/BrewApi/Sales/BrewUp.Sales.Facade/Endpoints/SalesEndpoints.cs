@@ -22,6 +22,14 @@ public static class SalesEndpoints
         .WithDescription(
             "Creates a new sales order. This endpoint is used to add a new sales order.")
         .WithName("CreateSalesOrder");
+    
+    group.MapPut("/{orderId}", HandleCloseSalesOrder)
+        .Produces(StatusCodes.Status201Created)
+        .Produces(StatusCodes.Status500InternalServerError)
+        .WithSummary("Close an existing sales order")
+        .WithDescription(
+            "Close a sales order. This endpoint is used to close a sales order.")
+        .WithName("CloseSalesOrder");
 
     group.MapGet("/", HandleGetSalesOrder)
         .Produces<PagedResult<SalesOrderJson>>()
@@ -58,6 +66,18 @@ public static class SalesEndpoints
             return Results.Created($"/v1/sales/{orderId}", success);
         }, 
         Results.BadRequest);
+  }
+
+  private static async Task<IResult> HandleCloseSalesOrder(
+      ISalesFacade salesFacade,
+      string orderId,
+      CancellationToken cancellationToken)
+  {
+      cancellationToken.ThrowIfCancellationRequested();
+
+      await salesFacade.CloseSalesOrderAsync(orderId, cancellationToken);
+
+      return Results.NoContent();
   }
 
   private static async Task<IResult> HandleGetSalesOrder(

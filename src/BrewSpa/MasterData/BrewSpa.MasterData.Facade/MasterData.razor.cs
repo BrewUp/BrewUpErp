@@ -4,9 +4,9 @@ namespace BrewSpa.MasterData.Facade;
 
 public partial class MasterData : ComponentBase, IDisposable
 {
-    [Inject] private NavigationManager Navigation { get; set; } = default!;
+    [Inject] private NavigationManager Navigation { get; set; } = null!;
 
-    protected void NavigateToSection(string section)
+    private void NavigateToSection(string section)
     {
         switch (section.ToLower())
         {

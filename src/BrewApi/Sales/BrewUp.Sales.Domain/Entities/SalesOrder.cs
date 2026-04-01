@@ -3,6 +3,7 @@ using BrewUp.Sales.SharedKernel.Messages.Events;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using Muflone.Core;
+using Muflone.CustomTypes;
 
 namespace BrewUp.Sales.Domain.Entities;
 
@@ -45,5 +46,16 @@ public class SalesOrder : AggregateRoot
         _customerName = @event.CustomerName;
         _salesOrderDeliveryDate = @event.SalesOrderDeliveryDate;
         _rows = @event.Rows.ToList();
+    }
+    
+    internal void CloseSalesOrder(SalesOrderDeliveryDate salesOrderDeliveryDate, Account account, Guid correlationId)
+    {
+        // Business logic validations can be added here
+        RaiseEvent(new SalesOrderClosed(new SalesOrderId(Id.Value), salesOrderDeliveryDate, correlationId));
+    }
+
+    private void Apply(SalesOrderClosed @event)
+    {
+        _salesOrderDeliveryDate = @event.SalesOrderDeliveryDate;
     }
 }

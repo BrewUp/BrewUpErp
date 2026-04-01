@@ -6,8 +6,7 @@ namespace BrewUp.Sales.SharedKernel.Messages.Events;
 public sealed class SalesOrderClosed(
     SalesOrderId aggregateId,
     SalesOrderDeliveryDate salesOrderDeliveryDate,
-    Guid correlationId) : DomainEvent(aggregateId, correlationId
-    )
+    Guid correlationId) : DomainEvent(aggregateId, correlationId)
 {
     public SalesOrderDeliveryDate SalesOrderDeliveryDate { get; private set; } = salesOrderDeliveryDate;
 }

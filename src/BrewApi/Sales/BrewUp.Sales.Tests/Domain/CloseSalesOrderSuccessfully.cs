@@ -5,13 +5,14 @@ using BrewUp.Sales.SharedKernel.Messages.Events;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using Microsoft.Extensions.Logging.Abstractions;
+using Muflone.CustomTypes;
 using Muflone.Messages.Commands;
 using Muflone.Messages.Events;
 using Muflone.SpecificationTests;
 
 namespace BrewUp.Sales.Tests.Domain;
 
-public sealed class CreateSalesOrderSuccessfully : CommandSpecification<CreateSalesOrder>
+public sealed class CloseSalesOrderSuccessfully : CommandSpecification<CloseSalesOrder>
 {
     private SalesOrderId _salesOrderId = new (Guid.CreateVersion7().ToString());
     private SalesOrderNumber _salesOrderNumber = new ("SO-1000");
@@ -20,23 +21,24 @@ public sealed class CreateSalesOrderSuccessfully : CommandSpecification<CreateSa
     private SalesOrderDate _salesOrderDate = new (DateTime.UtcNow);
     private SalesOrderDeliveryDate _salesOrderDeliveryDate = new (DateTime.UtcNow.AddDays(7));
     private readonly List<SalesOrderRowJson> _rows = [];
+
+    private Account _account = new (Guid.CreateVersion7().ToString(), "Muflone");
     
     private Guid _correlationId = Guid.CreateVersion7();
     
     protected override IEnumerable<DomainEvent> Given()
     {
-        yield break;
+        yield return new SalesOrderCreated(_salesOrderId, _salesOrderNumber, _salesOrderDate, _customerId,
+            _customerName, _salesOrderDeliveryDate, _rows, _correlationId);
     }
 
-    protected override CreateSalesOrder When() => new (_salesOrderId, _salesOrderNumber, _salesOrderDate, 
-        _customerId, _customerName, _salesOrderDeliveryDate, _rows, _correlationId);
+    protected override CloseSalesOrder When() => new(_salesOrderId, _salesOrderDeliveryDate, _account, _correlationId);
 
-    protected override ICommandHandlerAsync<CreateSalesOrder> OnHandler()
-        => new CreateSalesOrderCommandHandler(Repository, new NullLoggerFactory());
+    protected override ICommandHandlerAsync<CloseSalesOrder> OnHandler() =>
+        new CloseSalesOrderCommandHandler(Repository, new NullLoggerFactory());
 
     protected override IEnumerable<DomainEvent> Expect()
     {
-        yield return new SalesOrderCreated(_salesOrderId, _salesOrderNumber, _salesOrderDate, _customerId,
-            _customerName, _salesOrderDeliveryDate, _rows, _correlationId);
+        yield return new SalesOrderClosed(_salesOrderId, _salesOrderDeliveryDate, _correlationId);
     }
 }
