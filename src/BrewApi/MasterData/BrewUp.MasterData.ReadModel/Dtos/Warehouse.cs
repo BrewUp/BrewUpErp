@@ -1,5 +1,6 @@
 ﻿using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
+using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.ReadModel;
 
 namespace BrewUp.MasterData.ReadModel.Dtos;
@@ -19,4 +20,11 @@ public class Warehouse : DtoBase
         Id = warehouseId;
         Name = name;
     }
+    
+    public WarehouseJson ToJson() =>
+        new ()
+        {
+            Id = Id,
+            Name = Name
+        };
 }

@@ -8,10 +8,15 @@
 
     <ItemGroup>
       <PackageReference Include="Lena" Version="1.1.0" />
+      <PackageReference Include="MongoDB.Driver" Version="3.6.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Queries\" />
     </ItemGroup>
 
 </Project>

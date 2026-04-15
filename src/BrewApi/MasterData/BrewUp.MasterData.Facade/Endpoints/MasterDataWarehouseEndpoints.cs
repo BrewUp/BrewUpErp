@@ -1,7 +1,9 @@
 ﻿using BrewUp.Shared.ExternalContracts.Warehouse;
+using BrewUp.Shared.ReadModel;
 using BrewUp.Shared.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BrewUp.MasterData.Facade.Endpoints;
 
@@ -20,6 +22,14 @@ internal static class MasterDataWarehouseEndpoints
             .WithDescription(
                 "Creates a new warehouse. This endpoint is used to add a new warehouse.")
             .WithName("CreateWarehouse");
+        
+        group.MapGet("/", HandleGetWarehouses)
+            .Produces<PagedResult<WarehouseJson>>()
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get a list of warehouses")
+            .WithDescription(
+                "Get a list of warehouses.")
+            .WithName("GetWarehouses");
 
         return app;
     }
@@ -39,6 +49,21 @@ internal static class MasterDataWarehouseEndpoints
                 createResult.TryGetValue(out string warehouseId);
                 return Results.Created($"/v1/warehouse/{warehouseId}", success);
             }, 
+            Results.BadRequest);
+    }
+    
+    private static async Task<IResult> HandleGetWarehouses(
+        IMasterDataWarehouseFacade warehouseFacade,
+        CancellationToken cancellationToken,
+        [FromQuery] int page = 0,
+        [FromQuery] int pageSize = 10)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var warehousesResult = await warehouseFacade.GetWarehousesAsync(page, pageSize, cancellationToken);
+
+        return warehousesResult.Match(
+            Results.Ok, 
             Results.BadRequest);
     }
 }

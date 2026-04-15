@@ -5,9 +5,9 @@ using Lena.Core;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace BrewUp.MasterData.Infrastructure;
+namespace BrewUp.MasterData.ReadModel.Queries;
 
-public sealed class CustomerQueries(IMongoClient mongoClient) : IQueries<Customer>
+internal sealed class CustomerQueries(IMongoClient mongoClient) : IQueries<Customer>
 {
     private readonly IMongoDatabase _database = mongoClient.GetDatabase("MasterData");
 

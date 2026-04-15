@@ -5,7 +5,7 @@ using Lena.Core;
 
 namespace BrewUp.MasterData.ReadModel.Services;
 
-public interface IMasterDataQueryService
+public interface ICustomerQueryService
 {
     Task<Result<PagedResult<CustomerJson>>> GetCustomersAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken);

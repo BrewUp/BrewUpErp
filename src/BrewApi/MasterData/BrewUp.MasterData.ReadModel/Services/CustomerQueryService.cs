@@ -7,9 +7,9 @@ using Microsoft.Extensions.Logging;
 
 namespace BrewUp.MasterData.ReadModel.Services;
 
-internal sealed class MasterDataQueryService(ILoggerFactory loggerFactory, 
+internal sealed class CustomerQueryService(ILoggerFactory loggerFactory, 
     IQueries<Customer> customerQueries)
-    : ServiceBase(loggerFactory), IMasterDataQueryService
+    : ServiceBase(loggerFactory), ICustomerQueryService
 {
     /// <summary>
     /// Railway-Orineted Programming pattern
