@@ -10,7 +10,7 @@ using Lena.Core;
 namespace BrewUp.MasterData.Facade;
 
 internal sealed class CustomerFacade(ICustomerDomainService masterDataDomainService,
-    IMasterDataQueryService masterDataQueryService) : ICustomerFacade
+    IMasterDataQueryService masterDataQueryService) : IMasterDataCustomerFacade
 {
     public Task<Result<string>> CreateCustomerAsync(CreateCustomerJson body, CancellationToken cancellationToken)
     {

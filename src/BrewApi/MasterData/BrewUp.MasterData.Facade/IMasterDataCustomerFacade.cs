@@ -4,7 +4,7 @@ using Lena.Core;
 
 namespace BrewUp.MasterData.Facade;
 
-public interface ICustomerFacade
+public interface IMasterDataCustomerFacade
 {
     Task<Result<string>> CreateCustomerAsync(CreateCustomerJson body, CancellationToken cancellationToken);
     Task<Result<PagedResult<CustomerJson>>> GetCustomersAsync(int pageNumber, int pageSize,

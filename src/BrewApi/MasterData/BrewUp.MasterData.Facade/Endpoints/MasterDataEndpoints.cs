@@ -8,6 +8,7 @@ public static class MasterDataEndpoints
     {
         CustomersEndpoint.MapCustomersEndPoints(app);
         BeersEndpoints.MapBeersEndPoints(app);
+        MasterDataWarehouseEndpoints.MapWarehouseEndpoints(app);
 
         return app;
     }

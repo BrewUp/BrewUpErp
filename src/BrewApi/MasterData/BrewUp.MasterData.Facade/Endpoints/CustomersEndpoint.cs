@@ -12,7 +12,7 @@ internal static class CustomersEndpoint
     internal static void MapCustomersEndPoints(WebApplication app)
     {
         var group = app.MapGroup("/v1/masterdata/customers")
-            .WithTags("Customers");
+            .WithTags("MasterData");
         
         group.MapPost("/", HandlePostCustomer)
             .AddEndpointFilter<ValidationFilter<CreateCustomerJson>>()
@@ -57,7 +57,7 @@ internal static class CustomersEndpoint
     }
     
     private static async Task<IResult> HandlePostCustomer(
-        ICustomerFacade masterDataFacade,
+        IMasterDataCustomerFacade masterDataFacade,
         CreateCustomerJson body,
         CancellationToken cancellationToken)
     {
@@ -75,7 +75,7 @@ internal static class CustomersEndpoint
     }
     
     private static async Task<IResult> HandlePutCustomer(
-        ICustomerFacade masterDataFacade,
+        IMasterDataCustomerFacade masterDataFacade,
         string customerId,
         EditCustomerJson body,
         CancellationToken cancellationToken)
@@ -90,7 +90,7 @@ internal static class CustomersEndpoint
     }
     
     private static async Task<IResult> HandleDeleteCustomer(
-        ICustomerFacade masterDataFacade,
+        IMasterDataCustomerFacade masterDataFacade,
         string customerId,
         CancellationToken cancellationToken)
     {
@@ -104,7 +104,7 @@ internal static class CustomersEndpoint
     }
     
     private static async Task<IResult> HandleGetCustomers(
-        ICustomerFacade masterDataFacade,
+        IMasterDataCustomerFacade masterDataFacade,
         int pageNumber = 1,
         int pageSize = 10,
         CancellationToken cancellationToken = default)
@@ -119,7 +119,7 @@ internal static class CustomersEndpoint
     }
     
     private static async Task<IResult> HandleGetCustomerById(
-        ICustomerFacade masterDataFacade,
+        IMasterDataCustomerFacade masterDataFacade,
         string customerId,
         CancellationToken cancellationToken = default)
     {

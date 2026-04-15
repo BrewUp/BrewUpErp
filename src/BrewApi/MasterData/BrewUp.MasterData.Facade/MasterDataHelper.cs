@@ -27,8 +27,9 @@ public static class MasterDataHelper
             };
         });
         
-        services.AddScoped<ICustomerFacade, CustomerFacade>();
-        services.AddScoped<IBeerFacade, BeerFacade>();
+        services.AddScoped<IMasterDataCustomerFacade, CustomerFacade>();
+        services.AddScoped<IMasterDataWarehouseFacade, MasterDataWarehouseFacade>();
+        services.AddScoped<IMasterDataBeerFacade, BeerFacade>();
 
         services.AddMasterDataDomain();
         services.AddMasterDataInfrastructure();

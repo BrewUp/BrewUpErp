@@ -1,4 +1,4 @@
-﻿using BrewUp.MasterData.SharedKernel.Dtos;
+﻿using BrewUp.MasterData.ReadModel.Dtos;
 using BrewUp.Shared.ReadModel;
 using Microsoft.Extensions.DependencyInjection;
 

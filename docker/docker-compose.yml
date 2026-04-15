@@ -17,7 +17,7 @@ services:
       - sales-eventstore-data:/var/lib/eventstore
       - sales-eventstore-logs:/var/log/eventstore
     networks:
-      - blazar-network
+      - brewup-network
     restart: unless-stopped
 
   sagas-mongodb:
@@ -28,7 +28,7 @@ services:
     volumes:
       - sagas-mongodb-data:/data/db
     networks:
-      - blazar-network
+      - brewup-network
     restart: unless-stopped
 
   sales-mongodb:
@@ -39,7 +39,7 @@ services:
     volumes:
       - sales-mongodb-data:/data/db
     networks:
-      - blazar-network
+      - brewup-network
     restart: unless-stopped
 
   rabbitmq:
@@ -47,16 +47,20 @@ services:
     image: rabbitmq:4.0-management-alpine
     ports:
       - "5672:5672"
+      - "5552:5552"
       - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    command: >
+      sh -c "rabbitmq-plugins enable rabbitmq_stream rabbitmq_stream_management &&
+             docker-entrypoint.sh rabbitmq-server"
     networks:
-      - blazar-network
+      - brewup-network
     restart: unless-stopped
 
 networks:
-  blazar-network:
+  brewup-network:
     driver: bridge
 
 volumes:

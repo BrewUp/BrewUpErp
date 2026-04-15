@@ -3,6 +3,7 @@ using BrewUp.Infrastructure;
 using BrewUp.MasterData.Domain;
 using BrewUp.MasterData.Domain.Services;
 using BrewUp.MasterData.Facade;
+using BrewUp.MasterData.ReadModel.Dtos;
 using BrewUp.Shared.ReadModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,10 +28,10 @@ public class MasterDataModuleDependencyInjectionTests
         
         ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        var masterDataFacade = serviceProvider.GetService<ICustomerFacade>();
+        var masterDataFacade = serviceProvider.GetService<IMasterDataCustomerFacade>();
         var masterDataDomainService = serviceProvider.GetService<ICustomerDomainService>();
         var masterDataPersister = serviceProvider.GetRequiredKeyedService(typeof(IPersister), "masterdata");
-        var customerQueries = serviceProvider.GetService<IQueries<MasterData.SharedKernel.Dtos.Customer>>();
+        var customerQueries = serviceProvider.GetService<IQueries<Customer>>();
 
         Assert.NotNull(masterDataFacade);
         Assert.NotNull(masterDataDomainService);

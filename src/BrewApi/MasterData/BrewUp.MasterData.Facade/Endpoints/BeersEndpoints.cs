@@ -10,7 +10,7 @@ internal static class BeersEndpoints
     internal static void MapBeersEndPoints(WebApplication app)
     {
         var group = app.MapGroup("/v1/masterdata/beers")
-            .WithTags("Beers");
+            .WithTags("MasterData");
         
         group.MapPost("/", HandlePostBeer)
             .AddEndpointFilter<ValidationFilter<CreateBeerJson>>()
@@ -23,7 +23,7 @@ internal static class BeersEndpoints
     }
     
     private static async Task<IResult> HandlePostBeer(
-        IBeerFacade beerFacade,
+        IMasterDataBeerFacade beerFacade,
         CreateBeerJson body,
         CancellationToken cancellationToken)
     {

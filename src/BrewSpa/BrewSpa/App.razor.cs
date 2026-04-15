@@ -7,10 +7,12 @@ namespace BrewSpa;
 
 public class AppBase : ComponentBase, IDisposable
 {
-    [Inject] private LazyAssemblyLoader AssemblyLoader { get; set; } = null!;
-    [Inject] private ILogger<App> Logger { get; set; } = null!;
+  [Inject] private LazyAssemblyLoader AssemblyLoader { get; set; } = null!;
+  [Inject] private ILogger<App> Logger { get; set; } = null!;
+  [Inject]  private IConfiguration Configuration { get; set; } = null!;
 
-    protected readonly List<Assembly> LazyLoadedAssemblies = [];
+
+  protected readonly List<Assembly> LazyLoadedAssemblies = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -31,21 +33,28 @@ public class AppBase : ComponentBase, IDisposable
             {
                 case "masterdata":
                 {
-                    var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>
+                    if (Configuration!.GetValue<bool>("Modules:EnableDataMaster"))
                     {
-                        "BrewSpa.MasterData.Facade.wasm"
-                    });
-                    LazyLoadedAssemblies.AddRange(assemblies);
+                      var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>
+                        {
+                            "BrewSpa.MasterData.Facade.wasm"
+                        });
+                      LazyLoadedAssemblies.AddRange(assemblies);
+                    }
+
                     break;
                 }
                 
                 case "sales":
                 {
-                    var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>
+                    if (Configuration!.GetValue<bool>("Modules:EnableSales"))
                     {
-                        "BrewSpa.Sales.Facade.wasm"
-                    });
-                    LazyLoadedAssemblies.AddRange(assemblies);
+                      var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>
+                            {
+                                "BrewSpa.Sales.Facade.wasm"
+                            });
+                      LazyLoadedAssemblies.AddRange(assemblies);
+                    }
                     break;
                 }
             }

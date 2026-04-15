@@ -1,5 +1,5 @@
 ﻿using BrewUp.MasterData.Domain.Helpers;
-using BrewUp.MasterData.SharedKernel.Dtos;
+using BrewUp.MasterData.ReadModel.Dtos;
 using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ReadModel;

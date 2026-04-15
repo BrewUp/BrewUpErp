@@ -21,7 +21,12 @@ public class BrewUpArchitectureTests
             "BrewUp.Sales.Domain",
             "BrewUp.Sales.Infrastructure",
             "BrewUp.Sales.ReadModel",
-            "BrewUp.Sales.SharedKernel"
+            "BrewUp.Sales.SharedKernel",
+            
+            "BrewUp.Warehouse.Domain",
+            "BrewUp.Warehouse.Infrastructure",
+            "BrewUp.Warehouse.ReadModel",
+            "BrewUp.Warehouse.SharedKernel"
         };
         
         var result = types

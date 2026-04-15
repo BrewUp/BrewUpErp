@@ -1,10 +1,12 @@
 using System.Globalization;
 using BrewUp.Sales.Domain;
+using BrewUp.Sales.Facade.Acl;
 using BrewUp.Sales.Infrastructure;
 using BrewUp.Sales.ReadModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Muflone;
 
 namespace BrewUp.Sales.Facade;
 
@@ -34,6 +36,13 @@ public static class SalesFacadeHelper
         services.AddSalesDomain();
         services.AddSalesReadModel();
         services.AddSalesInfrastructure(configurationManager);
+        
+        services.AddIntegrationEventHandler<CustomerCreatedEventHandler>();
+        services.AddIntegrationEventHandler<CustomerUpdatedEventHandler>();
+        services.AddIntegrationEventHandler<CustomerDeletedEventHandler>();
+
+        services.AddIntegrationEventHandler<BeerCreatedEventHandler>();
+
 
         return services;
     }

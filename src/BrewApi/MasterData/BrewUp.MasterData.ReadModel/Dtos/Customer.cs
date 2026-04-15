@@ -1,11 +1,10 @@
 ﻿using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
-using BrewUp.Shared.ExternalContracts.MasterData;
 using BrewUp.Shared.ExternalContracts.MasterData.Customers;
 using BrewUp.Shared.Helpers;
 using BrewUp.Shared.ReadModel;
 
-namespace BrewUp.MasterData.SharedKernel.Dtos;
+namespace BrewUp.MasterData.ReadModel.Dtos;
 
 public class Customer : DtoBase
 {

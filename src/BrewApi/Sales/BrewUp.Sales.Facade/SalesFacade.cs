@@ -1,6 +1,5 @@
 ﻿using BrewUp.Sales.Domain;
 using BrewUp.Sales.ReadModel.Services;
-using BrewUp.Shared.ExternalContracts;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ReadModel;
 using Lena.Core;

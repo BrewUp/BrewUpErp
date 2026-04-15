@@ -4,13 +4,13 @@ using BrewUp.Shared.Messages.Events;
 using Microsoft.Extensions.Logging;
 using Muflone.Messages.Events;
 
-namespace BrewUp.Sales.ReadModel.Acl;
+namespace BrewUp.Sales.Facade.Acl;
 
-public sealed class CustomerUpdatedEventHandler(ICustomerService customerService,
+public sealed class CustomerCreatedEventHandler(ICustomerService customerService,
     ILoggerFactory loggerFactory)
-    : IntegrationEventHandlerAsync<CustomerUpdated>(loggerFactory)
+    : IntegrationEventHandlerAsync<CustomerCreated>(loggerFactory)
 {
-    public override async Task HandleAsync(CustomerUpdated @event, CancellationToken cancellationToken = new ())
+    public override async Task HandleAsync(CustomerCreated @event, CancellationToken cancellationToken = new ())
     {
         cancellationToken.ThrowIfCancellationRequested();
         

@@ -4,7 +4,7 @@ using BrewUp.Shared.Messages.Events;
 using Microsoft.Extensions.Logging;
 using Muflone.Messages.Events;
 
-namespace BrewUp.Sales.ReadModel.Acl;
+namespace BrewUp.Sales.Facade.Acl;
 
 public sealed class CustomerDeletedEventHandler(ICustomerService customerService,
     ILoggerFactory loggerFactory)

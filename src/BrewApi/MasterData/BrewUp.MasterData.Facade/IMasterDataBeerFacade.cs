@@ -3,7 +3,7 @@ using Lena.Core;
 
 namespace BrewUp.MasterData.Facade;
 
-public interface IBeerFacade
+internal interface IMasterDataBeerFacade
 {
     Task<Result<string>> CreateBeerAsync(CreateBeerJson body, CancellationToken cancellationToken);
 }

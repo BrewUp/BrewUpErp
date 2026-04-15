@@ -19,6 +19,11 @@
     <Project Path="Sales/BrewUp.Sales.SharedKernel/BrewUp.Sales.SharedKernel.csproj" />
     <Project Path="Sales/BrewUp.Sales.Tests/BrewUp.Sales.Tests.csproj" />
   </Folder>
+  <Folder Name="/50 Modules/Warehouse/">
+    <Project Path="Warehouse/BrewUp.Warehouse.Facade/BrewUp.Warehouse.Facade.csproj" />
+    <Project Path="Warehouse/BrewUp.Warehouse.Infrastructure/BrewUp.Warehouse.Infrastructure.csproj" />
+    <Project Path="Warehouse/BrewUp.Warehouse.ReadModel/BrewUp.Warehouse.ReadModel.csproj" />
+  </Folder>
   <Folder Name="/80 Infrastructure/">
     <Project Path="BrewUp.Infrastructure/BrewUp.Infrastructure.csproj" />
   </Folder>

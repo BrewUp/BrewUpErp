@@ -9,6 +9,7 @@ public static class MasterDataDomainHelper
     {
         services.AddScoped<ICustomerDomainService, CustomerDomainService>();
         services.AddScoped<IBeerDomainService, BeerDomainService>();
+        services.AddScoped<IWarehouseDomainService, WarehouseDomainService>();
         
         services.AddScoped<IIntegrationEventPublisher, IntegrationEventPublisher>();
         

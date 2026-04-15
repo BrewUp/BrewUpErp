@@ -6,7 +6,7 @@ using Lena.Core;
 
 namespace BrewUp.MasterData.Facade;
 
-internal sealed class BeerFacade(IBeerDomainService beerDomainService) : IBeerFacade
+internal sealed class BeerFacade(IBeerDomainService beerDomainService) : IMasterDataBeerFacade
 {
     public Task<Result<string>> CreateBeerAsync(CreateBeerJson body, CancellationToken cancellationToken)
     {

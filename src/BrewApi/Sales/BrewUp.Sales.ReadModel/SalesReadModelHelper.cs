@@ -1,5 +1,4 @@
-﻿using BrewUp.Sales.ReadModel.Acl;
-using BrewUp.Sales.ReadModel.EventHandlers;
+﻿using BrewUp.Sales.ReadModel.EventHandlers;
 using BrewUp.Sales.ReadModel.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Muflone;
@@ -15,12 +14,7 @@ public static class SalesReadModelHelper
         services.AddScoped<IBeerService, BeerService>();
 
         services.AddDomainEventHandler<SalesOrderCreatedEventHandler>();
-        services.AddIntegrationEventHandler<CustomerCreatedEventHandler>();
-        services.AddIntegrationEventHandler<CustomerUpdatedEventHandler>();
-        services.AddIntegrationEventHandler<CustomerDeletedEventHandler>();
-
-        services.AddIntegrationEventHandler<BeerCreatedEventHandler>();
-
+        
         return services;
     }
 }
