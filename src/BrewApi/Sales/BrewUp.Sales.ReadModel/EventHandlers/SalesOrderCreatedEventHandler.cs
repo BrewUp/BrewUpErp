@@ -16,6 +16,6 @@ public sealed class SalesOrderCreatedEventHandler(
         cancellationToken.ThrowIfCancellationRequested();
         
         await salesOrderService.CreateSalesOrderAsync((SalesOrderId)@event.AggregateId, @event.SalesOrderNumber,
-            @event.CustomerId, @event.CustomerName, @event.SalesOrderDate, @event.Rows, cancellationToken);
+            @event.Customer.CustomerId, @event.Customer.CustomerName, @event.SalesOrderDate, @event.Rows, cancellationToken);
     }
 }

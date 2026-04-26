@@ -14,6 +14,7 @@ public static class SalesReadModelHelper
         services.AddScoped<IBeerService, BeerService>();
 
         services.AddDomainEventHandler<SalesOrderCreatedEventHandler>();
+        services.AddDomainEventHandler<SalesOrderCreatedForIntegrationEventHandler>();
         
         return services;
     }

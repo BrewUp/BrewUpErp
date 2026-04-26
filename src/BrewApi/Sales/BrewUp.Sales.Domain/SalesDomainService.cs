@@ -1,4 +1,5 @@
 ﻿using BrewUp.Sales.SharedKernel.CustomTypes;
+using BrewUp.Sales.SharedKernel.Enums;
 using BrewUp.Sales.SharedKernel.Messages.Commands;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
@@ -19,8 +20,7 @@ internal class SalesDomainService(IServiceBus serviceBus) : ISalesDomainService
         CreateSalesOrder command = new (new SalesOrderId(salesOrderId),
             new SalesOrderNumber(body.OrderNumber),
             new SalesOrderDate(body.OrderDate),
-            new CustomerId(body.CustomerId),
-            new CustomerName(body.CustomerName),
+            new Customer(new CustomerId(body.CustomerId), new CustomerName(body.CustomerName), CustomerType.Gold),
             new SalesOrderDeliveryDate(body.DeliveryDate),
             body.Rows, Guid.NewGuid());
 

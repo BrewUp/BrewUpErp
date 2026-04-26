@@ -1,5 +1,4 @@
 ﻿using BrewUp.Sales.SharedKernel.CustomTypes;
-using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using Muflone.Messages.Commands;
 
@@ -9,8 +8,7 @@ public sealed class CreateSalesOrder(
     SalesOrderId aggregateId,
     SalesOrderNumber salesOrderNumber,
     SalesOrderDate salesOrderDate,
-    CustomerId customerId,
-    CustomerName customerName,
+    Customer customer,
     SalesOrderDeliveryDate salesOrderDeliveryDate,
     IEnumerable<SalesOrderRowJson> rows,
     Guid correlationId) : Command(aggregateId, correlationId)
@@ -18,8 +16,7 @@ public sealed class CreateSalesOrder(
     public SalesOrderNumber SalesOrderNumber { get; private set; } = salesOrderNumber;
     public SalesOrderDate SalesOrderDate { get; private set; } = salesOrderDate;
     
-    public CustomerId CustomerId { get; private set; } = customerId;
-    public CustomerName CustomerName { get; private set; } = customerName;
+    public Customer Customer { get; private set; } = customer;
     
     public SalesOrderDeliveryDate SalesOrderDeliveryDate { get; private set; } = salesOrderDeliveryDate;
     public IEnumerable<SalesOrderRowJson> Rows { get; private set; } = rows;

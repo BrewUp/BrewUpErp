@@ -23,6 +23,7 @@
     <Project Path="Warehouse/BrewUp.Warehouse.Facade/BrewUp.Warehouse.Facade.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.Infrastructure/BrewUp.Warehouse.Infrastructure.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.ReadModel/BrewUp.Warehouse.ReadModel.csproj" />
+    <Project Path="Warehouse/BrewUp.Warehouse.SharedKernel/BrewUp.Warehouse.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/80 Infrastructure/">
     <Project Path="BrewUp.Infrastructure/BrewUp.Infrastructure.csproj" />

@@ -14,6 +14,7 @@ public static class FacadeHelper
         services.AddReadModel();
 
         services.AddIntegrationEventHandler<WarehouseCreatedEventHandler>();
+        services.AddIntegrationEventHandler<SalesOrderCreatedIntegrationEventHandler>();
         
         return services;
     }

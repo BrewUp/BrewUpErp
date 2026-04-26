@@ -1,4 +1,5 @@
 ﻿using BrewUp.Sales.SharedKernel.CustomTypes;
+using BrewUp.Sales.SharedKernel.Enums;
 using BrewUp.Sales.SharedKernel.Messages.Events;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
@@ -11,8 +12,7 @@ public class SalesOrder : AggregateRoot
 {
     private SalesOrderNumber _salesOrderNumber = null!;
     private SalesOrderDate _salesOrderDate = null!;
-    private CustomerId _customerId = null!;
-    private CustomerName _customerName = null!;
+    private Customer _customer = null!;
     private SalesOrderDeliveryDate _salesOrderDeliveryDate = null!;
     private List<SalesOrderRowJson> _rows = [];
     
@@ -20,20 +20,24 @@ public class SalesOrder : AggregateRoot
     {}
 
     internal static SalesOrder Create(SalesOrderId aggregateId, SalesOrderNumber salesOrderNumber,
-        SalesOrderDate salesOrderDate,
-        CustomerId customerId, CustomerName customerName, SalesOrderDeliveryDate salesOrderDeliveryDate,
+        SalesOrderDate salesOrderDate, Customer customer, SalesOrderDeliveryDate salesOrderDeliveryDate,
         IEnumerable<SalesOrderRowJson> rows, Guid correlationId)
     {
-        return new SalesOrder(aggregateId, salesOrderNumber, salesOrderDate, customerId, customerName,
-            salesOrderDeliveryDate, rows, correlationId);
+        return new SalesOrder(aggregateId, salesOrderNumber, salesOrderDate, customer, salesOrderDeliveryDate, rows,
+            correlationId);
     }
 
     private SalesOrder(SalesOrderId aggregateId, SalesOrderNumber salesOrderNumber, SalesOrderDate salesOrderDate,
-        CustomerId customerId, CustomerName customerName, SalesOrderDeliveryDate salesOrderDeliveryDate,
+        Customer customer, SalesOrderDeliveryDate salesOrderDeliveryDate,
         IEnumerable<SalesOrderRowJson> rows, Guid correlationId)
     {
         // Business logic validations can be added here
-        RaiseEvent(new SalesOrderCreated(aggregateId, salesOrderNumber, salesOrderDate, customerId, customerName,
+        if (customer.CustomerType.Equals(CustomerType.Gold))
+        {
+            // Apply discount
+        }
+            
+        RaiseEvent(new SalesOrderCreated(aggregateId, salesOrderNumber, salesOrderDate, customer,
             salesOrderDeliveryDate, rows, correlationId));
     }
 
@@ -42,8 +46,7 @@ public class SalesOrder : AggregateRoot
         Id = @event.AggregateId;
         _salesOrderNumber = @event.SalesOrderNumber;
         _salesOrderDate = @event.SalesOrderDate;
-        _customerId = @event.CustomerId;
-        _customerName = @event.CustomerName;
+        _customer = @event.Customer;
         _salesOrderDeliveryDate = @event.SalesOrderDeliveryDate;
         _rows = @event.Rows.ToList();
     }
