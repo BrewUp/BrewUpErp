@@ -12,7 +12,7 @@ public static class ReadModelHelper
         services.AddScoped<IWarehouseService, WarehouseService>();
         services.AddScoped<IShipmentService, ShipmentService>();
 
-        services.AddDomainEventHandler<ShipmentReadyForPreparationEventHandler>();
+        services.AddDomainEventHandler<ShipmentPendingForPreparationEventHandler>();
         
         return services;
     }

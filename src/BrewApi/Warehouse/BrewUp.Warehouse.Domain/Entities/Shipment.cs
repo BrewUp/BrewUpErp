@@ -43,7 +43,7 @@ public class Shipment : AggregateRoot
         Id = @event.AggregateId;
         _salesOrderId = @event.SalesOrderId;
         _customerId = @event.CustomerId;
-        _deliveryDate = @event.ShipmentDeliveryDate;
+        _deliveryDate = @event.DeliveryDate;
         _rows = @event.Rows;
         _shipmentState = ShipmentState.PendingPreparation;
     }

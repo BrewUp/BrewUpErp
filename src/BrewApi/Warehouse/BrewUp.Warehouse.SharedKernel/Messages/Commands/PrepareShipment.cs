@@ -14,6 +14,6 @@ public sealed class PrepareShipment(ShipmentId aggregateId,
 {
     public SalesOrderId SalesOrderId { get; private set; } = salesOrderId;
     public CustomerId CustomerId { get; private set; } = customerId;
-    public DeliveryDate ShipmentDeliveryDate { get; private set; } = deliveryDate;
+    public DeliveryDate DeliveryDate { get; private set; } = deliveryDate;
     public IEnumerable<OrderRowDto> Rows { get; private set; } = rows;
 }

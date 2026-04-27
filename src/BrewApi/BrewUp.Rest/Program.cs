@@ -10,7 +10,8 @@ builder.RegisterModules([
     new OpenApiModule(),
     new MasterDataModule(),
     new SalesModule(),
-    new WarehouseModule()
+    new WarehouseModule(),
+    new DashboardsModule()
 ]);
 
 var app = builder.Build();

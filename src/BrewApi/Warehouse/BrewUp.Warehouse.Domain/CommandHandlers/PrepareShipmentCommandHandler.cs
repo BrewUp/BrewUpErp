@@ -15,7 +15,7 @@ public sealed class PrepareShipmentCommandHandler(IRepository repository,
         cancellationToken.ThrowIfCancellationRequested();
 
         var aggregate = Shipment.Create(new ShipmentId(command.AggregateId.Value), command.SalesOrderId,
-            command.CustomerId, command.ShipmentDeliveryDate, command.Rows, command.MessageId);
+            command.CustomerId, command.DeliveryDate, command.Rows, command.MessageId);
         
         await Repository.SaveAsync(aggregate, Guid.CreateVersion7(), cancellationToken);
     }

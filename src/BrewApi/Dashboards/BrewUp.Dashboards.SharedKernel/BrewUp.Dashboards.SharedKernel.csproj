@@ -7,17 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Lena" Version="1.1.0" />
-      <PackageReference Include="MongoDB.Driver" Version="3.8.0" />
+      <Folder Include="Messages\Events\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
-      <ProjectReference Include="..\BrewUp.Warehouse.SharedKernel\BrewUp.Warehouse.SharedKernel.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Queries\" />
     </ItemGroup>
 
 </Project>

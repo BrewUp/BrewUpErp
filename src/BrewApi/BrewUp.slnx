@@ -6,6 +6,7 @@
   <Folder Name="/50 Modules/" />
   <Folder Name="/50 Modules/Dashboards/">
     <Project Path="Dashboards/BrewUp.Dashboards.Facade/BrewUp.Dashboards.Facade.csproj" />
+    <Project Path="Dashboards/BrewUp.Dashboards.SharedKernel/BrewUp.Dashboards.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/50 Modules/MasterData/">
     <Project Path="BrewUp.MasterData.Tests/BrewUp.MasterData.Tests.csproj" />

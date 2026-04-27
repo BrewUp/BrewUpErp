@@ -6,7 +6,7 @@ using Muflone.Messages.Events;
 
 namespace BrewUp.Warehouse.ReadModel.EventHandlers;
 
-public sealed class ShipmentReadyForPreparationEventHandler(
+public sealed class ShipmentPendingForPreparationEventHandler(
     IShipmentService shipmentService,
     ILoggerFactory loggerFactory) : DomainEventHandlerAsync<ShipmentPendingForPreparation>(loggerFactory)
 {
@@ -15,6 +15,6 @@ public sealed class ShipmentReadyForPreparationEventHandler(
         cancellationToken.ThrowIfCancellationRequested();
         
         await shipmentService.AddShipmentAsync((ShipmentId)@event.AggregateId, @event.SalesOrderId, @event.CustomerId,
-            @event.ShipmentDeliveryDate, @event.Rows, @event.ShipmentState, cancellationToken);
+            @event.DeliveryDate, @event.Rows, @event.ShipmentState, cancellationToken);
     }
 }
