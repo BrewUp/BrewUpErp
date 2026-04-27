@@ -2,6 +2,7 @@
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Warehouse.Domain.CommandHandlers;
 using BrewUp.Warehouse.SharedKernel.CustomTypes;
+using BrewUp.Warehouse.SharedKernel.Enums;
 using BrewUp.Warehouse.SharedKernel.Messages.Commands;
 using BrewUp.Warehouse.SharedKernel.Messages.Events;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -34,6 +35,7 @@ public sealed class CreatePrepareShipmentSuccessfully : CommandSpecification<Pre
 
     protected override IEnumerable<DomainEvent> Expect()
     {
-        yield return new ShipmentReadyForDispatch(_shipmentId, _salesOrderId, _customerId, _deliveryDate, _rows, _correlationId);
+        yield return new ShipmentPendingForPreparation(_shipmentId, _salesOrderId, _customerId, _deliveryDate, _rows,
+            ShipmentState.PendingPreparation, _correlationId);
     }
 }

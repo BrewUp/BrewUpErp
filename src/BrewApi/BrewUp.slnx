@@ -4,6 +4,9 @@
     <Project Path="BrewUp.Shared/BrewUp.Shared.csproj" />
   </Folder>
   <Folder Name="/50 Modules/" />
+  <Folder Name="/50 Modules/Dashboards/">
+    <Project Path="Dashboards/BrewUp.Dashboards.Facade/BrewUp.Dashboards.Facade.csproj" />
+  </Folder>
   <Folder Name="/50 Modules/MasterData/">
     <Project Path="BrewUp.MasterData.Tests/BrewUp.MasterData.Tests.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Domain/BrewUp.MasterData.Domain.csproj" />

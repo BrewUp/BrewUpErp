@@ -1,4 +1,5 @@
-﻿using BrewUp.Shared.DomainIds;
+﻿using System.ComponentModel.DataAnnotations;
+using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Warehouse.SharedKernel.CustomTypes;
 using BrewUp.Warehouse.SharedKernel.Enums;
@@ -9,12 +10,16 @@ namespace BrewUp.Warehouse.Domain.Entities;
 
 public class Shipment : AggregateRoot
 {
+    [Required]
     private SalesOrderId _salesOrderId;
+    [Required]
     private CustomerId _customerId;
+    [Required]
     private DeliveryDate _deliveryDate;
     
+    [Required]
     private IEnumerable<OrderRowDto> _rows;
-    
+    [Required]
     private    ShipmentState _shipmentState;
     
     protected Shipment() { }
@@ -29,10 +34,11 @@ public class Shipment : AggregateRoot
     private Shipment(ShipmentId shipmentId, SalesOrderId salesOrderId, CustomerId customerId, DeliveryDate deliveryDate,
         IEnumerable<OrderRowDto> rows, Guid correlationId)
     {
-        RaiseEvent(new ShipmentReadyForDispatch(shipmentId, salesOrderId, customerId, deliveryDate, rows, correlationId));
+        RaiseEvent(new ShipmentPendingForPreparation(shipmentId, salesOrderId, customerId, deliveryDate, rows,
+            ShipmentState.PendingPreparation, correlationId));
     }
     
-    private void Apply(ShipmentReadyForDispatch @event)
+    private void Apply(ShipmentPendingForPreparation @event)
     {
         Id = @event.AggregateId;
         _salesOrderId = @event.SalesOrderId;
@@ -41,5 +47,4 @@ public class Shipment : AggregateRoot
         _rows = @event.Rows;
         _shipmentState = ShipmentState.PendingPreparation;
     }
-        
 }
