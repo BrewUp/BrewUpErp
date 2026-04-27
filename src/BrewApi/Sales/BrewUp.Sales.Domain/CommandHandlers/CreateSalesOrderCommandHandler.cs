@@ -1,5 +1,5 @@
-﻿using BrewUp.Sales.SharedKernel.CustomTypes;
-using BrewUp.Sales.SharedKernel.Messages.Commands;
+﻿using BrewUp.Sales.SharedKernel.Messages.Commands;
+using BrewUp.Shared.DomainIds;
 using Microsoft.Extensions.Logging;
 using Muflone.Messages.Commands;
 using Muflone.Persistence;

@@ -1,6 +1,7 @@
 ﻿using BrewUp.Sales.ReadModel.Services;
 using BrewUp.Sales.SharedKernel.CustomTypes;
 using BrewUp.Sales.SharedKernel.Messages.Events;
+using BrewUp.Shared.DomainIds;
 using Microsoft.Extensions.Logging;
 using Muflone.Messages.Events;
 

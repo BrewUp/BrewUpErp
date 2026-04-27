@@ -1,21 +1,21 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using BrewUp.Sales.Facade;
 using BrewUp.Shared.Tests;
+using BrewUp.Warehouse.Facade;
 using NetArchTest.Rules;
 
-namespace BrewUp.Sales.Tests.Architecture;
+namespace BrewUp.Warehouse.Tests.Architecture;
 
 [ExcludeFromCodeCoverage]
-public class SalesArchitectureTests
+public class WarehouseArchitectureTests
 {
     [Fact]
-    public void Should_SalesArchitecture_BeCompliant()
+    public void Should_WarehouseArchitecture_BeCompliant()
     {
-        var types = Types.InAssembly(typeof(SalesFacadeHelper).Assembly);
-        
-        var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjects(true, ["Sales"]);
+        var types = Types.InAssembly(typeof(WarehouseFacadeHelper).Assembly);
 
+        var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjects(true, ["Warehouse"]);
+        
         var result = types
             .ShouldNot()
             .HaveDependencyOnAny(forbiddenAssemblies.ToArray())
@@ -26,9 +26,9 @@ public class SalesArchitectureTests
     }
     
     [Fact]
-    public void SalesProjects_Should_Having_Namespace_StartingWith_Sales()
+    public void WarehouseProjects_Should_Having_Namespace_StartingWith_Warehouse()
     {
-        var modulePath = Path.Combine(VisualStudioProvider.TryGetSolutionDirectoryInfo().FullName, "Sales");
+        var modulePath = Path.Combine(VisualStudioProvider.TryGetSolutionDirectoryInfo().FullName, "Warehouse");
         var subFolders = Directory.GetDirectories(modulePath);
 
         var netVersion = Environment.Version;

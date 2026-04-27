@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
+      <ProjectReference Include="..\BrewUp.Warehouse.SharedKernel\BrewUp.Warehouse.SharedKernel.csproj" />
     </ItemGroup>
 
     <ItemGroup>

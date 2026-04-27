@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using BrewUp.Rest.Module;
+using BrewUp.Shared.Tests;
 using NetArchTest.Rules;
 namespace BrewUp.Rest.Tests.Architecture;
 
@@ -11,23 +12,7 @@ public class BrewUpArchitectureTests
     {
         var types = Types.InAssembly(typeof(IModule).Assembly);
 
-        var forbiddenAssemblies = new List<string>
-        {
-            "BrewUp.MasterData.Domain",
-            "BrewUp.MasterData.Infrastructure",
-            "BrewUp.MasterData.ReadModel",
-            "BrewUp.MasterData.SharedKernel",
-            
-            "BrewUp.Sales.Domain",
-            "BrewUp.Sales.Infrastructure",
-            "BrewUp.Sales.ReadModel",
-            "BrewUp.Sales.SharedKernel",
-            
-            "BrewUp.Warehouse.Domain",
-            "BrewUp.Warehouse.Infrastructure",
-            "BrewUp.Warehouse.ReadModel",
-            "BrewUp.Warehouse.SharedKernel"
-        };
+        var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjects(false, []);
         
         var result = types
             .ShouldNot()

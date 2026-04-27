@@ -5,8 +5,8 @@ namespace BrewUp.Sales.SharedKernel.Enums;
 public sealed class CustomerType(int id, string name) : Enumeration(id, name)
 {
     public static CustomerType Gold = new (1, nameof(Gold).ToLowerInvariant());
-    public static CustomerType Silver = new (1, nameof(Silver).ToLowerInvariant());
-    public static CustomerType Bronze = new (2, nameof(Bronze).ToLowerInvariant());
+    public static CustomerType Silver = new (2, nameof(Silver).ToLowerInvariant());
+    public static CustomerType Bronze = new (3, nameof(Bronze).ToLowerInvariant());
 
     public static IEnumerable<CustomerType> List() => new[] { Silver, Bronze };
 

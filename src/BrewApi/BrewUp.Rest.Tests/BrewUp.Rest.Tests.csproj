@@ -27,6 +27,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BrewUp.Rest\BrewUp.Rest.csproj" />
+      <ProjectReference Include="..\BrewUp.Shared.Tests\BrewUp.Shared.Tests.csproj" />
     </ItemGroup>
 
     <ItemGroup>

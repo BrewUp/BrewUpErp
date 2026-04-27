@@ -1,5 +1,7 @@
-﻿using BrewUp.Sales.SharedKernel.CustomTypes;
-using BrewUp.Sales.SharedKernel.Messages.Events;
+﻿using BrewUp.Sales.SharedKernel.Messages.Events;
+using BrewUp.Shared.DomainIds;
+using BrewUp.Shared.ExternalContracts.Sales;
+using BrewUp.Shared.Messages.Events;
 using Microsoft.Extensions.Logging;
 using Muflone;
 using Muflone.Messages.Events;
@@ -15,9 +17,17 @@ public sealed class SalesOrderCreatedForIntegrationEventHandler(
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        await eventBus.PublishAsync(
-            new SalesOrderCreatedIntegrationEvent(new SalesOrderId(@event.AggregateId.Value), @event.SalesOrderNumber.Value,
-                @event.SalesOrderDate.Value, @event.Customer.CustomerId.Value, @event.Customer.CustomerName.Value, @event.SalesOrderDeliveryDate.Value,
-                @event.Rows), cancellationToken);
+        SalesOrderCreatedIntegrationEvent integrationEvent = new (
+            new SalesOrderId(@event.AggregateId.Value), @event.SalesOrderNumber.Value,
+            @event.SalesOrderDate.Value, @event.Customer.CustomerId.Value, @event.Customer.CustomerName.Value,
+            @event.SalesOrderDeliveryDate.Value,
+            @event.Rows.Select(r => new OrderRowDto
+            {
+                BeerId = r.BeerId,
+                BeerName = r.BeerName,
+                Quantity = r.Quantity,
+            }).ToList());
+
+        await eventBus.PublishAsync(integrationEvent, cancellationToken);
     }
 }

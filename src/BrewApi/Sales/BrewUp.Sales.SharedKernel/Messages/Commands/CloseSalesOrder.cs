@@ -1,4 +1,5 @@
 ﻿using BrewUp.Sales.SharedKernel.CustomTypes;
+using BrewUp.Shared.DomainIds;
 using Muflone.CustomTypes;
 using Muflone.Messages.Commands;
 
