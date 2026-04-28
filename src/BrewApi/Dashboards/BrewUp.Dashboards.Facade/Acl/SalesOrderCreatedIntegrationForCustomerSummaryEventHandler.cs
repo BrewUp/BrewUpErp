@@ -7,9 +7,9 @@ namespace BrewUp.Dashboards.Facade.Acl;
 
 public sealed class SalesOrderCreatedIntegrationForCustomerSummaryEventHandler(IServiceBus serviceBus, 
     ILoggerFactory loggerFactory)
-    : IntegrationEventHandlerAsync<SalesOrderCreatedIntegrationEvent>(loggerFactory)
+    : IntegrationEventHandlerAsync<SalesOrderCreatedWihPriceIntegrationEvent>(loggerFactory)
 {
-    public override async Task HandleAsync(SalesOrderCreatedIntegrationEvent @event,
+    public override async Task HandleAsync(SalesOrderCreatedWihPriceIntegrationEvent @event,
         CancellationToken cancellationToken = new ())
     {
         cancellationToken.ThrowIfCancellationRequested();

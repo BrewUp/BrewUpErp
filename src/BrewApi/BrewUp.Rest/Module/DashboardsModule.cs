@@ -1,4 +1,5 @@
 ﻿using BrewUp.Dashboards.Facade;
+using BrewUp.Dashboards.Facade.Endpoints;
 
 namespace BrewUp.Rest.Module;
 
@@ -38,6 +39,7 @@ public class DashboardsModule : IModule
     /// <returns></returns>
     public WebApplication Configure(WebApplication app)
     {
+        app.MapDashboardsEndpoints();
         return app;
     }
 }

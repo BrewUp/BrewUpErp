@@ -22,7 +22,14 @@ public static class ModulesProjectUtils
         "BrewUp.Warehouse.Infrastructure",
         "BrewUp.Warehouse.readModel", 
         "BrewUp.Warehouse.SharedKernel",
-        "BrewUp.Warehouse.Tests"
+        "BrewUp.Warehouse.Tests",
+        
+        "BrewUp.Dashboards.Domain",
+        "BrewUp.Dashboards.Facade",
+        "BrewUp.Dashboards.Infrastructure",
+        "BrewUp.Dashboards.readModel", 
+        "BrewUp.Dashboards.SharedKernel",
+        "BrewUp.Dashboards.Tests"
     ];
 
     public static IEnumerable<string> GetModuleProjects(bool includeFacadeProjects, IEnumerable<string> excludeModules)

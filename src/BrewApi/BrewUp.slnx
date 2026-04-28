@@ -5,7 +5,10 @@
   </Folder>
   <Folder Name="/50 Modules/" />
   <Folder Name="/50 Modules/Dashboards/">
+    <Project Path="Dashboards/BrewUp.Dashboards.Domain/BrewUp.Dashboards.Domain.csproj" />
     <Project Path="Dashboards/BrewUp.Dashboards.Facade/BrewUp.Dashboards.Facade.csproj" />
+    <Project Path="Dashboards/BrewUp.Dashboards.Infrastructure/BrewUp.Dashboards.Infrastructure.csproj" />
+    <Project Path="Dashboards/BrewUp.Dashboards.ReadModel/BrewUp.Dashboards.ReadModel.csproj" />
     <Project Path="Dashboards/BrewUp.Dashboards.SharedKernel/BrewUp.Dashboards.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/50 Modules/MasterData/">

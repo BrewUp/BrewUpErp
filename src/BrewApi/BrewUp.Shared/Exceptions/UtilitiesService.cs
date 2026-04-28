@@ -10,7 +10,7 @@ public static class UtilitiesService
         {
             if (ex.InnerException == null)
                 return
-                    $"Source: {ex.Source} StackTrace: {ex.StackTrace} Message: {ex.Message}, Source: {ex.Source}, Trace: {ex.StackTrace}";
+                    $"Source: {ex.Source} StackTrace: {ex.StackTrace} Message: {ex.Message}, Source: {ex.Source}, Trace: {ex.StackTrace};";
 
             ex = ex.InnerException;
         }
