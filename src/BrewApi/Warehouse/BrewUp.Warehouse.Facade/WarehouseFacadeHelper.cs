@@ -11,6 +11,8 @@ public static class WarehouseFacadeHelper
 {
     public static IServiceCollection AddWarehouse(this IServiceCollection services)
     {
+        services.AddScoped<IWarehouseFacade, WarehouseFacade>();
+        
         services.AddInfrastructure();
         services.AddReadModel();
         services.AddDomain();

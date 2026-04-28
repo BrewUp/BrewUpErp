@@ -1,5 +1,6 @@
 ﻿using BrewUp.Sales.Infrastructure.MongoDb;
 using BrewUp.Sales.ReadModel.Dtos;
+using BrewUp.Sales.ReadModel.Queries;
 using BrewUp.Shared.Configuration;
 using BrewUp.Shared.ReadModel;
 using Microsoft.Extensions.Configuration;
@@ -22,7 +23,6 @@ public static class SalesInfrastructureHelper
         services.AddMufloneEventStore(eventStoreSettings.ConnectionString);
         
         services.AddKeyedScoped<IPersister, SalesPersister>("sales");
-        services.AddScoped<IQueries<SalesOrder>, SalesOrderQueries>();
 
         return services;
     }

@@ -1,5 +1,6 @@
 ﻿using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
+using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.ReadModel;
 using BrewUp.Warehouse.SharedKernel.CustomTypes;
 using BrewUp.Warehouse.SharedKernel.Enums;
@@ -32,5 +33,18 @@ public class Shipment : DtoBase
         Rows = rows;
 
         ShipmentState = shipmentState.Name;
+    }
+    
+    public ShipmentJson ToJson()
+    {
+        return new ShipmentJson
+        {
+            Id = Id,
+            SalesOrderId = SalesOrderId,
+            CustomerId = CustomerId,
+            DeliveryDate = DeliveryDate,
+            Rows = Rows,
+            ShipmentState = ShipmentState
+        };
     }
 }

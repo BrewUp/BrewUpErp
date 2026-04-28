@@ -11,7 +11,7 @@ internal static class MasterDataWarehouseEndpoints
 {
     internal static WebApplication MapWarehouseEndpoints(WebApplication app)
     {
-        var group = app.MapGroup("/v1/warehouse")
+        var group = app.MapGroup("/v1/masterdata/warehouse")
             .WithTags("MasterData");
         
         group.MapPost("/", HandlePostWarehouse)

@@ -1,5 +1,5 @@
 ﻿using BrewUp.Shared.ExternalContracts.Warehouse;
-using BrewUp.Shared.Validators;
+using BrewUp.Shared.ReadModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
@@ -12,25 +12,29 @@ public static class WarehouseEndpoints
         var group = app.MapGroup("/v1/warehouse")
             .WithTags("Warehouse");
         
+        group.MapGet("/", HandleGetShipmentOrders)
+            .Produces<PagedResult<ShipmentJson>>()
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get a list of shipment orders")
+            .WithDescription(
+                "Get a list of shipment orders.")
+            .WithName("GetShipmentOrders");
         
         return app;
     }
     
-    // private static async Task<IResult> HandlePostWarehouse(
-    //     IWarehouseFacade warehouseFacade,
-    //     CreateWarehouseJson body,
-    //     CancellationToken cancellationToken)
-    // {
-    //     cancellationToken.ThrowIfCancellationRequested();
-    //
-    //     var createResult = await warehouseFacade.CreateWarehouseAsync(body, cancellationToken);
-    //
-    //     return createResult.Match<IResult>(
-    //         success =>
-    //         {
-    //             createResult.TryGetValue(out string orderId);
-    //             return Results.Created($"/v1/warehouse/{orderId}", success);
-    //         }, 
-    //         Results.BadRequest);
-    // }
+    private static async Task<IResult> HandleGetShipmentOrders(
+        IWarehouseFacade warehouseFacade,
+        int pageNumber = 1,
+        int pageSize = 10,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var getResult = await warehouseFacade.GetShipmentOrdersAsync(pageNumber, pageSize, cancellationToken);
+
+        return getResult.Match<IResult>(
+            success => Results.Ok(success),
+            Results.BadRequest);
+    }
 }

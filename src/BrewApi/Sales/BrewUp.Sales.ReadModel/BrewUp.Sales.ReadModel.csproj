@@ -10,15 +10,12 @@
     <PackageReference Include="Lena" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.7" />
+    <PackageReference Include="MongoDB.Driver" Version="3.8.0" />
     <PackageReference Include="Muflone" Version="10.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BrewUp.Sales.SharedKernel\BrewUp.Sales.SharedKernel.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Queries\" />
   </ItemGroup>
 
 </Project>

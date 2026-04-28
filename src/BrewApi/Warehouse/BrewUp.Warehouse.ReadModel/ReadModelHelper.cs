@@ -1,4 +1,7 @@
-﻿using BrewUp.Warehouse.ReadModel.EventHandlers;
+﻿using BrewUp.Shared.ReadModel;
+using BrewUp.Warehouse.ReadModel.Dtos;
+using BrewUp.Warehouse.ReadModel.EventHandlers;
+using BrewUp.Warehouse.ReadModel.Queries;
 using BrewUp.Warehouse.ReadModel.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Muflone;
@@ -11,6 +14,8 @@ public static class ReadModelHelper
     {
         services.AddScoped<IWarehouseService, WarehouseService>();
         services.AddScoped<IShipmentService, ShipmentService>();
+        
+        services.AddScoped<IQueries<Shipment>, ShipmentQueries>();
 
         services.AddDomainEventHandler<ShipmentPendingForPreparationEventHandler>();
         
