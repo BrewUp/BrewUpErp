@@ -1,4 +1,5 @@
-﻿using BrewUp.Sales.SharedKernel.CustomTypes;
+﻿using BrewUp.Sales.Domain.Mappers;
+using BrewUp.Sales.SharedKernel.CustomTypes;
 using BrewUp.Sales.SharedKernel.Enums;
 using BrewUp.Sales.SharedKernel.Messages.Events;
 using BrewUp.Shared.DomainIds;
@@ -14,7 +15,7 @@ public class SalesOrder : AggregateRoot
     private SalesOrderDate _salesOrderDate = null!;
     private Customer _customer = null!;
     private SalesOrderDeliveryDate _salesOrderDeliveryDate = null!;
-    private List<SalesOrderRowJson> _rows = [];
+    private List<SalesOrderRow> _rows = [];
     
     protected SalesOrder()
     {}
@@ -48,7 +49,7 @@ public class SalesOrder : AggregateRoot
         _salesOrderDate = @event.SalesOrderDate;
         _customer = @event.Customer;
         _salesOrderDeliveryDate = @event.SalesOrderDeliveryDate;
-        _rows = @event.Rows.ToList();
+        _rows = @event.Rows.Select(r => r.ToEntity()).ToList();
     }
     
     internal void CloseSalesOrder(SalesOrderDeliveryDate salesOrderDeliveryDate, Account account, Guid correlationId)

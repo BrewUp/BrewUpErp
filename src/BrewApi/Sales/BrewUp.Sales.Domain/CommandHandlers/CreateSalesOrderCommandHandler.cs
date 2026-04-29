@@ -13,6 +13,10 @@ public sealed class CreateSalesOrderCommandHandler(IRepository repository,
 
     public override async Task HandleAsync(CreateSalesOrder command, CancellationToken cancellationToken = new ())
     {
+        // Verifica sconto
+        // Leggere aggretate Customer
+        // Accquisire classe
+        
         var aggregate = Entities.SalesOrder.Create(new SalesOrderId(command.AggregateId.Value),
             command.SalesOrderNumber,
             command.SalesOrderDate,
