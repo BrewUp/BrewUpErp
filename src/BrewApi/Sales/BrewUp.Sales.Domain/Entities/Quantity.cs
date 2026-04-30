@@ -1,3 +1,3 @@
 ﻿namespace BrewUp.Sales.Domain.Entities;
 
-public record Quantity(decimal Value, string UnitOIfMeasure);
+public record Quantity(decimal Value, string UnitOfMeasure);

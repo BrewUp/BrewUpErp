@@ -13,4 +13,7 @@ public interface ISalesOrderService
     
     Task<Result<PagedResult<SalesOrderJson>>> GetSalesOrdersAsync(int page, int pageSize, CancellationToken cancellationToken);
     Task<Result<SalesOrderJson>> GetSalesOrderByIdAsync(string salesOrderId, CancellationToken cancellationToken);
+
+    Task<Result<string>> AddBeersToSalesOrderAsync(SalesOrderId salesOrderId, IEnumerable<SalesOrderRowJson> rows,
+        CancellationToken cancellationToken);
 }

@@ -1,10 +1,11 @@
-﻿using BrewUp.Shared.DomainIds;
+﻿using BrewUp.Sales.SharedKernel.CustomTypes;
+using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using Muflone.Messages.Events;
 
 namespace BrewUp.Sales.SharedKernel.Messages.Events;
 
-public sealed class BeerAddedToCart(SalesOrderId aggregateId, SalesOrderRowJson row) : DomainEvent(aggregateId)
+public sealed class BeersAddedToCart(SalesOrderId aggregateId, IEnumerable<SalesOrderRowJson> rows) : DomainEvent(aggregateId)
 {
-    public SalesOrderRowJson Row { get; private set; } = row;
+    public IEnumerable<SalesOrderRowJson> Rows { get; private set; } = rows;
 }

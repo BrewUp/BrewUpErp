@@ -6,10 +6,10 @@ namespace BrewUp.Sales.Domain.Entities;
 
 public class SalesOrderRow : Entity
 {
-    private BeerId _beerId;
-    private BeerName _beerName;
-    private Quantity _quantity;
-    private Price _price;
+    internal BeerId _beerId;
+    internal BeerName _beerName;
+    internal Quantity _quantity;
+    internal Price _price;
     
     protected SalesOrderRow()
     {}

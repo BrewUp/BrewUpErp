@@ -1,5 +1,6 @@
 ﻿using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
+using BrewUp.Shared.ExternalContracts.MasterData.Beers;
 using BrewUp.Shared.ReadModel;
 
 namespace BrewUp.Sales.ReadModel.Dtos;
@@ -37,4 +38,15 @@ public class Beer : DtoBase
     public void UpdatePackaging(Packaging packaging) => Packaging = packaging.Value;
     public void UpdatePrice(Price price) => Price = price.Value;
     public void UpdateIsActive(bool isActive) => IsActive = isActive;
+    
+    public BeerJson ToJson() => new()
+    {
+        BeerId = Id,
+        BeerName = BeerName,
+        BeerStyle = BeerStyle,
+        AlcoholByVolume = AlcoholByVolume,
+        Packaging = Packaging,
+        Price = new Price(Price, string.Empty),
+        IsActive = IsActive
+    };
 }

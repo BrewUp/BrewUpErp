@@ -17,6 +17,8 @@ public class SalesOrder : AggregateRoot
     private SalesOrderDeliveryDate _salesOrderDeliveryDate = null!;
     private List<SalesOrderRow> _rows = [];
     
+    private SalesOrderStatus _salesOrderStatus;
+    
     protected SalesOrder()
     {}
 
@@ -50,11 +52,36 @@ public class SalesOrder : AggregateRoot
         _customer = @event.Customer;
         _salesOrderDeliveryDate = @event.SalesOrderDeliveryDate;
         _rows = @event.Rows.Select(r => r.ToEntity()).ToList();
+        
+        _salesOrderStatus = SalesOrderStatus.Accepted;
+    }
+
+    internal void AddBeers(IEnumerable<SalesOrderRowJson> rows)
+    {
+        if (Equals(_salesOrderStatus, SalesOrderStatus.Closed))
+        {
+            // Raise an Error Event!!!
+            throw new InvalidOperationException("Cannot add beers to a closed sales order.");
+        }
+        
+        IEnumerable<SalesOrderRowJson> orderRows = _rows.Select(r => r.ToJson()).ToList();
+        orderRows = orderRows.Concat(rows);
+        RaiseEvent(new BeersAddedToCart(new SalesOrderId(Id.Value), orderRows));
+    }
+    
+    private void Apply(BeersAddedToCart @event)
+    {
+        _rows = @event.Rows.Select(r => r.ToEntity()).ToList();
     }
     
     internal void CloseSalesOrder(SalesOrderDeliveryDate salesOrderDeliveryDate, Account account, Guid correlationId)
     {
-        // Business logic validations can be added here
+        if (Equals(_salesOrderStatus, SalesOrderStatus.Closed))
+        {
+            // Raise an Error Event!!!
+            throw new InvalidOperationException("Cannot add beers to a closed sales order.");
+        }
+        
         RaiseEvent(new SalesOrderClosed(new SalesOrderId(Id.Value), salesOrderDeliveryDate, correlationId));
     }
 

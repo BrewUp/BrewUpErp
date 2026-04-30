@@ -1,4 +1,5 @@
-﻿using BrewUp.Sales.SharedKernel.Messages.Events;
+﻿using BrewUp.Sales.SharedKernel.CustomTypes;
+using BrewUp.Sales.SharedKernel.Messages.Events;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.Messages.Events;
@@ -18,7 +19,7 @@ public sealed class SalesOrderCreatedWithPriceForIntegrationEventHandler(
         cancellationToken.ThrowIfCancellationRequested();
 
         SalesOrderCreatedWihPriceIntegrationEvent integrationEvent = new (
-            new SalesOrderId(@event.AggregateId.Value), @event.SalesOrderNumber.Value,
+            new IntegrationId(@event.AggregateId.Value), @event.SalesOrderNumber.Value,
             @event.SalesOrderDate.Value, @event.Customer.CustomerId.Value, @event.Customer.CustomerName.Value,
             @event.SalesOrderDeliveryDate.Value,
             @event.Rows.Select(r => new OrderRowWithPriceDto

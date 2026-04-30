@@ -10,4 +10,5 @@ public interface ISalesFacade
     Task CloseSalesOrderAsync(string orderId, CancellationToken cancellationToken);
     Task<Result<PagedResult<SalesOrderJson>>> GetSalesOrdersAsync(int page, int pageSize, CancellationToken cancellationToken);
     Task<Result<SalesOrderJson>> GetSalesOrderByIdAsync(string orderId, CancellationToken cancellationToken);
+    Task<Result<string>> AddBeersToSalesOrderAsync(AddBeersToCartJson body, CancellationToken cancellationToken);
 }
