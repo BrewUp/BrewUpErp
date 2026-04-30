@@ -42,4 +42,16 @@ internal class SalesDomainService(IServiceBus serviceBus) : ISalesDomainService
         
         return Result<bool>.Success(true);
     }
+
+    public async Task<Result<string>> AddBeersToSalesOrderAsync(AddBeersToCartJson body, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        AddBeersToCart command = new(new SalesOrderId(body.OrderId),
+            body.Rows);
+        
+        await serviceBus.SendAsync(command, cancellationToken);
+        
+        return Result<string>.Success(body.OrderId);
+    }
 }

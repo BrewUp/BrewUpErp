@@ -11,6 +11,8 @@ public static class DomainHelper
         services.AddScoped<ISalesDomainService, SalesDomainService>();
 
         services.AddCommandHandler<CreateSalesOrderCommandHandler>();
+        services.AddCommandHandler<AddBeersToCartCommandHandler>();
+        services.AddCommandHandler<CloseSalesOrderCommandHandler>();
         
         return services;
     }

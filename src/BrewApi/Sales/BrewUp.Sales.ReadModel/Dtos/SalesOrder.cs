@@ -37,6 +37,11 @@ public class SalesOrder : DtoBase
 
         Status = Shared.Helpers.OrderState.Created.Name;
     }
+    
+    public void AddBeers(IEnumerable<SalesOrderRowJson> rows)
+    {
+        Rows = rows.ToReadModelEntities();
+    }
 
     public void CompleteOrder() => Status = Shared.Helpers.OrderState.Completed.Name;
 

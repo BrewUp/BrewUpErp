@@ -4,7 +4,7 @@ using Muflone.Messages.Events;
 
 namespace BrewUp.Shared.Messages.Events;
 
-public class SalesOrderCreatedIntegrationEvent(SalesOrderId aggregateId,
+public class SalesOrderCreatedIntegrationEvent(IntegrationId aggregateId,
     string salesOrderNumber,
     DateTime salesOrderDate,
     string customerId,

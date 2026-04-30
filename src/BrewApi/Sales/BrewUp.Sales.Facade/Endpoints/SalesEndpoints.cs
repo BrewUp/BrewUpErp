@@ -23,6 +23,15 @@ public static class SalesEndpoints
             "Creates a new sales order. This endpoint is used to add a new sales order.")
         .WithName("CreateSalesOrder");
     
+    group.MapPatch("/rows/{orderId}", HandleAddBeersToSalesOrder)
+        .AddEndpointFilter<ValidationFilter<AddBeersToCartJson>>()
+        .Produces(StatusCodes.Status201Created)
+        .Produces(StatusCodes.Status500InternalServerError)
+        .WithSummary("Add beers to an existing sales order")
+        .WithDescription(
+            "Add beers to an existing sales order. This endpoint is used to add beers to a sales order.")
+        .WithName("AddBeersToSalesOrder");
+    
     group.MapPut("/{orderId}", HandleCloseSalesOrder)
         .Produces(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status500InternalServerError)
@@ -66,6 +75,25 @@ public static class SalesEndpoints
             return Results.Created($"/v1/sales/{orderId}", success);
         }, 
         Results.BadRequest);
+  }
+  
+  private static async Task<IResult> HandleAddBeersToSalesOrder(
+      ISalesFacade salesFacade,
+      string orderId,
+      AddBeersToCartJson body,
+      CancellationToken cancellationToken)
+  {
+      cancellationToken.ThrowIfCancellationRequested();
+
+      var createResult = await salesFacade.AddBeersToSalesOrderAsync(body, cancellationToken);
+
+      return createResult.Match<IResult>(
+          success =>
+          {
+              createResult.TryGetValue(out string newOrderId);
+              return Results.Created($"/v1/sales/{newOrderId}", success);
+          }, 
+          Results.BadRequest);
   }
 
   private static async Task<IResult> HandleCloseSalesOrder(
