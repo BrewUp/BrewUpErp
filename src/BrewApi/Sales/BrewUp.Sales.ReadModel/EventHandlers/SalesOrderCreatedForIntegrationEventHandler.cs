@@ -26,7 +26,7 @@ public sealed class SalesOrderCreatedForIntegrationEventHandler(
             {
                 BeerId = r.BeerId,
                 BeerName = r.BeerName,
-                Quantity = r.Quantity,
+                Quantity = r.Quantity
             }).ToList());
 
         await eventBus.PublishAsync(integrationEvent, cancellationToken);
