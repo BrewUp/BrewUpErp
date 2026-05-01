@@ -1,7 +1,9 @@
 ﻿using BrewUp.Sales.Domain.CommandHandlers;
 using BrewUp.Sales.SharedKernel.CustomTypes;
+using BrewUp.Sales.SharedKernel.Enums;
 using BrewUp.Sales.SharedKernel.Messages.Commands;
 using BrewUp.Sales.SharedKernel.Messages.Events;
+using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -17,42 +19,36 @@ public sealed class AddBeersToCartSuccessfully : CommandSpecification<AddBeersTo
     private SalesOrderNumber _salesOrderNumber = new ("SO-1000");
     private CustomerId _customerId = new (Guid.CreateVersion7().ToString());
     private CustomerName _customerName = new ("John Doe");
-    private Customer _customer;
+    private readonly Customer _customer = new (
+        new CustomerId(Guid.CreateVersion7().ToString()),
+        new CustomerName("John Doe"),
+        CustomerType.Gold
+    );
     private SalesOrderDate _salesOrderDate = new (DateTime.UtcNow);
     private SalesOrderDeliveryDate _salesOrderDeliveryDate = new (DateTime.UtcNow.AddDays(7));
     private readonly List<SalesOrderRowJson> _rows = [];
     
-    private readonly IEnumerable<SalesOrderRowJson> _rowsToAdd = [];
-    private readonly IEnumerable<SalesOrderRowJson> _totalRows;
-    
-    private Guid _correlationId = Guid.CreateVersion7();
-
-    public AddBeersToCartSuccessfully()
+    private readonly IEnumerable<SalesOrderRowJson> _totalRows = new List<SalesOrderRowJson>
     {
-        _rowsToAdd = _rowsToAdd.Concat(new List<SalesOrderRowJson>()
+        new ()
         {
-            new SalesOrderRowJson
-            {
-                BeerId = Guid.CreateVersion7().ToString(),
-                Quantity = new(2, "Bottles")
-            }
-        });
-        
-        _totalRows = _rowsToAdd.Union(_rows);
-    }
-    
+            BeerId = Guid.CreateVersion7().ToString(),
+            Quantity = new Quantity(2, "Bottles")
+        }
+    };
+
+    private Guid _correlationId = Guid.CreateVersion7();
+   
     protected override IEnumerable<DomainEvent> Given()
     {
         yield return new SalesOrderCreated(_salesOrderId, _salesOrderNumber, _salesOrderDate, _customer,
             _salesOrderDeliveryDate, _rows, _correlationId);
     }
 
-    protected override AddBeersToCart When() => new AddBeersToCart(_salesOrderId, _totalRows);
+    protected override AddBeersToCart When() => new (_salesOrderId, _totalRows);
 
-    protected override ICommandHandlerAsync<AddBeersToCart> OnHandler()
-    {
-        return new AddBeersToCartCommandHandler(Repository, new NullLoggerFactory());
-    }
+    protected override ICommandHandlerAsync<AddBeersToCart> OnHandler() =>
+        new AddBeersToCartCommandHandler(Repository, new NullLoggerFactory());
 
     protected override IEnumerable<DomainEvent> Expect()
     {

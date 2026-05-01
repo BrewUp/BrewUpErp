@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using BrewUp.Shared.Tests;
+using BrewUp.Warehouse.Domain;
 using BrewUp.Warehouse.Facade;
 using NetArchTest.Rules;
 
@@ -52,7 +53,7 @@ public class WarehouseArchitectureTests
         
         var typesWithCorrectNamespace = Types.InAssemblies(moduleAssemblies)
             .That()
-            .ResideInNamespaceStartingWith("BrewUp.Sales")
+            .ResideInNamespaceStartingWith("BrewUp.Warehouse")
             .And()
             .AreNotNested()
             .GetTypes();
@@ -68,6 +69,21 @@ public class WarehouseArchitectureTests
                     $"Namespace violation detected: {type.FullName} in assembly {type.Assembly.GetName().Name} should start " +
                     $"with 'BrewUp.Sales' but is in namespace '{type.Namespace}'");
         }
+    }
+    
+    [Fact]
+    public void Domain_Should_Not_Depend_On_Outer_Layers()
+    {
+        var result = Types.InAssembly(typeof(DomainHelper).Assembly)
+            .ShouldNot()
+            .HaveDependencyOnAny(
+                "BrewUp.Infrastructure",
+                "BrewUp.Sales.Infrastructure",
+                "BrewUp.Sales.ReadModel",
+                "BrewUp.Sales.Facade")
+            .GetResult();
+
+        Assert.True(result.IsSuccessful);
     }
     
     private static class VisualStudioProvider

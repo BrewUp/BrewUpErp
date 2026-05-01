@@ -35,10 +35,10 @@ public class SalesOrder : AggregateRoot
         IEnumerable<SalesOrderRowJson> rows, Guid correlationId)
     {
         // Business logic validations can be added here
-        if (customer.CustomerType.Equals(CustomerType.Gold))
-        {
-            // Apply discount
-        }
+        // if (customer.CustomerType.Equals(CustomerType.Gold))
+        // {
+        //     // Apply discount
+        // }
             
         RaiseEvent(new SalesOrderCreated(aggregateId, salesOrderNumber, salesOrderDate, customer,
             salesOrderDeliveryDate, rows, correlationId));
@@ -65,7 +65,7 @@ public class SalesOrder : AggregateRoot
         }
         
         IEnumerable<SalesOrderRowJson> orderRows = _rows.Select(r => r.ToJson()).ToList();
-        orderRows = orderRows.Concat(rows);
+        orderRows = orderRows.Concat(rows).ToList();
         RaiseEvent(new BeersAddedToCart(new SalesOrderId(Id.Value), orderRows));
     }
     
