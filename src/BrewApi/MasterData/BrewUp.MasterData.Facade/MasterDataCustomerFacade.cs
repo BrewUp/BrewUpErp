@@ -1,5 +1,4 @@
-﻿using BrewUp.MasterData.Domain;
-using BrewUp.MasterData.Domain.Services;
+﻿using BrewUp.MasterData.Domain.Services;
 using BrewUp.MasterData.ReadModel.Services;
 using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
@@ -9,7 +8,7 @@ using Lena.Core;
 
 namespace BrewUp.MasterData.Facade;
 
-internal sealed class CustomerFacade(ICustomerDomainService masterDataDomainService,
+internal sealed class MasterDataCustomerFacade(ICustomerDomainService masterDataDomainService,
     ICustomerQueryService masterDataQueryService) : IMasterDataCustomerFacade
 {
     public Task<Result<string>> CreateCustomerAsync(CreateCustomerJson body, CancellationToken cancellationToken)

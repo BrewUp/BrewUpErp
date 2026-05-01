@@ -1,12 +1,15 @@
 ﻿using BrewUp.MasterData.Domain.Services;
+using BrewUp.MasterData.ReadModel.Services;
 using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.MasterData.Beers;
+using BrewUp.Shared.ReadModel;
 using Lena.Core;
 
 namespace BrewUp.MasterData.Facade;
 
-internal sealed class BeerFacade(IBeerDomainService beerDomainService) : IMasterDataBeerFacade
+internal sealed class MasterDataBeerFacade(IBeerDomainService beerDomainService,
+    IBeerQueryService beerQueryService) : IMasterDataBeerFacade
 {
     public Task<Result<string>> CreateBeerAsync(CreateBeerJson body, CancellationToken cancellationToken)
     {
@@ -20,4 +23,7 @@ internal sealed class BeerFacade(IBeerDomainService beerDomainService) : IMaster
             new Price(body.Price.Value, body.Price.Currency),
             body.IsActive, cancellationToken);
     }
+
+    public Task<Result<PagedResult<BeerJson>>> GetBeersAsync(int pageNumber, int pageSize,
+        CancellationToken cancellationToken) => beerQueryService.GetBeersAsync(pageNumber, pageSize, cancellationToken);
 }

@@ -25,6 +25,7 @@ public static class ModulesProjectUtils
         "BrewUp.Warehouse.Tests",
         
         "BrewUp.Dashboards.Domain",
+        "BrewUp.Dashboards.Entities",
         "BrewUp.Dashboards.Facade",
         "BrewUp.Dashboards.Infrastructure",
         "BrewUp.Dashboards.readModel", 
