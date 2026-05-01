@@ -8,6 +8,7 @@ namespace BrewUp.Dashboards.ReadModel;
 public class DashboardsContext(DbContextOptions<DashboardsContext> options) : DbContext(options)
 {
     public DbSet<SalesByCustomers> SalesByCustomers { get; set; } = null!;
+    public DbSet<MessagesReceived> MessagesReceived { get; set; } = null!;
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -32,5 +33,6 @@ public class DashboardsContext(DbContextOptions<DashboardsContext> options) : Db
         base.OnModelCreating(modelBuilder);
         
         modelBuilder.ApplyConfiguration(new SalesByCustomersMappings());
+        modelBuilder.ApplyConfiguration(new MessagesReceivedMappings());
     }
 }

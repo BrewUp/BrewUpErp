@@ -13,7 +13,7 @@ public static class DashboardsFacadeHelper
     public static IServiceCollection AddDashboards(this IServiceCollection services,
         IConfigurationManager configurationManager)
     {
-        services.AddReadModel();
+        services.AddReadModel(configurationManager);
         services.AddInfrastructure(configurationManager);
         services.AddDomain();
         
