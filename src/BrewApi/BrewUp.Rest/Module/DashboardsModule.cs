@@ -26,7 +26,7 @@ public class DashboardsModule : IModule
     /// <returns></returns>
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
-        builder.Services.AddDashboards();
+        builder.Services.AddDashboards(builder.Configuration);
         
         return builder.Services;
     }

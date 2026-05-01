@@ -19,6 +19,9 @@
     <ItemGroup>
       <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
       <ProjectReference Include="..\BrewUp.Dashboards.Domain\BrewUp.Dashboards.Domain.csproj" />
+      <ProjectReference Include="..\BrewUp.Dashboards.Infrastructure\BrewUp.Dashboards.Infrastructure.csproj" />
+      <ProjectReference Include="..\BrewUp.Dashboards.ReadModel\BrewUp.Dashboards.ReadModel.csproj" />
+      <ProjectReference Include="..\BrewUp.Dashboards.SharedKernel\BrewUp.Dashboards.SharedKernel.csproj" />
     </ItemGroup>
 
 </Project>

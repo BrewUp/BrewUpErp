@@ -10,8 +10,11 @@ public static class ReadModelHelper
 {
     public static IServiceCollection AddMasterDataReadModel(this IServiceCollection services)
     {
+        services.AddScoped<IQueries<Beer>, BeerQueries>();
         services.AddScoped<IQueries<Customer>, CustomerQueries>();
         services.AddScoped<IQueries<Warehouse>, WarehouseQueries>();
+        
+        services.AddScoped<IBeerQueryService, BeerQueryService>();
         services.AddScoped<ICustomerQueryService, CustomerQueryService>();
         services.AddScoped<IWarehouseQueryService, WarehouseQueryService>();
         
