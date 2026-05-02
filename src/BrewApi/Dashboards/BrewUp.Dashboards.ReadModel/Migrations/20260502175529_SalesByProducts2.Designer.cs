@@ -4,6 +4,7 @@ using BrewUp.Dashboards.ReadModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrewUp.Dashboards.ReadModel.Migrations
 {
     [DbContext(typeof(DashboardsContext))]
-    partial class DashboardsContextModelSnapshot : ModelSnapshot
+    [Migration("20260502175529_SalesByProducts2")]
+    partial class SalesByProducts2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

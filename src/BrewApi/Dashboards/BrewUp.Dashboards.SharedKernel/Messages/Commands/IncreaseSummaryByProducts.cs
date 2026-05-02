@@ -4,10 +4,11 @@ using Muflone.Messages.Commands;
 
 namespace BrewUp.Dashboards.SharedKernel.Messages.Commands;
 
-public class IncreaseSalesSummaryByCustomer(CustomerId aggregateId,
+public sealed class IncreaseSummaryByProducts(
+    BeerId aggregateId,
     SalesOrderValue salesOrderValue,
-    SalesOrderYear salesOrderYear) : Command(aggregateId)
+    SalesOrderQuantity salesOrderQuantity) : Command(aggregateId)
 {
     public SalesOrderValue SalesOrderValue { get; private set; } = salesOrderValue;
-    public SalesOrderYear SalesOrderYear { get; private set; } = salesOrderYear;
+    public SalesOrderQuantity SalesOrderQuantity { get; private set; } = salesOrderQuantity;
 }
