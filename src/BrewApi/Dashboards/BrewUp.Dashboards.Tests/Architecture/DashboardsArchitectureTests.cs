@@ -1,22 +1,21 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using BrewUp.Dashboards.Facade;
 using BrewUp.Shared.Tests;
-using BrewUp.Warehouse.Domain;
-using BrewUp.Warehouse.Facade;
 using NetArchTest.Rules;
 
-namespace BrewUp.Warehouse.Tests.Architecture;
+namespace BrewUp.Dashboards.Tests.Architecture;
 
 [ExcludeFromCodeCoverage]
-public class WarehouseArchitectureTests
+public class DashboardsArchitectureTests
 {
     [Fact]
-    public void Should_WarehouseArchitecture_BeCompliant()
+    public void Should_DashboardsArchitecture_BeCompliant()
     {
-        var types = Types.InAssembly(typeof(WarehouseFacadeHelper).Assembly);
-
-        var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjects(true, ["Warehouse"]);
+        var types = Types.InAssembly(typeof(DashboardsFacadeHelper).Assembly);
         
+        var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjects(true, ["Dashboards"]);
+
         var result = types
             .ShouldNot()
             .HaveDependencyOnAny(forbiddenAssemblies.ToArray())
@@ -27,9 +26,9 @@ public class WarehouseArchitectureTests
     }
     
     [Fact]
-    public void WarehouseProjects_Should_Having_Namespace_StartingWith_Warehouse()
+    public void DashboardsProjects_Should_Having_Namespace_StartingWith_Dashboards()
     {
-        var modulePath = Path.Combine(VisualStudioProvider.TryGetSolutionDirectoryInfo().FullName, "Warehouse");
+        var modulePath = Path.Combine(VisualStudioProvider.TryGetSolutionDirectoryInfo().FullName, "Dashboards");
         var subFolders = Directory.GetDirectories(modulePath);
 
         var netVersion = Environment.Version;
@@ -53,7 +52,7 @@ public class WarehouseArchitectureTests
         
         var typesWithCorrectNamespace = Types.InAssemblies(moduleAssemblies)
             .That()
-            .ResideInNamespaceStartingWith("BrewUp.Warehouse")
+            .ResideInNamespaceStartingWith("BrewUp.Dashboards")
             .And()
             .AreNotNested()
             .GetTypes();
@@ -67,23 +66,8 @@ public class WarehouseArchitectureTests
             if (type.Namespace != null)
                 Assert.Fail(
                     $"Namespace violation detected: {type.FullName} in assembly {type.Assembly.GetName().Name} should start " +
-                    $"with 'BrewUp.Warehouse' but is in namespace '{type.Namespace}'");
+                    $"with 'BrewUp.Dashboards' but is in namespace '{type.Namespace}'");
         }
-    }
-    
-    [Fact]
-    public void Domain_Should_Not_Depend_On_Outer_Layers()
-    {
-        var result = Types.InAssembly(typeof(DomainHelper).Assembly)
-            .ShouldNot()
-            .HaveDependencyOnAny(
-                "BrewUp.Infrastructure",
-                "BrewUp.Warehouse.Infrastructure",
-                "BrewUp.Warehouse.ReadModel",
-                "BrewUp.Warehouse.Facade")
-            .GetResult();
-
-        Assert.True(result.IsSuccessful);
     }
     
     private static class VisualStudioProvider
