@@ -8,7 +8,7 @@ public class DashboardsContextFactory : IDesignTimeDbContextFactory<DashboardsCo
     public DashboardsContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<DashboardsContext>();
-        optionsBuilder.UseSqlServer("Server=brewup-sql-server.database.windows.net;Database=Sales;User Id=brewup-admin;Password=AzureDayRome!2025;TrustServerCertificate=True");
+        optionsBuilder.UseSqlServer("Server=(localhost);Database=Sales;User Id=brewup-admin;Password=xxxxxxxxxxxxxx;TrustServerCertificate=True");
 
         return new DashboardsContext(optionsBuilder.Options);
     }

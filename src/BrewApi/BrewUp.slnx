@@ -11,6 +11,7 @@
     <Project Path="Dashboards/BrewUp.Dashboards.Infrastructure/BrewUp.Dashboards.Infrastructure.csproj" />
     <Project Path="Dashboards/BrewUp.Dashboards.ReadModel/BrewUp.Dashboards.ReadModel.csproj" />
     <Project Path="Dashboards/BrewUp.Dashboards.SharedKernel/BrewUp.Dashboards.SharedKernel.csproj" />
+    <Project Path="Dashboards/BrewUp.Dashboards.Tests/BrewUp.Dashboards.Tests.csproj" />
   </Folder>
   <Folder Name="/50 Modules/MasterData/">
     <Project Path="BrewUp.MasterData.Tests/BrewUp.MasterData.Tests.csproj" />
