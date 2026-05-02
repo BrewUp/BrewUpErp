@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BrewUp.Dashboards.Domain.CommandHandlers;
 
-public sealed class CreateSalesByCustomersCommandHandler(IDashboardsRepository<SalesByCustomers> repository, ILoggerFactory loggerFactory) 
+public sealed class CreateSummaryByCustomersCommandHandler(IDashboardsRepository<SalesByCustomers> repository, ILoggerFactory loggerFactory) 
     : DashboardsCommandHandlerBaseAsync<CreateSummaryByCustomer>(repository, loggerFactory)
 {
     public override async Task HandleAsync(CreateSummaryByCustomer command, CancellationToken cancellationToken = new ())

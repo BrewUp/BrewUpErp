@@ -9,7 +9,7 @@ public class SalesByCustomers : DtoBase
 {
     public string CustomerName { get; private set; } = string.Empty;
     public string Year { get; private set; } = string.Empty;
-    public double TotalSales { get; private set; } = 0;
+    public decimal TotalSales { get; private set; } = 0;
     public string Currency { get; private set; } = string.Empty;
     
     protected SalesByCustomers()
@@ -26,6 +26,9 @@ public class SalesByCustomers : DtoBase
         Id = customerId;
         CustomerName = customerName;
         Year = year;
+        
+        TotalSales = 0;
+        Currency = string.Empty;
     }
     
     public void UpdateTotalSales(SalesOrderValue totalSales)
@@ -34,9 +37,9 @@ public class SalesByCustomers : DtoBase
         Currency = totalSales.Currency;
     }
     
-    public SalesForCustomerJson ToJson()
+    public SalesByCustomerJson ToJson()
     {
-        return new SalesForCustomerJson
+        return new SalesByCustomerJson
         {
             CustomerId = Id,
             CustomerName = CustomerName,

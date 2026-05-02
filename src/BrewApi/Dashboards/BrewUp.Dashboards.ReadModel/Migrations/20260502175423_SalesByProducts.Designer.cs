@@ -4,6 +4,7 @@ using BrewUp.Dashboards.ReadModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrewUp.Dashboards.ReadModel.Migrations
 {
     [DbContext(typeof(DashboardsContext))]
-    partial class DashboardsContextModelSnapshot : ModelSnapshot
+    [Migration("20260502175423_SalesByProducts")]
+    partial class SalesByProducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,40 +72,6 @@ namespace BrewUp.Dashboards.ReadModel.Migrations
                     b.HasKey("Id", "Year");
 
                     b.ToTable("SalesByCustomers", "dbo");
-                });
-
-            modelBuilder.Entity("BrewUp.Dashboards.Entities.Dtos.SalesByProducts", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(36)
-                        .HasColumnType("nvarchar(36)");
-
-                    b.Property<string>("Year")
-                        .HasMaxLength(4)
-                        .HasColumnType("nvarchar(4)");
-
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalQuantity")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TotalSales")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("UnitOfMeasure")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id", "Year");
-
-                    b.ToTable("SalesByProducts", "dbo");
                 });
 #pragma warning restore 612, 618
         }

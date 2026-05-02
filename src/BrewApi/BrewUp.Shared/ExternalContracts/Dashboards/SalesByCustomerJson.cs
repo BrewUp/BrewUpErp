@@ -1,6 +1,6 @@
 ﻿namespace BrewUp.Shared.ExternalContracts.Dashboards;
 
-public class SalesForCustomerJson
+public class SalesByCustomerJson
 {
     public string CustomerId { get; set; } = string.Empty;
     public string CustomerName { get; set; } = string.Empty;

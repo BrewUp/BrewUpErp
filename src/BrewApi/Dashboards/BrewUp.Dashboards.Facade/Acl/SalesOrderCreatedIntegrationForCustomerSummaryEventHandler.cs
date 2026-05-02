@@ -1,22 +1,20 @@
 ﻿using System.Linq.Expressions;
+using BrewUp.Dashboards.Domain;
 using BrewUp.Dashboards.Entities.Dtos;
 using BrewUp.Dashboards.Infrastructure;
 using BrewUp.Dashboards.SharedKernel.CustomTypes;
-using BrewUp.Dashboards.SharedKernel.Messages.Commands;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.Messages.Events;
 using BrewUp.Shared.ReadModel;
 using Microsoft.Extensions.Logging;
-using Muflone.Messages.Commands;
 using Muflone.Messages.Events;
 
 namespace BrewUp.Dashboards.Facade.Acl;
 
 public sealed class SalesOrderCreatedIntegrationForCustomerSummaryEventHandler(
-    ICommandHandlerAsync<IncreaseSalesSummaryByCustomer> increaseSalesSummaryByCustomerCommandHandler, 
-    ICommandHandlerAsync<CreateSummaryByCustomer> createSalesSummaryByCustomerCommandHandler,
-    IMessagesReceivedService  messagesReceivedService,
     IQueries<SalesByCustomers> salesByCustomersQueries,
+    IDashboardsDomainService dashboardsDomainService,
+    IMessagesReceivedService  messagesReceivedService,
     ILoggerFactory loggerFactory)
     : IntegrationEventHandlerAsync<SalesOrderCreatedWihPriceIntegrationEvent>(loggerFactory)
 {
@@ -27,8 +25,8 @@ public sealed class SalesOrderCreatedIntegrationForCustomerSummaryEventHandler(
         
         if (IsMessageAlreadyProcessed(@event.MessageId.ToString()))
             return;
-
-        var salesOrderValue = @event.Rows.Sum(row => (double) (row.Price.Value * row.Quantity.Value));
+        
+        var salesOrderValue = @event.Rows.Sum(row => (row.Price.Value * row.Quantity.Value));
         
         Expression<Func<SalesByCustomers, bool>> query = customers => customers.Id == @event.CustomerId && customers.Year == @event.SalesOrderDate.Year.ToString(); 
         var queryResult = await salesByCustomersQueries.GetByFilterAsync(query, 1, 1, cancellationToken);
@@ -40,21 +38,13 @@ public sealed class SalesOrderCreatedIntegrationForCustomerSummaryEventHandler(
             
         if (!pagedResult.Results.Any())
         {
-            CreateSummaryByCustomer createCommand = new (new CustomerId(@event.CustomerId),
-                new CustomerName(@event.CustomerName),
-                new SalesOrderValue(salesOrderValue, "EUR"),
-                new SalesOrderYear(@event.SalesOrderDate.Year.ToString()));
-        
-            await createSalesSummaryByCustomerCommandHandler.HandleAsync(createCommand, cancellationToken); 
+            await dashboardsDomainService.CreateSummaryByCustomersAsync(new CustomerId(@event.CustomerId), new CustomerName(@event.CustomerName),
+                new SalesOrderYear(@event.SalesOrderDate.Year.ToString()), cancellationToken);
         }
             
         salesOrderValue += pagedResult.Results.FirstOrDefault()?.TotalSales ?? 0;
-            
-        IncreaseSalesSummaryByCustomer increaseCommand = new (new CustomerId(@event.CustomerId),
-            new SalesOrderValue(salesOrderValue, "EUR"),
-            new SalesOrderYear(@event.SalesOrderDate.Year.ToString()));
-            
-        await increaseSalesSummaryByCustomerCommandHandler.HandleAsync(increaseCommand, cancellationToken);
+         
+        await dashboardsDomainService.IncreaseSummaryByCustomersAsync(new CustomerId(@event.CustomerId), new SalesOrderValue(salesOrderValue, "EUR"), cancellationToken);
         
         await AddMessageAsync(@event.MessageId.ToString(), cancellationToken);
     }

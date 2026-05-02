@@ -8,25 +8,25 @@ using Microsoft.Extensions.Logging;
 
 namespace BrewUp.Dashboards.Infrastructure.Repository;
 
-public class SalesByCustomersRepository(DashboardsContext dashboardsContext,
-    ILoggerFactory loggerFactory) : IDashboardsRepository<SalesByCustomers>
+public class SummaryByProductsRepository(DashboardsContext dashboardsContext,
+    ILoggerFactory loggerFactory) : IDashboardsRepository<SalesByProducts>
 {
-    private readonly ILogger<SalesByCustomersRepository> _logger = loggerFactory.CreateLogger<SalesByCustomersRepository>();
+    private readonly ILogger<SummaryByProductsRepository> _logger = loggerFactory.CreateLogger<SummaryByProductsRepository>();
     
-    public async Task<Result<SalesByCustomers>> GetByIdAsync(string id, CancellationToken cancellationToken)
+    public async Task<Result<SalesByProducts>> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
         try
         {
-            var queryable = dashboardsContext.Set<SalesByCustomers>()
+            var queryable = dashboardsContext.Set<SalesByProducts>()
                 .Where(a => a.Id.Equals(id));
             
             var result = await queryable.FirstOrDefaultAsync(cancellationToken: cancellationToken);
             
             return result != null
-                ? Result<SalesByCustomers>.Success(result)
-                : Result<SalesByCustomers>.Error($"Entity of type {nameof(SalesByCustomers)} with id {id} not found.");
+                ? Result<SalesByProducts>.Success(result)
+                : Result<SalesByProducts>.Error($"Entity of type {nameof(SalesByProducts)} with id {id} not found.");
         }
         catch (Exception ex)
         {
@@ -35,7 +35,7 @@ public class SalesByCustomersRepository(DashboardsContext dashboardsContext,
         }
     }
 
-    public async Task AddAsync(SalesByCustomers entity, CancellationToken cancellationToken)
+    public async Task AddAsync(SalesByProducts entity, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -60,7 +60,7 @@ public class SalesByCustomersRepository(DashboardsContext dashboardsContext,
         }
     }
 
-    public async Task UpdateAsync(SalesByCustomers entity, CancellationToken cancellationToken)
+    public async Task UpdateAsync(SalesByProducts entity, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -84,7 +84,7 @@ public class SalesByCustomersRepository(DashboardsContext dashboardsContext,
         }
     }
 
-    public async Task DeleteAsync(SalesByCustomers entity, CancellationToken cancellationToken)
+    public async Task DeleteAsync(SalesByProducts entity, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         
@@ -108,28 +108,23 @@ public class SalesByCustomersRepository(DashboardsContext dashboardsContext,
         }
     }
     
-    private async Task AddEntityAsync(SalesByCustomers entity, CancellationToken cancellationToken)
+    private async Task AddEntityAsync(SalesByProducts entity, CancellationToken cancellationToken)
     {
-        var dbSet = dashboardsContext.Set<SalesByCustomers>();
+        var dbSet = dashboardsContext.Set<SalesByProducts>();
         await dbSet.AddAsync(entity, cancellationToken);
         await dashboardsContext.SaveChangesAsync(cancellationToken);
     }
     
-    private async Task UpdateEntityAsync(SalesByCustomers entity, CancellationToken cancellationToken)
+    private async Task UpdateEntityAsync(SalesByProducts entity, CancellationToken cancellationToken)
     {
-        var dbSet = dashboardsContext.Set<SalesByCustomers>();
+        var dbSet = dashboardsContext.Set<SalesByProducts>();
         dbSet.Update(entity);
         await dashboardsContext.SaveChangesAsync(cancellationToken);
     }
     
-    private async Task DeleteEntityAsync(SalesByCustomers entity, CancellationToken cancellationToken)
+    private async Task DeleteEntityAsync(SalesByProducts entity, CancellationToken cancellationToken)
     {
-        dashboardsContext.Set<SalesByCustomers>().Remove(entity);
+        dashboardsContext.Set<SalesByProducts>().Remove(entity);
         await dashboardsContext.SaveChangesAsync(cancellationToken);
-    }
-    
-    private static TAggregate ConstructAggregate<TAggregate>()
-    {
-        return (TAggregate)Activator.CreateInstance(typeof(TAggregate), true)!;
     }
 }

@@ -14,7 +14,8 @@ public static class InfrastructureHelper
         // services.AddDbContext<DashboardsContext>(options =>
         //     options.UseSqlServer(configurationManager["BrewUp:SqlServer:ConnectionString"]!));
 
-        services.AddScoped<IDashboardsRepository<SalesByCustomers>, SalesByCustomersRepository>();
+        services.AddScoped<IDashboardsRepository<SalesByCustomers>, SummaryByCustomersRepository>();
+        services.AddScoped<IDashboardsRepository<SalesByProducts>, SummaryByProductsRepository>();
         services.AddScoped<IDashboardsRepository<MessagesReceived>, MessagesReceivedRepository>();
         
         services.AddScoped<IMessagesReceivedService, MessagesReceivedService>();

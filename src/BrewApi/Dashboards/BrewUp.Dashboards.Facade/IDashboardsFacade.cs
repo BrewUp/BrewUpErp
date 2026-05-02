@@ -6,7 +6,12 @@ namespace BrewUp.Dashboards.Facade;
 
 public interface IDashboardsFacade
 {
-    Task<Result<PagedResult<SalesForCustomerJson>>> GetSalesByCustomerAsync(
+    Task<Result<PagedResult<SalesByCustomerJson>>> GetSalesByCustomerAsync(
+        int pageNumber,
+        int pageSize,
+        CancellationToken cancellationToken);
+    
+    Task<Result<PagedResult<SalesByProductsJson>>> GetSalesByProductAsync(
         int pageNumber,
         int pageSize,
         CancellationToken cancellationToken);

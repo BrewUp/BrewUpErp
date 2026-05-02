@@ -33,6 +33,7 @@ public class DashboardsContext(DbContextOptions<DashboardsContext> options) : Db
         base.OnModelCreating(modelBuilder);
         
         modelBuilder.ApplyConfiguration(new SalesByCustomersMappings());
+        modelBuilder.ApplyConfiguration(new SalesByProductsMappings());
         modelBuilder.ApplyConfiguration(new MessagesReceivedMappings());
     }
 }
