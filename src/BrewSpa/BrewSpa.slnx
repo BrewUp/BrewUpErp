@@ -5,6 +5,7 @@
   </Folder>
   <Folder Name="/50 Modules/" />
   <Folder Name="/50 Modules/Dashboards/">
+    <Project Path="Dashboards/BrewSpa.Dashboards.ApplicationServices/BrewSpa.Dashboards.ApplicationServices.csproj" />
     <Project Path="Dashboards/BrewSpa.Dashboards.Facade/BrewSpa.Dashboards.Facade.csproj" />
   </Folder>
   <Folder Name="/50 Modules/DataMaster/">

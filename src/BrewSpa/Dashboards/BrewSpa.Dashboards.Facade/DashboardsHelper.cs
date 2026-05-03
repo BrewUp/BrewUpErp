@@ -8,7 +8,7 @@ public static class DashboardsHelper
     public static IServiceCollection AddDashboardsFacade(this IServiceCollection services)
     {
         services.AddApexCharts();
-        
+
         return services;
     }
 }

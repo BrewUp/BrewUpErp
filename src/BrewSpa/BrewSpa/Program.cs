@@ -1,5 +1,5 @@
-using ApexCharts;
 using BrewSpa;
+using BrewSpa.Dashboards.ApplicationServices.Extensions;
 using BrewSpa.MasterData.Application.Extensions;
 using BrewSpa.Shared.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -21,5 +21,6 @@ builder.Services.AddSingleton<IConfiguration>(configuration);
 builder.Services.AddSharedComponents();
 
 builder.Services.AddMasterDataServices(builder.Configuration);
+builder.Services.AddDashboardsApplicationServices(builder.Configuration);
 
 await builder.Build().RunAsync();

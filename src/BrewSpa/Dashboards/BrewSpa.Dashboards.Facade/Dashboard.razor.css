@@ -1,6 +1,74 @@
-﻿.my-component {
-    border: 2px dashed red;
-    padding: 1em;
-    margin: 1em 0;
-    background-image: url('background.png');
+﻿.dashboard-container {
+    padding: 1.5rem;
+}
+
+.header-section {
+    margin-bottom: 1.5rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+}
+
+.page-subtitle {
+    color: #6c757d;
+    margin: 0;
+}
+
+.loading-message {
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* ── Tabs ── */
+
+.tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 1.25rem;
+}
+
+.tab-btn {
+    padding: 0.6rem 1.4rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #6c757d;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.tab-btn:hover {
+    color: #343a40;
+}
+
+.tab-btn.active {
+    color: #0d6efd;
+    border-bottom-color: #0d6efd;
+}
+
+/* ── Chart card ── */
+
+.tab-content {
+    padding-top: 0.5rem;
+}
+
+.chart-card {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+}
+
+.chart-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+    color: #343a40;
 }
