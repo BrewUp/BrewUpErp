@@ -7,14 +7,15 @@
 <PageTitle>Dashboard</PageTitle>
 
 <div class="dashboard-container">
-@*     <div class="header-section">
-        <h1 class="page-title">BrewUp Dashboard</h1>
-        <p class="page-subtitle">Sales analytics aggregated by customer and product</p>
-    </div> *@
+    <div class="header-section">
+        @* <h1 class="page-title">BrewUp Dashboard</h1> *@
+        <p class="page-subtitle">@_message</p> 
+    </div>
+    
 
     @if (_isLoading)
     {
-        <p class="loading-message">Loading dashboard data...</p>
+        <p class="loading-message">@_message</p>
     }
     else
     {

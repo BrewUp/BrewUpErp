@@ -6,21 +6,21 @@ public static class ModulesProjectUtils
         "BrewUp.MasterData.Domain",
         "BrewUp.MasterData.Facade",
         "BrewUp.MasterData.Infrastructure",
-        "BrewUp.MasterData.readModel", 
+        "BrewUp.MasterData.ReadModel", 
         "BrewUp.MasterData.SharedKernel",
         "BrewUp.MasterData.Tests",
         
         "BrewUp.Sales.Domain",
         "BrewUp.Sales.Facade",
         "BrewUp.Sales.Infrastructure",
-        "BrewUp.Sales.readModel", 
+        "BrewUp.Sales.ReadModel", 
         "BrewUp.Sales.SharedKernel",
         "BrewUp.Sales.Tests",
         
         "BrewUp.Warehouse.Domain",
         "BrewUp.Warehouse.Facade",
         "BrewUp.Warehouse.Infrastructure",
-        "BrewUp.Warehouse.readModel", 
+        "BrewUp.Warehouse.ReadModel", 
         "BrewUp.Warehouse.SharedKernel",
         "BrewUp.Warehouse.Tests",
         
@@ -28,7 +28,7 @@ public static class ModulesProjectUtils
         "BrewUp.Dashboards.Entities",
         "BrewUp.Dashboards.Facade",
         "BrewUp.Dashboards.Infrastructure",
-        "BrewUp.Dashboards.readModel", 
+        "BrewUp.Dashboards.ReadModel", 
         "BrewUp.Dashboards.SharedKernel",
         "BrewUp.Dashboards.Tests"
     ];

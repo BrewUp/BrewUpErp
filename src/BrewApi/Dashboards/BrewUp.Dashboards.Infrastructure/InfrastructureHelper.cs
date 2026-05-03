@@ -1,4 +1,5 @@
 ﻿using BrewUp.Dashboards.Entities.Dtos;
+using BrewUp.Dashboards.Infrastructure.Hubs;
 using BrewUp.Dashboards.Infrastructure.Repository;
 using BrewUp.Dashboards.SharedKernel.Persistence;
 using Microsoft.Extensions.Configuration;
@@ -14,11 +15,15 @@ public static class InfrastructureHelper
         // services.AddDbContext<DashboardsContext>(options =>
         //     options.UseSqlServer(configurationManager["BrewUp:SqlServer:ConnectionString"]!));
 
+        services.AddSignalR();
+        
         services.AddScoped<IDashboardsRepository<SalesByCustomers>, SummaryByCustomersRepository>();
         services.AddScoped<IDashboardsRepository<SalesByProducts>, SummaryByProductsRepository>();
         services.AddScoped<IDashboardsRepository<MessagesReceived>, MessagesReceivedRepository>();
         
         services.AddScoped<IMessagesReceivedService, MessagesReceivedService>();
+
+        services.AddSingleton<IDashboardsHubHelper, DashboardsHubHelper>();
         
         return services;
     }
