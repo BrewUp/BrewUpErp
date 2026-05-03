@@ -7,6 +7,7 @@
   <Folder Name="/50 Modules/Dashboards/">
     <Project Path="Dashboards/BrewSpa.Dashboards.ApplicationServices/BrewSpa.Dashboards.ApplicationServices.csproj" />
     <Project Path="Dashboards/BrewSpa.Dashboards.Facade/BrewSpa.Dashboards.Facade.csproj" />
+    <Project Path="Dashboards/BrewSpa.Dashboards.Tests/BrewSpa.Dashboards.Tests.csproj" Id="58baf2cf-8817-4857-9110-e3555f9b0379" />
   </Folder>
   <Folder Name="/50 Modules/DataMaster/">
     <Project Path="MasterData/BrewSpa.MasterData.Application/BrewSpa.MasterData.Application.csproj" />

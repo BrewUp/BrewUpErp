@@ -40,6 +40,8 @@ public class DashboardsModule : IModule
     public WebApplication Configure(WebApplication app)
     {
         app.MapDashboardsEndpoints();
+        app.MapDashboardsSignalR();
+        
         return app;
     }
 }

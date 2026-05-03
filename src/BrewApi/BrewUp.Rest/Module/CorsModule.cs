@@ -27,9 +27,9 @@ public class CorsModule : IModule
         {
             options.AddPolicy("BrewUpCorsPolicy", policy =>
             {
-                policy.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
+                policy.AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials().SetIsOriginAllowed(_ => true);
             });
         });
         
