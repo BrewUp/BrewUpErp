@@ -8,9 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BitBlazor" Version="0.2.2" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.2" PrivateAssets="all"/>
+        <PackageReference Include="BitBlazor" Version="0.2.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.7" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.7" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BrewSpa.Shared.Components\BrewSpa.Shared.Components.csproj" />
+      <ProjectReference Include="..\Dashboards\BrewSpa.Dashboards.ApplicationServices\BrewSpa.Dashboards.ApplicationServices.csproj" />
       <ProjectReference Include="..\Dashboards\BrewSpa.Dashboards.Facade\BrewSpa.Dashboards.Facade.csproj" />
       <ProjectReference Include="..\MasterData\BrewSpa.MasterData.Facade\BrewSpa.MasterData.Facade.csproj" />
       <ProjectReference Include="..\Sales\BrewSpa.Sales.Facade\BrewSpa.Sales.Facade.csproj" />

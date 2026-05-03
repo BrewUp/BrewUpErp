@@ -2,24 +2,68 @@
 @page "/dashboard"
 
 @using ApexCharts
-@using BrewSpa.Dashboards.Facade.Models
+@using BrewSpa.Dashboards.ApplicationServices.Models
 
 <PageTitle>Dashboard</PageTitle>
 
-<ApexChart TItem="SummaryData"
-           Title="Summary Data">
+<div class="dashboard-container">
+@*     <div class="header-section">
+        <h1 class="page-title">BrewUp Dashboard</h1>
+        <p class="page-subtitle">Sales analytics aggregated by customer and product</p>
+    </div> *@
 
-    <ApexPointSeries TItem="SummaryData"
-                     Items="Data"
-                     Name="Net Profit"
-                     SeriesType="SeriesType.Bar"
-                     XValue="e => e.Category"
-                     YValue="e=> e.NetProfit" />
+    @if (_isLoading)
+    {
+        <p class="loading-message">Loading dashboard data...</p>
+    }
+    else
+    {
+        <div class="tab-bar">
+            <button class="tab-btn @(_activeTab == "customers" ? "active" : "")"
+                    @onclick="@(() => _activeTab = "customers")">
+                Customers
+            </button>
+            <button class="tab-btn @(_activeTab == "products" ? "active" : "")"
+                    @onclick="@(() => _activeTab = "products")">
+                Products
+            </button>
+        </div>
 
-    <ApexPointSeries TItem="SummaryData"
-                     Items="Data"
-                     Name="Revenue"
-                     SeriesType="SeriesType.Bar"
-                     XValue="e => e.Category"
-                     YValue="e=> e.Revenue" />
-</ApexChart>
+        <div class="tab-content">
+            @if (_activeTab == "customers")
+            {
+                <div class="chart-card">
+                    <h2 class="chart-title">Sales by Customer</h2>
+                    <ApexChart TItem="SalesByCustomerJson" Title="">
+                        <ApexPointSeries TItem="SalesByCustomerJson"
+                                         Items="_salesByCustomer"
+                                         Name="Total Sales"
+                                         SeriesType="SeriesType.Bar"
+                                         XValue="e => e.CustomerName"
+                                         YValue="e => e.TotalSales" />
+                    </ApexChart>
+                </div>
+            }
+            else if (_activeTab == "products")
+            {
+                <div class="chart-card">
+                    <h2 class="chart-title">Sales by Product</h2>
+                    <ApexChart TItem="SalesByProductJson" Title="">
+                        <ApexPointSeries TItem="SalesByProductJson"
+                                         Items="_salesByProduct"
+                                         Name="Total Sales"
+                                         SeriesType="SeriesType.Bar"
+                                         XValue="e => e.ProductName"
+                                         YValue="e => e.TotalSales" />
+                        <ApexPointSeries TItem="SalesByProductJson"
+                                         Items="_salesByProduct"
+                                         Name="Quantity"
+                                         SeriesType="SeriesType.Line"
+                                         XValue="e => e.ProductName"
+                                         YValue="e => e.Quantity" />
+                    </ApexChart>
+                </div>
+            }
+        </div>
+    }
+</div>

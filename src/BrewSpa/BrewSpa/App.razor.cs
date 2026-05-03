@@ -31,18 +31,32 @@ public class AppBase : ComponentBase, IDisposable
         {
             switch (args.Path)
             {
+                case "dashboards":
+                {
+                  if (Configuration!.GetValue<bool>("Modules:EnableDashboards"))
+                  {
+                    var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>
+                    {
+                      "BrewSpa.Dashboards.Facade.wasm"
+                    });
+                    LazyLoadedAssemblies.AddRange(assemblies);
+                  }
+
+                  break;
+                }
+
                 case "masterdata":
                 {
-                    if (Configuration!.GetValue<bool>("Modules:EnableDataMaster"))
+                  if (Configuration!.GetValue<bool>("Modules:EnableDataMaster"))
+                  {
+                    var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>
                     {
-                      var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>
-                        {
-                            "BrewSpa.MasterData.Facade.wasm"
-                        });
-                      LazyLoadedAssemblies.AddRange(assemblies);
-                    }
+                        "BrewSpa.MasterData.Facade.wasm"
+                    });
+                    LazyLoadedAssemblies.AddRange(assemblies);
+                  }
 
-                    break;
+                  break;
                 }
                 
                 case "sales":

@@ -6,7 +6,7 @@ public partial class Sales : ComponentBase, IDisposable
 {
     [Inject] private NavigationManager Navigation { get; set; } = null!;
 
-    protected void NavigateToSection(string section)
+    private void NavigateToSection(string section)
     {
         switch (section.ToLower())
         {
