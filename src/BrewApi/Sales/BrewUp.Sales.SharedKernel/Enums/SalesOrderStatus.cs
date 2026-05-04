@@ -8,8 +8,9 @@ public class SalesOrderStatus(int id, string name) : Enumeration(id, name)
     public static SalesOrderStatus WorkInProgress = new (2, nameof(WorkInProgress).ToLowerInvariant());
     public static SalesOrderStatus Completed = new (3, nameof(Completed).ToLowerInvariant());
     public static SalesOrderStatus Closed = new (4, nameof(Closed).ToLowerInvariant());
+    public static SalesOrderStatus Rejected = new (5, nameof(Rejected).ToLowerInvariant());
 
-    public static IEnumerable<SalesOrderStatus> List() => [Accepted, WorkInProgress, Completed, Closed];
+    public static IEnumerable<SalesOrderStatus> List() => [Accepted, WorkInProgress, Completed, Closed, Rejected];
 
     public static SalesOrderStatus FromName(string name)
     {

@@ -1,5 +1,6 @@
 ﻿using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.Messages.Events;
+using BrewUp.Shared.Messages.Events.Sales;
 using BrewUp.Warehouse.SharedKernel.CustomTypes;
 using BrewUp.Warehouse.SharedKernel.Messages.Commands;
 using Microsoft.Extensions.Logging;

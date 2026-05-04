@@ -6,6 +6,7 @@ using BrewUp.Dashboards.SharedKernel.CustomTypes;
 using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.Messages.Events;
+using BrewUp.Shared.Messages.Events.Sales;
 using BrewUp.Shared.ReadModel;
 using Microsoft.Extensions.Logging;
 using Muflone.Messages.Events;

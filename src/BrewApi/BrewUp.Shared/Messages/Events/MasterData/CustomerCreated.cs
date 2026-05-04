@@ -3,7 +3,7 @@ using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.Helpers;
 using Muflone.Messages.Events;
 
-namespace BrewUp.Shared.Messages.Events;
+namespace BrewUp.Shared.Messages.Events.MasterData;
 
 public sealed class CustomerCreated(CustomerId aggregateId, 
     RagioneSociale ragioneSociale,
