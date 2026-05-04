@@ -30,7 +30,15 @@ public static class ModulesProjectUtils
         "BrewUp.Dashboards.Infrastructure",
         "BrewUp.Dashboards.ReadModel", 
         "BrewUp.Dashboards.SharedKernel",
-        "BrewUp.Dashboards.Tests"
+        "BrewUp.Dashboards.Tests",
+        
+        "BrewUp.Sagas.Domain",
+        "BrewUp.Sagas.Entities",
+        "BrewUp.Sagas.Facade",
+        "BrewUp.Sagas.Infrastructure",
+        "BrewUp.Sagas.ReadModel", 
+        "BrewUp.Sagas.SharedKernel",
+        "BrewUp.Sagas.Tests"
     ];
 
     public static IEnumerable<string> GetModuleProjects(bool includeFacadeProjects, IEnumerable<string> excludeModules)

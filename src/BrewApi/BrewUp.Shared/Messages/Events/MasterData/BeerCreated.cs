@@ -2,9 +2,9 @@
 using BrewUp.Shared.DomainIds;
 using Muflone.Messages.Events;
 
-namespace BrewUp.Shared.Messages.Events;
+namespace BrewUp.Shared.Messages.Events.MasterData;
 
-public sealed class BeerUpdated(BeerId aggregateId,
+public sealed class BeerCreated(BeerId aggregateId,
     BeerName beerName,
     BeerStyle beerStyle,
     AlcoholByVolume alcoholByVolume,

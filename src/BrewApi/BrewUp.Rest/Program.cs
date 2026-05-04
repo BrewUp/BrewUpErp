@@ -11,7 +11,8 @@ builder.RegisterModules([
     new MasterDataModule(),
     new SalesModule(),
     new WarehouseModule(),
-    new DashboardsModule()
+    new DashboardsModule(),
+    new SagasModule()
 ]);
 
 var app = builder.Build();

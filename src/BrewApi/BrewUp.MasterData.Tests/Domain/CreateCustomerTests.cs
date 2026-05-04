@@ -2,6 +2,7 @@
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.Helpers;
 using BrewUp.Shared.Messages.Events;
+using BrewUp.Shared.Messages.Events.MasterData;
 using Muflone.Persistence;
 
 namespace BrewUp.MasterData.Tests.Domain;

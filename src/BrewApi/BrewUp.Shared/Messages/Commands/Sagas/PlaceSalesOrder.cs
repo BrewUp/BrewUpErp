@@ -1,23 +1,21 @@
 ﻿using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
-using Muflone.Messages.Events;
+using Muflone.Messages.Commands;
 
-namespace BrewUp.Shared.Messages.Events;
+namespace BrewUp.Shared.Messages.Commands.Sagas;
 
-public class SalesOrderCreatedWihPriceIntegrationEvent(IntegrationId aggregateId,
+public sealed class PlaceSalesOrder(IntegrationId aggregateId, 
+    Guid correlationId,
     string salesOrderNumber,
     DateTime salesOrderDate,
     string customerId,
-    string customerName,
     DateTime salesOrderDeliveryDate,
-    IEnumerable<OrderRowWithPriceDto> rows) : IntegrationEvent(aggregateId)
+    IEnumerable<SalesOrderRowJson> rows) : Command(aggregateId, correlationId)
 {
+    public Guid CorrelationId { get; private set; } = correlationId;
     public string SalesOrderNumber { get; private set; } = salesOrderNumber;
     public DateTime SalesOrderDate { get; private set; } = salesOrderDate;
-    
     public string CustomerId { get; private set; } = customerId;
-    public string CustomerName { get; private set; } = customerName;
-    
     public DateTime SalesOrderDeliveryDate { get; private set; } = salesOrderDeliveryDate;
-    public IEnumerable<OrderRowWithPriceDto> Rows { get; private set; } = rows;
+    public List<SalesOrderRowJson> Rows { get; private set; } = rows.ToList();
 }

@@ -21,6 +21,14 @@
     <Project Path="MasterData/BrewUp.MasterData.ReadModel/BrewUp.MasterData.ReadModel.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.SharedKernel/BrewUp.MasterData.SharedKernel.csproj" />
   </Folder>
+  <Folder Name="/50 Modules/Sagas/">
+    <Project Path="Sagas/BrewUp.Sagas.Domain/BrewUp.Sagas.Domain.csproj" />
+    <Project Path="Sagas/BrewUp.Sagas.Facade/BrewUp.Sagas.Facade.csproj" />
+    <Project Path="Sagas/BrewUp.Sagas.Infrastructure/BrewUp.Sagas.Infrastructure.csproj" />
+    <Project Path="Sagas/BrewUp.Sagas.ReadModel/BrewUp.Sagas.ReadModel.csproj" />
+    <Project Path="Sagas/BrewUp.Sagas.SharedKernel/BrewUp.Sagas.SharedKernel.csproj" />
+    <Project Path="Sagas/BrewUp.Sagas.Tests/BrewUp.Sagas.Tests.csproj" />
+  </Folder>
   <Folder Name="/50 Modules/Sales/">
     <Project Path="Sales/BrewUp.Sales.Domain/BrewUp.Sales.Domain.csproj" />
     <Project Path="Sales/BrewUp.Sales.Facade/BrewUp.Sales.Facade.csproj" />

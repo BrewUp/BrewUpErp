@@ -2,7 +2,7 @@
 using BrewUp.Shared.ExternalContracts.Sales;
 using Muflone.Messages.Events;
 
-namespace BrewUp.Shared.Messages.Events;
+namespace BrewUp.Shared.Messages.Events.Sales;
 
 public class SalesOrderCreatedIntegrationEvent(IntegrationId aggregateId,
     string salesOrderNumber,
