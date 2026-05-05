@@ -1,5 +1,6 @@
 {
   "appHost": {
-    "language": "csharp"
+    "language": "csharp",
+    "path": "src/BrewApi/BrewUp.AppHost/BrewUp.AppHost.csproj"
   }
 }
