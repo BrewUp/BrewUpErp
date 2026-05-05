@@ -8,7 +8,7 @@ public sealed class CustomerType(int id, string name) : Enumeration(id, name)
     public static CustomerType Silver = new (2, nameof(Silver).ToLowerInvariant());
     public static CustomerType Bronze = new (3, nameof(Bronze).ToLowerInvariant());
 
-    public static IEnumerable<CustomerType> List() => new[] { Silver, Bronze };
+    public static IEnumerable<CustomerType> List() => new[] { Gold, Silver, Bronze };
 
     public static CustomerType FromName(string name)
     {

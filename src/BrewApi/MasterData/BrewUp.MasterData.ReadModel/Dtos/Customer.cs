@@ -15,6 +15,9 @@ public class Customer : DtoBase
     
     public IndirizzoJson Indirizzo { get; private set; } = new ();
     
+    public decimal BudgetLimit { get; private set; } = 0;
+    public bool IsEnabled { get; private set; } = true;
+    
     protected Customer() 
     { }
 
@@ -57,6 +60,24 @@ public class Customer : DtoBase
         Indirizzo = indirizzo;
     }
     
+    public void UpdateConsumerLevel(string consumerLevel)
+    {
+        if (ConsumerLevel == consumerLevel)
+            return;
+        
+        ConsumerLevel = consumerLevel;
+    }
+    
+    public void UpdateBudgetLimit(decimal budgetLimit)
+    {
+        if (BudgetLimit == budgetLimit)
+            return;
+        
+        BudgetLimit = budgetLimit;
+    }
+    
+    public void UpdateIsEnabled(bool isEnabled) => IsEnabled = isEnabled;
+    
     public CustomerJson ToJson() =>
-        new (Id, RagioneSociale, PartitaIva, ConsumerLevel, Indirizzo);
+        new (Id, RagioneSociale, PartitaIva, ConsumerLevel, Indirizzo, BudgetLimit, IsEnabled);
 }

@@ -13,6 +13,7 @@ public static class DomainHelper
         services.AddCommandHandler<CreateSalesOrderCommandHandler>();
         services.AddCommandHandler<AddBeersToCartCommandHandler>();
         services.AddCommandHandler<CloseSalesOrderCommandHandler>();
+        services.AddCommandHandler<PlaceSalesOrderCommandHandler>();
         
         return services;
     }

@@ -1,16 +1,17 @@
-﻿using BrewUp.Shared.DomainIds;
+﻿using BrewUp.Sagas.SharedKernel.CustomTypes;
+using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using Muflone.Messages.Events;
 
-namespace BrewUp.Shared.Messages.Events.Sagas;
+namespace BrewUp.Sagas.SharedKernel.Messages.Events;
 
-public sealed class SalesOrderPlaced(IntegrationId aggregateId, 
+public sealed class SalesOrderSagaStarted(SagaId aggregateId, 
     Guid correlationId,
     string salesOrderNumber,
     DateTime salesOrderDate,
     string customerId,
     DateTime salesOrderDeliveryDate,
-    IEnumerable<SalesOrderRowJson> rows) : IntegrationEvent(aggregateId, correlationId)
+    IEnumerable<SalesOrderRowJson> rows) : DomainEvent(aggregateId, correlationId)
 {
     public string SalesOrderNumber { get; private set; } = salesOrderNumber;
     public DateTime SalesOrderDate { get; private set; } = salesOrderDate;

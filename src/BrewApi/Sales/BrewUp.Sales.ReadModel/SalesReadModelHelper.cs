@@ -20,8 +20,10 @@ public static class SalesReadModelHelper
         services.AddScoped<IQueries<Beer>, BeersQueries>();
 
         services.AddDomainEventHandler<SalesOrderCreatedEventHandler>();
-        services.AddDomainEventHandler<SalesOrderCreatedForIntegrationEventHandler>();
+        // If you want to use Saga, you have to disable this event handler
+        // services.AddDomainEventHandler<SalesOrderCreatedForIntegrationEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedWithPriceForIntegrationEventHandler>();
+        services.AddDomainEventHandler<SalesOrderCreatedForSalesOrderPlacedIntegrationEventHandler>();
 
         services.AddDomainEventHandler<BeersAddedToCartEventHandler>();
         

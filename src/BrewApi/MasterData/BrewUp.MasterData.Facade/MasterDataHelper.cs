@@ -1,9 +1,11 @@
 ﻿using System.Globalization;
 using BrewUp.MasterData.Domain;
+using BrewUp.MasterData.Facade.Acl;
 using BrewUp.MasterData.Infrastructure;
 using BrewUp.MasterData.ReadModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Muflone;
 
 namespace BrewUp.MasterData.Facade;
 
@@ -34,6 +36,8 @@ public static class MasterDataHelper
         services.AddMasterDataDomain();
         services.AddMasterDataInfrastructure();
         services.AddMasterDataReadModel();
+
+        services.AddIntegrationEventHandler<SalesOrderSagaStartedIntegrationEventHandler>();
         
         return services;
     }

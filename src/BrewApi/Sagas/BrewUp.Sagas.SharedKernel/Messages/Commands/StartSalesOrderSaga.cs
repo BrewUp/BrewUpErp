@@ -2,9 +2,9 @@
 using BrewUp.Shared.ExternalContracts.Sales;
 using Muflone.Messages.Commands;
 
-namespace BrewUp.Shared.Messages.Commands.Sagas;
+namespace BrewUp.Sagas.SharedKernel.Messages.Commands;
 
-public sealed class PlaceSalesOrder(IntegrationId aggregateId, 
+public sealed class StartSalesOrderSaga(IntegrationId aggregateId, 
     Guid correlationId,
     string salesOrderNumber,
     DateTime salesOrderDate,

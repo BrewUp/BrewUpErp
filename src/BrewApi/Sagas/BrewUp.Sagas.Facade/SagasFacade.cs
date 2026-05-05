@@ -1,18 +1,18 @@
-﻿using BrewUp.Shared.DomainIds;
+﻿using BrewUp.Sagas.Domain.Orchestrators;
+using BrewUp.Sagas.SharedKernel.Messages.Commands;
+using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sagas;
-using BrewUp.Shared.Messages.Commands.Sagas;
 using Lena.Core;
-using Muflone.Messages.Commands;
 
 namespace BrewUp.Sagas.Facade;
 
-internal sealed class SagasFacade(ICommandHandlerAsync<PlaceSalesOrder> placeSalesOrderCommandHandler) : ISagasFacade
+internal sealed class SagasFacade(ISalesOrderSagaOrchestrator salesOrderSagaOrchestrator) : ISagasFacade
 {
     public async Task<Result<string>> PlaceSalesOrderAsync(PlaceSalesOrderJson body, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         
-        PlaceSalesOrder command = new(new IntegrationId(Guid.CreateVersion7().ToString()),
+        StartSalesOrderSaga command = new(new IntegrationId(Guid.CreateVersion7().ToString()),
             Guid.CreateVersion7(),
             body.OrderNumber,
             body.OrderDate,
@@ -20,7 +20,7 @@ internal sealed class SagasFacade(ICommandHandlerAsync<PlaceSalesOrder> placeSal
             body.DeliveryDate,
             body.Rows);
         
-        await placeSalesOrderCommandHandler.HandleAsync(command, cancellationToken);
+        await salesOrderSagaOrchestrator.StartSagaAsync(command, cancellationToken);
         
         return Result.Success(command.AggregateId.Value);
     }

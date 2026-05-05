@@ -2,7 +2,6 @@
 using BrewUp.Sales.SharedKernel.CustomTypes;
 using BrewUp.Sales.SharedKernel.Enums;
 using BrewUp.Sales.SharedKernel.Messages.Events;
-using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using Muflone.Core;
 using Muflone.CustomTypes;
@@ -35,13 +34,22 @@ public class SalesOrder : AggregateRoot
         IEnumerable<SalesOrderRowJson> rows, Guid correlationId)
     {
         // Business logic validations can be added here
-        // if (customer.CustomerType.Equals(CustomerType.Gold))
-        // {
-        //     // Apply discount
-        // }
+        List<SalesOrderRowJson> rowsList = [];
+        if (customer is not null && customer.CustomerType.Equals(CustomerType.Gold))
+        {
+            
+            rowsList.AddRange(rows.Select(row => new SalesOrderRowJson
+            {
+                BeerId = row.BeerId, BeerName = row.BeerName, Quantity = row.Quantity, Price = new Shared.CustomTypes.Price(row.Price.Value * 0.9m, row.Price.Currency) // Apply a 10% discount for Gold customers
+            }));
+        }
+        
+        rowsList = !rowsList.Any()
+            ? rowsList = rows.ToList()
+            : rowsList;
             
         RaiseEvent(new SalesOrderCreated(aggregateId, salesOrderNumber, salesOrderDate, customer,
-            salesOrderDeliveryDate, rows, correlationId));
+            salesOrderDeliveryDate, rowsList, correlationId));
     }
 
     private void Apply(SalesOrderCreated @event)

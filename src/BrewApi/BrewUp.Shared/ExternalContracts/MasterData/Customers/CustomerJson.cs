@@ -4,4 +4,6 @@ public record CustomerJson(string CustomerId,
     string RagioneSociale,
     string PartitaIva,
     string ConsumerLevel,
-    IndirizzoJson Indirizzo);
+    IndirizzoJson Indirizzo,
+    decimal BudgetLimit,
+    bool IsEnabled);

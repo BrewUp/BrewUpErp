@@ -12,5 +12,9 @@
         <PackageReference Include="Lena" Version="1.1.0" />
         <PackageReference Include="Muflone" Version="10.1.1" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Messages\Commands\Sagas\" />
+    </ItemGroup>
 
 </Project>
