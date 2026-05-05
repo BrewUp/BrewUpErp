@@ -52,4 +52,6 @@
     <Project Path="BrewUp.Rest.Tests/BrewUp.Rest.Tests.csproj" />
     <Project Path="BrewUp.Rest/BrewUp.Rest.csproj" />
   </Folder>
+  <Project Path="BrewUp.AppHost/BrewUp.AppHost.csproj" />
+  <Project Path="BrewUp.ServiceDefaults/BrewUp.ServiceDefaults.csproj" />
 </Solution>
