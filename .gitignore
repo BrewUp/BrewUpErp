@@ -368,6 +368,6 @@ AppPackages/
 !**/Platforms/
 
 # Mobile app secrets and environment-specific config
-mobile/**/apiSettings.json
-**/apiSettings.Development.json
-**/apiSettings.Production.json
+mobile/**/appsettings.json
+**/appsettings.Development.json
+**/appsettings.Production.json
