@@ -1,8 +1,6 @@
-﻿using BrewUp.Sales.SharedKernel.CustomTypes;
-using BrewUp.Sales.SharedKernel.Messages.Events;
+﻿using BrewUp.Sales.SharedKernel.Messages.Events;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
-using BrewUp.Shared.Messages.Events;
 using BrewUp.Shared.Messages.Events.Sales;
 using Microsoft.Extensions.Logging;
 using Muflone;
@@ -11,8 +9,7 @@ using Muflone.Messages.Events;
 namespace BrewUp.Sales.ReadModel.EventHandlers;
 
 public sealed class SalesOrderCreatedWithPriceForIntegrationEventHandler(
-    IEventBus  eventBus,
-    ILoggerFactory loggerFactory) 
+    IEventBus  eventBus, ILoggerFactory loggerFactory) 
     : DomainEventHandlerAsync<SalesOrderCreated>(loggerFactory)
 {
     public override async Task HandleAsync(SalesOrderCreated @event, CancellationToken cancellationToken = new ())

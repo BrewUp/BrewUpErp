@@ -31,6 +31,15 @@ internal static class CustomersEndpoint
                 "Save full details of a customer.")
             .WithName("SaveCustomer");
         
+        group.MapPatch("/{customerId}", HandleCustomerProperties)
+            .AddEndpointFilter<ValidationFilter<CustomerPropertiesJson>>()
+            .Produces(StatusCodes.Status202Accepted)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Update customer's properties")
+            .WithDescription(
+                "Update properties of a customer.")
+            .WithName("UpdateCustomerProperties");
+        
         group.MapDelete("/{customerId}", HandleDeleteCustomer)
             .Produces(StatusCodes.Status202Accepted)
             .Produces(StatusCodes.Status500InternalServerError)
@@ -83,6 +92,20 @@ internal static class CustomersEndpoint
         cancellationToken.ThrowIfCancellationRequested();
 
         var createResult = await masterDataFacade.SaveCustomerAsync(body, cancellationToken);
+
+        return createResult.Match<IResult>(
+            success => Results.Accepted($"/v1/masterdata/customers/{body.CustomerId}", success), 
+            error => Results.Problem(error.Message, statusCode: StatusCodes.Status500InternalServerError));
+    }
+    
+    private static async Task<IResult> HandleCustomerProperties(
+        IMasterDataCustomerFacade masterDataFacade,
+        CustomerPropertiesJson body,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var createResult = await masterDataFacade.SetCustomerPropertiesAsync(body, cancellationToken);
 
         return createResult.Match<IResult>(
             success => Results.Accepted($"/v1/masterdata/customers/{body.CustomerId}", success), 

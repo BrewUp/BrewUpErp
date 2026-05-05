@@ -41,12 +41,13 @@ internal sealed class MasterDataCustomerFacade(ICustomerDomainService masterData
                 new Provincia(body.Indirizzo.Provincia),
                 new Nazione(body.Indirizzo.Nazione)),
             cancellationToken);
-        
-        throw new NotImplementedException();
     }
 
     public Task<Result<bool>> DeleteCustomerAsync(string customerId, CancellationToken cancellationToken) =>
         masterDataDomainService.DeleteCustomerAsync(new CustomerId(customerId), cancellationToken);
+
+    public Task<Result<bool>> SetCustomerPropertiesAsync(CustomerPropertiesJson body, CancellationToken cancellationToken)
+        => masterDataDomainService.SetCustomerPropertiesAsync(body, cancellationToken);
 
     public Task<Result<PagedResult<CustomerJson>>> GetCustomersAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken) =>

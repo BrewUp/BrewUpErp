@@ -1,7 +1,6 @@
-﻿using BrewUp.Sagas.Domain.CommandHandlers;
-using BrewUp.Shared.Messages.Commands.Sagas;
+﻿using BrewUp.Sagas.Domain.Orchestrators;
 using Microsoft.Extensions.DependencyInjection;
-using Muflone.Messages.Commands;
+using Muflone;
 
 namespace BrewUp.Sagas.Domain;
 
@@ -9,7 +8,9 @@ public static class SagasDomainHelper
 {
     public static IServiceCollection AddDomain(this IServiceCollection services)
     {
-        services.AddScoped<ICommandHandlerAsync<PlaceSalesOrder>, PlaceSalesOrderCommandHandler>();
+        services.AddScoped<ISalesOrderSagaOrchestrator, SalesOrderSagaOrchestrator>();
+
+        services.AddIntegrationEventHandler<SalesOrderSagaOrchestrator>();
         
         return services;
     }
