@@ -1,5 +1,4 @@
-﻿using BrewUp.Infrastructure.MongoDb;
-using BrewUp.Infrastructure.RabbitMq;
+﻿using BrewUp.Infrastructure.RabbitMq;
 using BrewUp.Shared.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,11 +16,11 @@ public static class InfrastructureHelper
     {
         MongoDbSettings mongoDbSettings = new();
         configurationManager.GetSection("BrewUp:MongoDbSettings").Bind(mongoDbSettings);
-        services.AddMongoDb(mongoDbSettings);
-        
+        //services.AddMongoDb(mongoDbSettings);
+
         RabbitMqSettings rabbitMqSettings = new();
         configurationManager.GetSection("BrewUp:RabbitMQ").Bind(rabbitMqSettings);
-        
+
         RabbitMQConfiguration rabbitMqConfiguration = new(rabbitMqSettings.Host,
             rabbitMqSettings.Username,
             rabbitMqSettings.Password,

@@ -1,10 +1,13 @@
 <Project Sdk="Aspire.AppHost.Sdk/13.2.4">
 
   <ItemGroup>
+    <ProjectReference Include="..\BrewUp.Infrastructure\BrewUp.Infrastructure.csproj" />
     <ProjectReference Include="..\BrewUp.Rest\BrewUp.Rest.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.MongoDB" Version="13.2.4" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="13.2.4" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.KurrentDB" Version="13.2.1-beta.532" />
   </ItemGroup>
 

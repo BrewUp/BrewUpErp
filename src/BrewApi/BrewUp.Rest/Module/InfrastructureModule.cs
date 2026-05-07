@@ -1,5 +1,4 @@
 ﻿using BrewUp.Infrastructure;
-
 namespace BrewUp.Rest.Module;
 
 /// <summary>
@@ -16,7 +15,7 @@ public class InfrastructureModule : IModule
     /// Modules with lower order values will be registered before those with higher values.
     /// </summary>
     public int Order => 0;
-    
+
     /// <summary>
     /// Registers the module's services and dependencies in the application's service collection.
     /// This method is called during the application startup process to configure the module's services.
@@ -28,7 +27,10 @@ public class InfrastructureModule : IModule
         using var serviceProvider = builder.Services.BuildServiceProvider();
         var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
         builder.Services.AddInfrastructure(loggerFactory, builder.Configuration);
-        
+
+        builder.AddRabbitMQClient(connectionName: "rabbitmq");
+        builder.AddMongoDBClient(connectionName: "mongodb");
+
         return builder.Services;
     }
 
