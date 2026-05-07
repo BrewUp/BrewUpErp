@@ -10,12 +10,14 @@ public class SalesOrderSagaTests
     public void CorrelationId_MustBe_Preserved()
     {
         var correlationId = Guid.CreateVersion7();
+        var warehouseId = Guid.CreateVersion7().ToString();
         var customerId = Guid.CreateVersion7().ToString();
 
         SalesOrderSagaStarted @event = new(new SagaId(correlationId.ToString()), correlationId,
             "1234567890",
             DateTime.UtcNow,
             customerId,
+            warehouseId,
             DateTime.UtcNow.AddDays(5),
             []);
         

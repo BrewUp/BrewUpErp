@@ -17,6 +17,7 @@ internal sealed class SagasFacade(ISalesOrderSagaOrchestrator salesOrderSagaOrch
             body.OrderNumber,
             body.OrderDate,
             body.CustomerId,
+            body.WarehouseId,
             body.DeliveryDate,
             body.Rows);
         

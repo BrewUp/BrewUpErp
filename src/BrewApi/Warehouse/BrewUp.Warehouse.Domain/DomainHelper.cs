@@ -9,6 +9,7 @@ public static class DomainHelper
     public static IServiceCollection AddDomain(this IServiceCollection services)
     {
         services.AddCommandHandler<PrepareShipmentCommandHandler>();
+        services.AddCommandHandler<RequestBeersAvailabilityCommandHandler>();
         
         return services;
     }
