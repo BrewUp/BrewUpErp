@@ -9,32 +9,40 @@ namespace BrewUp.Infrastructure;
 
 public static class InfrastructureHelper
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services,
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
         ILoggerFactory loggerFactory,
         IConfigurationManager configurationManager)
     {
-
         RabbitMqSettings rabbitMqSettings = new();
-        configurationManager.GetSection("BrewUp:RabbitMQ").Bind(rabbitMqSettings);
 
-        //RabbitMQConfiguration rabbitMqConfiguration = new(rabbitMqSettings.Host,
-        //    rabbitMqSettings.Username,
-        //    rabbitMqSettings.Password,
-        //    rabbitMqSettings.ExchangeCommandName,
-        //    rabbitMqSettings.ExchangeEventName,
-        //    rabbitMqSettings.ClientId);
+        configurationManager
+            .GetSection("BrewUp:RabbitMQ")
+            .Bind(rabbitMqSettings);
 
+        var host =
+            configurationManager["RABBITMQ_HOST"]
+            ?? throw new InvalidOperationException("Missing RABBITMQ_HOST");
 
-        RabbitMQConfiguration rabbitMqConfiguration = new(
-            Environment.GetEnvironmentVariable("RABBITMQ_HOST")!,
-            Environment.GetEnvironmentVariable("RABBITMQ_USERNAME")!,
-            Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD")!,
+        var username =
+            configurationManager["RABBITMQ_USERNAME"]
+            ?? throw new InvalidOperationException("Missing RABBITMQ_USERNAME");
+
+        var password =
+            configurationManager["RABBITMQ_PASSWORD"]
+            ?? throw new InvalidOperationException("Missing RABBITMQ_PASSWORD");
+
+        var rabbitMqConfiguration = new RabbitMQConfiguration(
+            host,
+            username,
+            password,
             rabbitMqSettings.ExchangeCommandName,
             rabbitMqSettings.ExchangeEventName,
             rabbitMqSettings.ClientId);
 
-
-        services.AddMufloneTransportRabbitMQ(loggerFactory, rabbitMqConfiguration);
+        services.AddMufloneTransportRabbitMQ(
+            loggerFactory,
+            rabbitMqConfiguration);
 
         return services;
     }

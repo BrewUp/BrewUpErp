@@ -1,4 +1,5 @@
 ﻿using BrewUp.Infrastructure;
+
 namespace BrewUp.Rest.Module;
 
 /// <summary>
