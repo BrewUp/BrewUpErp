@@ -12,6 +12,7 @@ using Muflone;
 
 namespace BrewUp.Warehouse.Domain.CommandHandlers
 {
+        /*
     public sealed class RequestBeersAvailabilityCommandHandler([FromKeyedServices("warehouse")] IPersister persister,
         IEventBus eventBus,
         ILoggerFactory loggerFactory) : WarehouseCommandHandlerAsync<RequestBeersAvailability>(persister, loggerFactory)
@@ -29,7 +30,7 @@ namespace BrewUp.Warehouse.Domain.CommandHandlers
             var warehouseId = new WarehouseId(command.AggregateId.Value);
             var correlationId = command.MessageId;
 
-            var warehouseEntity = Entities.Warehouse.Create(warehouseId, warehouse.Name, warehouse.ItemStocks, correlationId);
+            var warehouseEntity = Entities.WhAvailability.Create(warehouseId, warehouse.Name, warehouse.ItemStocks, correlationId);
 
             var result = await TryRemoveBeersAndSave(warehouseEntity, command.Rows.ToList(), cancellationToken);
 
@@ -45,7 +46,7 @@ namespace BrewUp.Warehouse.Domain.CommandHandlers
             await eventBus.PublishAsync(requestFailed, cancellationToken);
         }
 
-        private async Task<Result<bool>> TryRemoveBeersAndSave(Entities.Warehouse warehouse, List<ItemRequest> itemRequests, CancellationToken cancellationToken)
+        private async Task<Result<bool>> TryRemoveBeersAndSave(Entities.WhAvailability warehouse, List<ItemRequest> itemRequests, CancellationToken cancellationToken)
         {
             if (!TryRemoveBeersFromWarehouse(warehouse, itemRequests))
                 return Result<bool>.Error("Not enough beers");
@@ -53,7 +54,7 @@ namespace BrewUp.Warehouse.Domain.CommandHandlers
             var dto = WarehouseDto.Create(
                 (WarehouseId)warehouse.Id,
                 new WarehouseName(warehouse.Name),
-                warehouse.ItemStocks.Select(s => new ItemStockJson()
+                warehouse.ItemStocks.Select(s => new ItemStock()
                 {
                     BeerId = s.Value.BeerId.Value,
                     Quantity = s.Value.Quantity.ToString()
@@ -65,7 +66,7 @@ namespace BrewUp.Warehouse.Domain.CommandHandlers
                     Result<bool>.Error);
         }
 
-        private static bool TryRemoveBeersFromWarehouse(Entities.Warehouse warehouse, List<ItemRequest> itemRequests)
+        private static bool TryRemoveBeersFromWarehouse(Entities.WhAvailability warehouse, List<ItemRequest> itemRequests)
         {
             foreach (var itemRequest in itemRequests)
             {
@@ -79,5 +80,5 @@ namespace BrewUp.Warehouse.Domain.CommandHandlers
             }
             return true;
         }
-    }
+    }*/
 }
