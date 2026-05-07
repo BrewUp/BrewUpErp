@@ -1,25 +1,28 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 
-//var serviceBus = builder.AddServiceBus
+//var serviceBus = builder.AddAzureServiceBus("messaging");
 
-var rabbitmq = builder.AddRabbitMQ("messaging");
+var rabbitMq = builder.AddRabbitMQ("rabbitMq");
 
-
-var mongoDb = builder.AddMongoDB("mongoDb")
+var mongoDb = builder.AddMongoDB("mongodb")
     .WithDataVolume("brewup-mongodb-data");
+
+var brewUpDB = mongoDb.AddDatabase("brewup-db");
 
 var kurrent = builder.AddKurrentDB("kurrentDb")
     .WithEnvironment("KURRENTDB_ENABLE_ATOM_PUB_OVER_HTTP", "true")
     .WithDataVolume("brewup-kurrent-data");
 
 var infra = builder.AddProject<Projects.BrewUp_Infrastructure>("infra")
-    .WithReference(mongoDb)
+    .WithReference(brewUpDB)
     .WithReference(kurrent)
-    .WaitFor(mongoDb)
-    .WaitFor(kurrent);
+    .WithReference(rabbitMq)
+    .WaitFor(brewUpDB)
+    .WaitFor(kurrent)
+    .WaitFor(rabbitMq);
 
-var brewUpApi = builder.AddProject<Projects.BrewUp_Rest>("brewUpApi")
+var brewUpApi = builder.AddProject<Projects.BrewUp_Rest>("api")
     .WithReference(infra)
     .WaitFor(infra);
 

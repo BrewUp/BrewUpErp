@@ -26,10 +26,13 @@ public class InfrastructureModule : IModule
     {
         using var serviceProvider = builder.Services.BuildServiceProvider();
         var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
-        builder.Services.AddInfrastructure(loggerFactory, builder.Configuration);
+
 
         builder.AddRabbitMQClient(connectionName: "rabbitmq");
         builder.AddMongoDBClient(connectionName: "mongodb");
+
+        builder.Services.AddInfrastructure(loggerFactory, builder.Configuration);
+
 
         return builder.Services;
     }
