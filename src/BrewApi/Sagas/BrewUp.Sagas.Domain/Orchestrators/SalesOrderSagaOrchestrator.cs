@@ -69,6 +69,7 @@ internal sealed class SalesOrderSagaOrchestrator(IRepository repository,
             .GetByIdAsync<SalesOrderSaga>(new SagaId(correlationId.ToString()), cancellationToken)
             .ConfigureAwait(false);
         aggregate!.MarkCustomerBudgetAsVerified(@event.Customer, correlationId);
+        await repository.SaveAsync(aggregate, Guid.CreateVersion7(), cancellationToken).ConfigureAwait(false);
     }
 
     public async Task HandleAsync(CustomerBudgetUnVerified @event, CancellationToken cancellationToken = new ())
@@ -114,6 +115,7 @@ internal sealed class SalesOrderSagaOrchestrator(IRepository repository,
             .GetByIdAsync<SalesOrderSaga>(new SagaId(correlationId.ToString()), cancellationToken)
             .ConfigureAwait(false);
         aggregate!.MarkSalesOrderAsPlaced(correlationId);
+        await repository.SaveAsync(aggregate, Guid.CreateVersion7(), cancellationToken).ConfigureAwait(false);
         
         CreateSalesOrderJson salesOrderDetails = aggregate!.GetSalesOrderDetails();
     }
