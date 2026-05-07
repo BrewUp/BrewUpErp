@@ -13,6 +13,7 @@ public class SalesOrderSaga : AggregateRoot
     private string _salesOrderNumber = string.Empty;
     private DateTime _salesOrderDate;
     private string _customerId = string.Empty;
+    private string _warehouseId = string.Empty;
     private CustomerJson _customer;
     private DateTime _salesOrderDeliveryDate;
     private List<SalesOrderRowJson> _rows = [];
@@ -26,19 +27,19 @@ public class SalesOrderSaga : AggregateRoot
     {}
 
     internal static SalesOrderSaga Start(SagaId aggregateId, Guid correlationId, string salesOrderNumber,
-        DateTime salesOrderDate, string customerId, DateTime salesOrderDeliveryDate,
+        DateTime salesOrderDate, string customerId, string warehouseId, DateTime salesOrderDeliveryDate,
         IEnumerable<SalesOrderRowJson> rows)
     {
-        return new SalesOrderSaga(aggregateId, correlationId, salesOrderNumber, salesOrderDate, customerId,
-            salesOrderDeliveryDate, rows);
+        return new SalesOrderSaga(aggregateId, correlationId, salesOrderNumber, salesOrderDate, customerId, 
+            warehouseId, salesOrderDeliveryDate, rows);
     }
 
     private SalesOrderSaga(SagaId aggregateId, Guid correlationId, string salesOrderNumber,
-        DateTime salesOrderDate, string customerId, DateTime salesOrderDeliveryDate,
+        DateTime salesOrderDate, string customerId, string warehouseId, DateTime salesOrderDeliveryDate,
         IEnumerable<SalesOrderRowJson> rows)
     {
         RaiseEvent(new SalesOrderSagaStarted(aggregateId, correlationId, salesOrderNumber, salesOrderDate, customerId,
-            salesOrderDeliveryDate, rows));
+            warehouseId, salesOrderDeliveryDate, rows));
     }
 
     public CreateSalesOrderJson GetSalesOrderDetails()
@@ -59,6 +60,7 @@ public class SalesOrderSaga : AggregateRoot
         _salesOrderNumber = @event.SalesOrderNumber;
         _salesOrderDate = @event.SalesOrderDate;
         _customerId = @event.CustomerId;
+        _warehouseId = @event.WarehouseId;
         _salesOrderDeliveryDate = @event.SalesOrderDeliveryDate;
         _rows = @event.Rows.ToList();
         
@@ -81,7 +83,17 @@ public class SalesOrderSaga : AggregateRoot
     {
         RaiseEvent(new SagaCustomerBudgetVerified(new CustomerId(_customerId), correlationId, customer));
     }
-    
+
+    internal void MarkOrderAvailable(Guid correlationId)
+    {
+        RaiseEvent(new SagaOrderRequestAccepted(new WarehouseId(_warehouseId), correlationId));
+    }
+
+    internal void MarkOrderNotAvailable(string message, Guid correlationId)
+    {
+        RaiseEvent(new SagaOrderRequestRejected(new WarehouseId(_warehouseId), correlationId, message));
+    }
+
     private void Apply(SagaCustomerBudgetVerified @event)
     {
         _customer = @event.Customer;

@@ -38,6 +38,7 @@
     <Project Path="Sales/BrewUp.Sales.Tests/BrewUp.Sales.Tests.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Warehouse/">
+    <Project Path="BrewUp.Warehouse.Entities/BrewUp.Warehouse.Entities.csproj" Id="f9d677f2-b4b5-4aa5-814a-9286eb3e1699" />
     <Project Path="Warehouse/BrewUp.Warehouse.Domain/BrewUp.Warehouse.Domain.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.Facade/BrewUp.Warehouse.Facade.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.Infrastructure/BrewUp.Warehouse.Infrastructure.csproj" />

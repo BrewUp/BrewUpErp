@@ -16,7 +16,7 @@ internal sealed class WarehouseService([FromKeyedServices("warehouse")] IPersist
     {
         cancellationToken.ThrowIfCancellationRequested();
         
-        var warehouse = Dtos.Warehouse.Create(warehouseId, warehouseName);
+        var warehouse = Dtos.WarehouseDto.Create(warehouseId, warehouseName, new());
         var insertResult = await Persister.InsertAsync(warehouse, cancellationToken);
         
         return insertResult.Match(
