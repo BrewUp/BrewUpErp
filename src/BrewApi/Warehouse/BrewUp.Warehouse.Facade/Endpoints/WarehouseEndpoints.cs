@@ -1,5 +1,6 @@
 ﻿using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.ReadModel;
+using BrewUp.Shared.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
@@ -19,7 +20,16 @@ public static class WarehouseEndpoints
             .WithDescription(
                 "Get a list of shipment orders.")
             .WithName("GetShipmentOrders");
-        
+
+        group.MapPost("/", HandleAddItemStocks)
+            .AddEndpointFilter<ValidationFilter<WarehouseJson>>()
+            .Produces(StatusCodes.Status202Accepted)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Add item stocks to a warehouse")
+            .WithDescription(
+                "Adds item stocks to an existing warehouse. This endpoint is used to update the stock of items in a warehouse.")
+            .WithName("AddItemStocks");
+
         return app;
     }
     
@@ -35,6 +45,23 @@ public static class WarehouseEndpoints
 
         return getResult.Match<IResult>(
             success => Results.Ok(success),
+            Results.BadRequest);
+    }
+
+    private static async Task<IResult> HandleAddItemStocks(
+        IWarehouseFacade warehouseFacade,
+        WarehouseJson body,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var result = await warehouseFacade.AddItemStocksAsync(body, cancellationToken);
+
+        return result.Match<IResult>(
+            success =>
+            {
+                return Results.Created($"/v1/warehouse", success);
+            },
             Results.BadRequest);
     }
 }
