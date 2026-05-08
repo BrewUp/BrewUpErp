@@ -1,4 +1,4 @@
-﻿using BrewUp.MasterData.ReadModel.Dtos;
+﻿using BrewUp.MasterData.Entities.Dtos;
 using BrewUp.MasterData.ReadModel.Queries;
 using BrewUp.MasterData.ReadModel.Services;
 using BrewUp.Shared.ReadModel;
