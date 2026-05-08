@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using BrewUp.MasterData.ReadModel.Dtos;
+using BrewUp.MasterData.Entities.Dtos;
 using BrewUp.Shared.ReadModel;
 using Lena.Core;
 using MongoDB.Driver;

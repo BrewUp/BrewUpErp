@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using BrewUp.MasterData.ReadModel.Dtos;
+using BrewUp.MasterData.Entities.Dtos;
 using BrewUp.Shared.ReadModel;
 using Lena.Core;
 using MongoDB.Driver;
@@ -13,7 +13,7 @@ internal sealed class WarehouseQueries(IMongoClient mongoClient) : IQueries<Ware
     
     public async Task<Result<Warehouse>> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
-        var collection = _database.GetCollection<Dtos.Warehouse>(nameof(Warehouse));
+        var collection = _database.GetCollection<Warehouse>(nameof(Warehouse));
         var filter = Builders<Warehouse>.Filter.Eq("_id", id);
         
         return await collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken) > 0
