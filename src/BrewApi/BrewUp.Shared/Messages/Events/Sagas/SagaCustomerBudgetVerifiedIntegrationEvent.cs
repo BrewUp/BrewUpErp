@@ -5,7 +5,7 @@ using Muflone.Messages.Events;
 
 namespace BrewUp.Shared.Messages.Events.Sagas;
 
-public class SagaCustomerBudgetVerifiedForSalesOrder(IntegrationId aggregateId, 
+public class SagaCustomerBudgetVerifiedIntegrationEvent(IntegrationId aggregateId, 
     Guid correlationId,
     CreateSalesOrderJson salesOrder,
     CustomerJson customer) : IntegrationEvent(aggregateId, correlationId)

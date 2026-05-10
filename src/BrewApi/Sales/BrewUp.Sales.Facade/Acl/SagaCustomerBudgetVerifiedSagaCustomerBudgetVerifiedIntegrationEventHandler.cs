@@ -8,11 +8,11 @@ using Muflone.Persistence;
 
 namespace BrewUp.Sales.Facade.Acl;
 
-public sealed class SagaCustomerBudgetVerifiedForSalesOrderEventHandler(IServiceBus serviceBus,
+public sealed class SagaCustomerBudgetVerifiedSagaCustomerBudgetVerifiedIntegrationEventHandler(IServiceBus serviceBus,
     ILoggerFactory loggerFactory)
-: IntegrationEventHandlerAsync<SagaCustomerBudgetVerifiedForSalesOrder>(loggerFactory)
+: IntegrationEventHandlerAsync<SagaCustomerBudgetVerifiedIntegrationEvent>(loggerFactory)
 {
-    public override async Task HandleAsync(SagaCustomerBudgetVerifiedForSalesOrder @event,
+    public override async Task HandleAsync(SagaCustomerBudgetVerifiedIntegrationEvent @event,
         CancellationToken cancellationToken = new ())
     {
         cancellationToken.ThrowIfCancellationRequested();
