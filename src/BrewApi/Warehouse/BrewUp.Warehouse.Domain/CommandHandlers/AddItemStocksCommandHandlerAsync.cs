@@ -6,13 +6,16 @@ using Muflone.Persistence;
 namespace BrewUp.Warehouse.Domain.CommandHandlers
 {
     internal sealed class AddItemStocksCommandHandlerAsync(IRepository repository,
-        ILoggerFactory loggerFactory) : CommandHandlerAsync<AddItemStocks>(repository, loggerFactory)
+        ILoggerFactory loggerFactory) : CommandHandlerAsync<AddItemStock>(repository, loggerFactory)
     {
-        public override async Task HandleAsync(AddItemStocks command, CancellationToken cancellationToken = default)
+        public override async Task HandleAsync(AddItemStock command, CancellationToken cancellationToken = default)
         {
             var aggregate = await Repository.GetByIdAsync<Entities.WhAvailability>(command.AggregateId, cancellationToken);
+            if (aggregate is null) throw new ArgumentNullException(nameof(aggregate));
 
+            aggregate.AddItemStock(new Entities.Quantity(command.Quantity.Value, command.Quantity.UnitOfMeasure));
 
+            await Repository.SaveAsync(aggregate, Guid.CreateVersion7(), cancellationToken);
         }
     }
 }

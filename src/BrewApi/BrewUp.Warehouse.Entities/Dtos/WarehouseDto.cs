@@ -7,18 +7,16 @@ namespace BrewUp.Warehouse.Entities.Dtos;
 public class WarehouseDto : DtoBase
 {
     public string Name { get; set; } = string.Empty;
-    public List<ItemStock> ItemStocks { get; set; } = new();
 
     protected WarehouseDto() { }
     
-    public static WarehouseDto Create(WarehouseId warehouseId, WarehouseName name, List<ItemStock> itemStocks) =>
-        new (warehouseId.Value, name.Value, itemStocks);
+    public static WarehouseDto Create(WarehouseId warehouseId, WarehouseName name) =>
+        new (warehouseId.Value, name.Value);
     
-    private WarehouseDto(string warehouseId, string name, List<ItemStock> itemStocks)
+    private WarehouseDto(string warehouseId, string name)
     {
         Id = warehouseId;
         Name = name;
-        ItemStocks = itemStocks;
     }
     
 }

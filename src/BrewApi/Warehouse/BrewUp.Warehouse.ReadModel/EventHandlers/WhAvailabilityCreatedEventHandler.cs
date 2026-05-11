@@ -14,7 +14,7 @@ namespace BrewUp.Warehouse.ReadModel.EventHandlers
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            await availabilityService.AddWhAvailability(new AvailabilityId(@event.AggregateId.Value),
+            await availabilityService.AddWhAvailabilityAsync(new AvailabilityId(@event.AggregateId.Value),
                 @event.WarehouseId,
                 @event.BeerId,
                 @event.Quantity,

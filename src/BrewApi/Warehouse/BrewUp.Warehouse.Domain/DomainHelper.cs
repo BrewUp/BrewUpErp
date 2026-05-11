@@ -14,10 +14,8 @@ public static class DomainHelper
         services.AddScoped<IWarehouseDomainService, WarehouseDomainService>();
 
         services.AddCommandHandler<PrepareShipmentCommandHandler>();
-        //services.AddCommandHandler<RequestBeersAvailabilityCommandHandler>();
+        services.AddCommandHandler<AddItemStocksCommandHandlerAsync>();
 
-        services.AddScoped<ICommandHandlerAsync<AddItemStocks>, AddItemStocksCommandHandlerAsync>();
-        
         return services;
     }
 }

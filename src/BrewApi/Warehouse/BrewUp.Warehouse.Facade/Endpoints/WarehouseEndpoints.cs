@@ -21,14 +21,14 @@ public static class WarehouseEndpoints
                 "Get a list of shipment orders.")
             .WithName("GetShipmentOrders");
 
-        group.MapPost("/", HandleAddItemStocks)
-            .AddEndpointFilter<ValidationFilter<WarehouseJson>>()
+        group.MapPost("/", HandleAddItemStock)
+            .AddEndpointFilter<ValidationFilter<AddItemStockJson>>()
             .Produces(StatusCodes.Status202Accepted)
             .Produces(StatusCodes.Status500InternalServerError)
-            .WithSummary("Add item stocks to a warehouse")
+            .WithSummary("Add item stock to a warehouse")
             .WithDescription(
-                "Adds item stocks to an existing warehouse. This endpoint is used to update the stock of items in a warehouse.")
-            .WithName("AddItemStocks");
+                "Adds item stock to an existing warehouse. This endpoint is used to update the stock of an item in a warehouse.")
+            .WithName("AddItemStock");
 
         return app;
     }
@@ -48,14 +48,14 @@ public static class WarehouseEndpoints
             Results.BadRequest);
     }
 
-    private static async Task<IResult> HandleAddItemStocks(
+    private static async Task<IResult> HandleAddItemStock(
         IWarehouseFacade warehouseFacade,
-        WarehouseJson body,
+        AddItemStockJson body,
         CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var result = await warehouseFacade.AddItemStocksAsync(body, cancellationToken);
+        var result = await warehouseFacade.AddItemStockAsync(body, cancellationToken);
 
         return result.Match<IResult>(
             success =>

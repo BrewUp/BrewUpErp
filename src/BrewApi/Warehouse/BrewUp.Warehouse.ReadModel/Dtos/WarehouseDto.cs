@@ -1,7 +1,6 @@
 ﻿using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ReadModel;
-using BrewUp.Warehouse.Entities.Dtos;
 
 namespace BrewUp.Warehouse.ReadModel.Dtos;
 
@@ -11,8 +10,8 @@ public class WarehouseDto : DtoBase
 
     protected WarehouseDto() { }
     
-    public static WarehouseDto Create(WarehouseId warehouseId, WarehouseName name, List<ItemStock> itemStocks) =>
-        new (warehouseId.Value, name.Value, itemStocks);
+    public static WarehouseDto Create(WarehouseId warehouseId, WarehouseName name) =>
+        new (warehouseId.Value, name.Value);
 
     internal Shared.ExternalContracts.Warehouse.WarehouseJson ToJson()
     {
@@ -23,10 +22,9 @@ public class WarehouseDto : DtoBase
         };
     }
 
-    private WarehouseDto(string warehouseId, string name, List<ItemStock> itemStocks)
+    private WarehouseDto(string warehouseId, string name)
     {
         Id = warehouseId;
         Name = name;
     }
-    
 }

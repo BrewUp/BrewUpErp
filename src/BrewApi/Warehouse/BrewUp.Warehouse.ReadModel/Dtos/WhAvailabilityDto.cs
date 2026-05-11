@@ -47,4 +47,10 @@ public class WhAvailabilityDto : DtoBase
         Quantity = quantity;
         UnitOfMeasure = unitOfMeasure;
     }
+
+    public void UpdateQuantity(Quantity quantity)
+    {
+        Quantity = quantity.Value;
+        UnitOfMeasure = quantity.UnitOfMeasure;
+    }
 }
