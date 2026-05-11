@@ -12,6 +12,8 @@ using Muflone;
 
 namespace BrewUp.Warehouse.Domain.CommandHandlers
 {
+    //TODO: saga flow - to implement
+
         /*
     public sealed class RequestBeersAvailabilityCommandHandler([FromKeyedServices("warehouse")] IPersister persister,
         IEventBus eventBus,

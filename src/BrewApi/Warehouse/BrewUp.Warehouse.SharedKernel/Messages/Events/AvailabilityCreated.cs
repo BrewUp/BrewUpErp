@@ -4,7 +4,7 @@ using Muflone.Messages.Events;
 
 namespace BrewUp.Warehouse.SharedKernel.Messages.Events
 {
-    public sealed class WhAvailabilityCreated(AvailabilityId aggregateId,
+    public sealed class AvailabilityCreated(AvailabilityId aggregateId,
         WarehouseId warehouseId,
         BeerId beerId,
         Quantity quantity) : DomainEvent(aggregateId)

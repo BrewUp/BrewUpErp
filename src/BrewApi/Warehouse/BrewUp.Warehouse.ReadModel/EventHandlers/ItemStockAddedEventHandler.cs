@@ -7,10 +7,10 @@ using Muflone.Messages.Events;
 namespace BrewUp.Warehouse.ReadModel.EventHandlers;
 
 public sealed class ItemStockAddedEventHandler(
-    IWhAvailabilityService availabilityService,
-    ILoggerFactory loggerFactory) : DomainEventHandlerAsync<WhAvailabilityCreated>(loggerFactory)
+    IAvailabilityService availabilityService,
+    ILoggerFactory loggerFactory) : DomainEventHandlerAsync<AvailabilityCreated>(loggerFactory)
 {
-    public override async Task HandleAsync(WhAvailabilityCreated @event, CancellationToken cancellationToken = default)
+    public override async Task HandleAsync(AvailabilityCreated @event, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 

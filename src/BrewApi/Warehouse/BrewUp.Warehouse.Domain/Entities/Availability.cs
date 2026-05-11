@@ -6,34 +6,34 @@ using Muflone.Core;
 
 namespace BrewUp.Warehouse.Domain.Entities
 {
-    public class WhAvailability : AggregateRoot
+    public class Availability : AggregateRoot
     {
         internal WarehouseId _warehouseId;
         internal BeerId _beerId;
         internal Quantity _quantity;
 
-        protected WhAvailability() { }
+        protected Availability() { }
 
-        internal static WhAvailability Create(AvailabilityId aggregateId,
+        internal static Availability Create(AvailabilityId aggregateId,
             WarehouseId warehouseId,
             BeerId beerId,
             Quantity quantity)
         {
-            return new WhAvailability(aggregateId, warehouseId, beerId, quantity);
+            return new Availability(aggregateId, warehouseId, beerId, quantity);
         }
 
-        private WhAvailability(AvailabilityId aggregateId,
+        private Availability(AvailabilityId aggregateId,
             WarehouseId warehouseId,
             BeerId beerId,
             Quantity quantity)
         {
-            RaiseEvent(new WhAvailabilityCreated(aggregateId,
+            RaiseEvent(new AvailabilityCreated(aggregateId,
                 warehouseId,
                 beerId,
                 new Shared.CustomTypes.Quantity(quantity.Value, quantity.UnitOfMeasure)));
         }
 
-        private void Apply(WhAvailabilityCreated @event)
+        private void Apply(AvailabilityCreated @event)
         {
             Id = @event.AggregateId;
             _warehouseId = @event.WarehouseId;
