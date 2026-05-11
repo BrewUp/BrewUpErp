@@ -5,7 +5,7 @@ using Muflone.Persistence;
 
 namespace BrewUp.Warehouse.Domain.CommandHandlers
 {
-    internal sealed class AddItemStockCommandHandlerAsync(IRepository repository,
+    public sealed class AddItemStockCommandHandlerAsync(IRepository repository,
         ILoggerFactory loggerFactory) : CommandHandlerAsync<AddItemStock>(repository, loggerFactory)
     {
         public override async Task HandleAsync(AddItemStock command, CancellationToken cancellationToken = default)

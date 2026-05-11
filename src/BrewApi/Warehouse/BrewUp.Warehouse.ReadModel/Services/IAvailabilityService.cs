@@ -10,5 +10,8 @@ namespace BrewUp.Warehouse.ReadModel.Services
         Task<Result<bool>> AddAvailabilityAsync(AvailabilityId availabilityId, WarehouseId warehouseId, BeerId beerId, Quantity quantity, CancellationToken cancellationToken);
         Task<Result<AvailabilityJson>> GetByIdAsync(string id, CancellationToken cancellationToken = default);
         Task<Result<string>> AddItemStockAsync(AvailabilityId availabilityId, Quantity quantity, CancellationToken cancellationToken);
+
+        Task<Result<AvailabilityJson>> GetByWarehouseIdAndBeerIdAsync(WarehouseId warehouseId, BeerId beerId,
+            CancellationToken cancellationToken);
     }
 }
