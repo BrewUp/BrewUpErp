@@ -4,7 +4,6 @@ using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.ReadModel;
 using BrewUp.Warehouse.ReadModel.Dtos;
 using Lena.Core;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -29,7 +28,7 @@ namespace BrewUp.Warehouse.ReadModel.Services
             return Result<WhAvailabilityJson>.Error("WhAvailability not found");
         }
 
-        public async Task<Result<bool>> AddWhAvailability(AvailabilityId availabilityId,
+        public async Task<Result<bool>> AddWhAvailabilityAsync(AvailabilityId availabilityId,
             WarehouseId warehouseId,
             BeerId beerId,
             Quantity quantity,
@@ -38,6 +37,25 @@ namespace BrewUp.Warehouse.ReadModel.Services
             var dto = WhAvailabilityDto.Create(availabilityId, warehouseId, beerId, quantity);
 
             return await Persister.InsertAsync(dto, cancellationToken);
+        }
+
+        public async Task<Result<string>> AddItemStockAsync(AvailabilityId availabilityId,
+            Quantity quantity,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var persisterResult = await Persister.GetByIdAsync<WhAvailabilityDto>(availabilityId.Value, cancellationToken);
+            if (!persisterResult.IsSuccess)
+                return Result<string>.Error("Error retrieving warehouse availability");
+
+            persisterResult.TryGetValue(out WhAvailabilityDto availabilityDto);
+            availabilityDto.UpdateQuantity(quantity);
+
+            var updateResult = await Persister.UpdateAsync(availabilityDto, cancellationToken);
+            return updateResult.Match(
+                _ => Result<string>.Success(availabilityId.Value),
+                _ => Result<string>.Error("Error updating warehouse availability"));
         }
     }
 }

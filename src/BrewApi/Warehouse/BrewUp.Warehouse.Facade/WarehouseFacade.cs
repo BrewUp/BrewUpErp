@@ -10,22 +10,22 @@ namespace BrewUp.Warehouse.Facade;
 
 internal sealed class WarehouseFacade(IShipmentService shipmentService, 
     IWarehouseService warehouseService,
-    ICommandHandlerAsync<AddItemStocks> commandHandler) : IWarehouseFacade
+    ICommandHandlerAsync<AddItemStock> commandHandler) : IWarehouseFacade
 {
     public Task<Result<PagedResult<ShipmentJson>>> GetShipmentOrdersAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken) =>
         shipmentService.GetShipmentsAsync(pageNumber, pageSize, cancellationToken);
 
-    public async Task<Result<string>> AddItemStocksAsync(WarehouseJson warehouseJson, CancellationToken cancellationToken)
+    public async Task<Result<string>> AddItemStockAsync(AddItemStockJson json, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var warehouseResult = await warehouseService.GetWarehouseByIdAsync(new WarehouseId(warehouseJson.Id), cancellationToken);
+        var warehouseResult = await warehouseService.GetWarehouseByIdAsync(new WarehouseId(json.WarehouseId), cancellationToken);
         if (warehouseResult.IsError)
             return Result<string>.Error("Warehouse not found");
 
-        AddItemStocks command = new(new WarehouseId(warehouseJson.Id), 
-            warehouseJson.ItemStocks, 
+        AddItemStock command = new(new AvailabilityId(json.Id), 
+            new Shared.CustomTypes.Quantity(json.Quantity, json.UnitOfMeasure), 
             Guid.NewGuid());
 
         await commandHandler.HandleAsync(command, cancellationToken);

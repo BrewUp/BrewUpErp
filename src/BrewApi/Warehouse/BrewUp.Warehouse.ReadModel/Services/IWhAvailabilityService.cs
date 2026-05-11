@@ -7,7 +7,8 @@ namespace BrewUp.Warehouse.ReadModel.Services
 {
     public interface IWhAvailabilityService
     {
-        Task<Result<bool>> AddWhAvailability(AvailabilityId availabilityId, WarehouseId warehouseId, BeerId beerId, Quantity quantity, CancellationToken cancellationToken);
+        Task<Result<bool>> AddWhAvailabilityAsync(AvailabilityId availabilityId, WarehouseId warehouseId, BeerId beerId, Quantity quantity, CancellationToken cancellationToken);
         Task<Result<WhAvailabilityJson>> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+        Task<Result<string>> AddItemStockAsync(AvailabilityId availabilityId, Quantity quantity, CancellationToken cancellationToken);
     }
 }
