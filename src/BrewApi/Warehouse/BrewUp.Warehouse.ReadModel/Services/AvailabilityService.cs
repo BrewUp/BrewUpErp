@@ -20,12 +20,11 @@ namespace BrewUp.Warehouse.ReadModel.Services
 
             var queryResult = await queries.GetByIdAsync(id, cancellationToken);
 
-            if (queryResult.IsSuccess)
-            {
-                queryResult.TryGetValue(out AvailabilityDto availabilityDto);
-                return Result<AvailabilityJson>.Success(availabilityDto.ToJson());
-            }
-            return Result<AvailabilityJson>.Error("WhAvailability not found");
+            if (!queryResult.IsSuccess) 
+                return Result<AvailabilityJson>.Error("WhAvailability not found");
+            
+            queryResult.TryGetValue(out AvailabilityDto availabilityDto);
+            return Result<AvailabilityJson>.Success(availabilityDto.ToJson());
         }
 
         public async Task<Result<bool>> AddAvailabilityAsync(AvailabilityId availabilityId,
@@ -56,6 +55,23 @@ namespace BrewUp.Warehouse.ReadModel.Services
             return updateResult.Match(
                 _ => Result<string>.Success(availabilityId.Value),
                 _ => Result<string>.Error("Error updating warehouse availability"));
+        }
+
+        public async Task<Result<AvailabilityJson>> GetByWarehouseIdAndBeerIdAsync(WarehouseId warehouseId, BeerId beerId, 
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var queryResult = await queries.GetByFilterAsync(a => a.WarehouseId == warehouseId.Value 
+                && a.BeerId == beerId.Value, 0, 1, cancellationToken);
+
+            if (!queryResult.IsSuccess) 
+                return Result<AvailabilityJson>.Error("WhAvailability not found");
+            
+            queryResult.TryGetValue(out PagedResult<AvailabilityDto> availabilityDto);
+            return availabilityDto.Results.Any() 
+                ? Result<AvailabilityJson>.Success(availabilityDto.Results.First().ToJson())
+                : Result<AvailabilityJson>.Error("No availability found");
         }
     }
 }
