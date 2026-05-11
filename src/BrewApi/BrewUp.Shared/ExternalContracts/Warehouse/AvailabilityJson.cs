@@ -1,6 +1,6 @@
 ﻿namespace BrewUp.Shared.ExternalContracts.Warehouse;
 
-public class WhAvailabilityJson
+public class AvailabilityJson
 {
     public string Id { get; set; } = null!;
     public string WarehouseId { get; set; } = null!;

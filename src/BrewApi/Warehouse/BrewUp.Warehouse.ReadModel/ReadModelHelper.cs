@@ -14,10 +14,10 @@ public static class ReadModelHelper
     {
         services.AddScoped<IWarehouseService, WarehouseService>();
         services.AddScoped<IShipmentService, ShipmentService>();
-        services.AddScoped<IWhAvailabilityService, WhAvailabilityService>();
+        services.AddScoped<IAvailabilityService, AvailabilityService>();
 
         services.AddScoped<IQueries<Shipment>, ShipmentQueries>();
-        services.AddScoped<IQueries<WhAvailabilityDto>, WhAvailabilityQueries>();
+        services.AddScoped<IQueries<AvailabilityDto>, AvailabilityQueries>();
 
         services.AddDomainEventHandler<ShipmentPendingForPreparationEventHandler>();
         

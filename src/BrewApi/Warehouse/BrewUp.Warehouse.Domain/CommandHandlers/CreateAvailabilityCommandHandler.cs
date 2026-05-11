@@ -7,14 +7,14 @@ using Muflone.Persistence;
 
 namespace BrewUp.Warehouse.Domain.CommandHandlers
 {
-    public sealed class CreateWhAvailabilityCommandHandler(IRepository repository,
-        ILoggerFactory loggerFactory) : CommandHandlerAsync<CreateWhAvailability>(repository, loggerFactory)
+    public sealed class CreateAvailabilityCommandHandler(IRepository repository,
+        ILoggerFactory loggerFactory) : CommandHandlerAsync<CreateAvailability>(repository, loggerFactory)
     {
-        public override async Task HandleAsync(CreateWhAvailability command, CancellationToken cancellationToken = default)
+        public override async Task HandleAsync(CreateAvailability command, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var aggregate = WhAvailability.Create(
+            var aggregate = Availability.Create(
                 new AvailabilityId(command.AggregateId.Value),
                 command.WarehouseId,
                 command.BeerId,
