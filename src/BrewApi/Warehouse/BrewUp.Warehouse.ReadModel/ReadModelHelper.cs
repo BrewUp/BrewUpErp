@@ -17,7 +17,7 @@ public static class ReadModelHelper
         services.AddScoped<IAvailabilityService, AvailabilityService>();
 
         services.AddScoped<IQueries<Shipment>, ShipmentQueries>();
-        services.AddScoped<IQueries<AvailabilityDto>, AvailabilityQueries>();
+        services.AddScoped<IQueries<Availability>, AvailabilityQueries>();
 
         services.AddDomainEventHandler<ShipmentPendingForPreparationEventHandler>();
         

@@ -7,30 +7,30 @@ using System.Linq.Expressions;
 
 namespace BrewUp.Warehouse.ReadModel.Queries
 {
-    internal sealed class BeerQueries(IMongoClient mongoClient) : IQueries<AvailabilityDto>
+    internal sealed class BeerQueries(IMongoClient mongoClient) : IQueries<Availability>
     {
         private readonly IMongoDatabase _database = mongoClient.GetDatabase("Warehouse");
 
-        public async Task<Result<AvailabilityDto>> GetByIdAsync(string id, CancellationToken cancellationToken)
+        public async Task<Result<Availability>> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var collection = _database.GetCollection<AvailabilityDto>(nameof(AvailabilityDto));
-            var filter = Builders<AvailabilityDto>.Filter.Eq("_id", id);
+            var collection = _database.GetCollection<Availability>(nameof(Availability));
+            var filter = Builders<Availability>.Filter.Eq("_id", id);
 
             return await collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken) > 0
-                ? Result<AvailabilityDto>.Success((await collection.FindAsync(filter, cancellationToken: cancellationToken)).First(cancellationToken: cancellationToken))
-                : Result<AvailabilityDto>.Success(ConstructAggregate<AvailabilityDto>());
+                ? Result<Availability>.Success((await collection.FindAsync(filter, cancellationToken: cancellationToken)).First(cancellationToken: cancellationToken))
+                : Result<Availability>.Success(ConstructAggregate<Availability>());
         }
 
-        public async Task<Result<PagedResult<AvailabilityDto>>> GetByFilterAsync(Expression<Func<AvailabilityDto, bool>>? query, int page, int pageSize, CancellationToken cancellationToken)
+        public async Task<Result<PagedResult<Availability>>> GetByFilterAsync(Expression<Func<Availability, bool>>? query, int page, int pageSize, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             if (--page < 0)
                 page = 0;
 
-            var collection = _database.GetCollection<AvailabilityDto>(nameof(AvailabilityDto));
+            var collection = _database.GetCollection<Availability>(nameof(Availability));
             var queryable = query != null
                 ? collection.AsQueryable()
                     .Where(query)
@@ -40,7 +40,7 @@ namespace BrewUp.Warehouse.ReadModel.Queries
             var results = await queryable.Skip(page * pageSize).Take(pageSize)
                 .ToListAsync(cancellationToken: cancellationToken);
 
-            return Result<PagedResult<AvailabilityDto>>.Success(new PagedResult<AvailabilityDto>(results, page, pageSize, count));
+            return Result<PagedResult<Availability>>.Success(new PagedResult<Availability>(results, page, pageSize, count));
         }
 
         private static TAggregate ConstructAggregate<TAggregate>()

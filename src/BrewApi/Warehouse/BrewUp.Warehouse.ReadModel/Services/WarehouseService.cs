@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace BrewUp.Warehouse.ReadModel.Services;
 
 internal sealed class WarehouseService([FromKeyedServices("warehouse")] IPersister persister,
-    IQueries<WarehouseDto> query,
+    IQueries<Dtos.Warehouse> query,
     ILoggerFactory loggerFactory) 
     : ServiceBase(persister, loggerFactory), IWarehouseService
 {
@@ -19,7 +19,7 @@ internal sealed class WarehouseService([FromKeyedServices("warehouse")] IPersist
     {
         cancellationToken.ThrowIfCancellationRequested();
         
-        var warehouse = Dtos.WarehouseDto.Create(warehouseId, warehouseName);
+        var warehouse = Dtos.Warehouse.Create(warehouseId, warehouseName);
         var insertResult = await Persister.InsertAsync(warehouse, cancellationToken);
         
         return insertResult.Match(
@@ -40,7 +40,7 @@ internal sealed class WarehouseService([FromKeyedServices("warehouse")] IPersist
         return queryResult.Match(
             _ =>
             {
-                queryResult.TryGetValue(out WarehouseDto warehouseDto);
+                queryResult.TryGetValue(out Dtos.Warehouse warehouseDto);
                 return Result<WarehouseJson>.Success(warehouseDto.ToJson());
             },
             _ => Result<WarehouseJson>.Error("Error retrieving warehouse"));
