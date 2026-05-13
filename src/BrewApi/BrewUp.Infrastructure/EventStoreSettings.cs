@@ -1,4 +1,4 @@
-﻿namespace BrewUp.Sales.Infrastructure;
+﻿namespace BrewUp.Infrastructure;
 
 public class EventStoreSettings
 {

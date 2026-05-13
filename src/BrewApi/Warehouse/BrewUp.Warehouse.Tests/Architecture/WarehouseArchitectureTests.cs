@@ -74,16 +74,17 @@ public class WarehouseArchitectureTests
     [Fact]
     public void Domain_Should_Not_Depend_On_Outer_Layers()
     {
-        var result = Types.InAssembly(typeof(DomainHelper).Assembly)
-            .ShouldNot()
-            .HaveDependencyOnAny(
-                "BrewUp.Infrastructure",
-                "BrewUp.Warehouse.Infrastructure",
-                "BrewUp.Warehouse.ReadModel",
-                "BrewUp.Warehouse.Facade")
-            .GetResult();
+        var types = Types.InAssembly(typeof(DomainHelper).Assembly);
 
-        Assert.True(result.IsSuccessful);
+        var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjectsWithoutDomain("Warehouse");
+        
+        var result = types
+            .ShouldNot()
+            .HaveDependencyOnAny(forbiddenAssemblies.ToArray())
+            .GetResult()
+            .IsSuccessful;
+
+        Assert.True(result);
     }
     
     private static class VisualStudioProvider

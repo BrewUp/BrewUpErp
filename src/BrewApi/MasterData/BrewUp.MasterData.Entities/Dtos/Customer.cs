@@ -4,7 +4,7 @@ using BrewUp.Shared.ExternalContracts.MasterData.Customers;
 using BrewUp.Shared.Helpers;
 using BrewUp.Shared.ReadModel;
 
-namespace BrewUp.MasterData.ReadModel.Dtos;
+namespace BrewUp.MasterData.Entities.Dtos;
 
 public class Customer : DtoBase
 {
