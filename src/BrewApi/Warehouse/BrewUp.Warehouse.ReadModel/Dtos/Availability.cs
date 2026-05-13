@@ -5,16 +5,16 @@ using BrewUp.Shared.ReadModel;
 
 namespace BrewUp.Warehouse.ReadModel.Dtos;
 
-public class AvailabilityDto : DtoBase
+public class Availability : DtoBase
 {
     public string WarehouseId { get; private set; }
     public string BeerId { get; private set; }
     public decimal Quantity { get; private set; }
     public string UnitOfMeasure { get; private set; }
 
-    protected AvailabilityDto() { }
+    protected Availability() { }
     
-    public static AvailabilityDto Create(AvailabilityId aggregateId, 
+    public static Availability Create(AvailabilityId aggregateId, 
         WarehouseId warehouseId,
         BeerId beerId, 
         Quantity quantity) => new (aggregateId.Value, 
@@ -35,7 +35,7 @@ public class AvailabilityDto : DtoBase
         };
     }
 
-    private AvailabilityDto(string aggregateId, 
+    private Availability(string aggregateId, 
         string warehouseId,
         string beerId,
         decimal quantity,

@@ -4,13 +4,13 @@ using BrewUp.Shared.ReadModel;
 
 namespace BrewUp.Warehouse.ReadModel.Dtos;
 
-public class WarehouseDto : DtoBase
+public class Warehouse : DtoBase
 {
     public string Name { get; set; } = string.Empty;
 
-    protected WarehouseDto() { }
+    protected Warehouse() { }
     
-    public static WarehouseDto Create(WarehouseId warehouseId, WarehouseName name) =>
+    public static Warehouse Create(WarehouseId warehouseId, WarehouseName name) =>
         new (warehouseId.Value, name.Value);
 
     internal Shared.ExternalContracts.Warehouse.WarehouseJson ToJson()
@@ -22,7 +22,7 @@ public class WarehouseDto : DtoBase
         };
     }
 
-    private WarehouseDto(string warehouseId, string name)
+    private Warehouse(string warehouseId, string name)
     {
         Id = warehouseId;
         Name = name;

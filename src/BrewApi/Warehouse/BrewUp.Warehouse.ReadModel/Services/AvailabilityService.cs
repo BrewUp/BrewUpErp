@@ -6,11 +6,12 @@ using BrewUp.Warehouse.ReadModel.Dtos;
 using Lena.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Availability = BrewUp.Warehouse.ReadModel.Dtos.Availability;
 
 namespace BrewUp.Warehouse.ReadModel.Services
 {
     internal class AvailabilityService([FromKeyedServices("warehouse")] IPersister persister,
-    IQueries<AvailabilityDto> queries,
+    IQueries<Availability> queries,
     ILoggerFactory loggerFactory)
     : ServiceBase(persister, loggerFactory), IAvailabilityService
     {
@@ -23,7 +24,7 @@ namespace BrewUp.Warehouse.ReadModel.Services
             if (!queryResult.IsSuccess) 
                 return Result<AvailabilityJson>.Error("WhAvailability not found");
             
-            queryResult.TryGetValue(out AvailabilityDto availabilityDto);
+            queryResult.TryGetValue(out Availability availabilityDto);
             return Result<AvailabilityJson>.Success(availabilityDto.ToJson());
         }
 
@@ -33,7 +34,7 @@ namespace BrewUp.Warehouse.ReadModel.Services
             Quantity quantity,
             CancellationToken cancellationToken)
         {
-            var dto = AvailabilityDto.Create(availabilityId, warehouseId, beerId, quantity);
+            var dto = Availability.Create(availabilityId, warehouseId, beerId, quantity);
 
             return await Persister.InsertAsync(dto, cancellationToken);
         }
@@ -44,11 +45,11 @@ namespace BrewUp.Warehouse.ReadModel.Services
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var persisterResult = await Persister.GetByIdAsync<AvailabilityDto>(availabilityId.Value, cancellationToken);
+            var persisterResult = await Persister.GetByIdAsync<Availability>(availabilityId.Value, cancellationToken);
             if (!persisterResult.IsSuccess)
                 return Result<string>.Error("Error retrieving warehouse availability");
 
-            persisterResult.TryGetValue(out AvailabilityDto availabilityDto);
+            persisterResult.TryGetValue(out Availability availabilityDto);
             availabilityDto.UpdateQuantity(quantity);
 
             var updateResult = await Persister.UpdateAsync(availabilityDto, cancellationToken);
@@ -68,7 +69,7 @@ namespace BrewUp.Warehouse.ReadModel.Services
             if (!queryResult.IsSuccess) 
                 return Result<AvailabilityJson>.Error("WhAvailability not found");
             
-            queryResult.TryGetValue(out PagedResult<AvailabilityDto> availabilityDto);
+            queryResult.TryGetValue(out PagedResult<Availability> availabilityDto);
             return availabilityDto.Results.Any() 
                 ? Result<AvailabilityJson>.Success(availabilityDto.Results.First().ToJson())
                 : Result<AvailabilityJson>.Error("No availability found");
