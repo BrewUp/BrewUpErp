@@ -3,7 +3,7 @@ using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.MasterData.Beers;
 using BrewUp.Shared.ReadModel;
 
-namespace BrewUp.Sales.ReadModel.Dtos;
+namespace BrewUp.Warehouse.Entities.Dtos;
 
 public class Beer : DtoBase
 {

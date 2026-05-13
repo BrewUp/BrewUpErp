@@ -9,7 +9,7 @@ namespace BrewUp.Warehouse.ReadModel.Queries
 {
     internal sealed class BeerQueries(IMongoClient mongoClient) : IQueries<AvailabilityDto>
     {
-        private readonly IMongoDatabase _database = mongoClient.GetDatabase("MasterData");
+        private readonly IMongoDatabase _database = mongoClient.GetDatabase("Warehouse");
 
         public async Task<Result<AvailabilityDto>> GetByIdAsync(string id, CancellationToken cancellationToken)
         {
