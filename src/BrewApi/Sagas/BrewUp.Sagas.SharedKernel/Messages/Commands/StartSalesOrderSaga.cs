@@ -9,6 +9,7 @@ public sealed class StartSalesOrderSaga(IntegrationId aggregateId,
     string salesOrderNumber,
     DateTime salesOrderDate,
     string customerId,
+    string warehouseId,
     DateTime salesOrderDeliveryDate,
     IEnumerable<SalesOrderRowJson> rows) : Command(aggregateId, correlationId)
 {
@@ -16,6 +17,7 @@ public sealed class StartSalesOrderSaga(IntegrationId aggregateId,
     public string SalesOrderNumber { get; private set; } = salesOrderNumber;
     public DateTime SalesOrderDate { get; private set; } = salesOrderDate;
     public string CustomerId { get; private set; } = customerId;
+    public string WarehouseId { get; private set; } = warehouseId;
     public DateTime SalesOrderDeliveryDate { get; private set; } = salesOrderDeliveryDate;
     public List<SalesOrderRowJson> Rows { get; private set; } = rows.ToList();
 }

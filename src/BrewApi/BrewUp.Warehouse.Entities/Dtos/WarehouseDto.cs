@@ -2,19 +2,18 @@
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ReadModel;
 
-namespace BrewUp.Warehouse.ReadModel.Dtos;
+namespace BrewUp.Warehouse.Entities.Dtos;
 
-public class Warehouse : DtoBase
+public class WarehouseDto : DtoBase
 {
     public string Name { get; set; } = string.Empty;
+
+    protected WarehouseDto() { }
     
-    protected Warehouse() 
-    { }
-    
-    public static Warehouse Create(WarehouseId warehouseId, WarehouseName name) =>
+    public static WarehouseDto Create(WarehouseId warehouseId, WarehouseName name) =>
         new (warehouseId.Value, name.Value);
     
-    private Warehouse(string warehouseId, string name)
+    private WarehouseDto(string warehouseId, string name)
     {
         Id = warehouseId;
         Name = name;

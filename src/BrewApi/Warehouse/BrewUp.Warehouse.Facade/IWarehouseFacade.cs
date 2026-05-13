@@ -8,4 +8,6 @@ public interface IWarehouseFacade
 {
     Task<Result<PagedResult<ShipmentJson>>> GetShipmentOrdersAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken);
+
+    Task<Result<string>> AddItemStockAsync(AddItemStockJson json, CancellationToken cancellationToken);
 }

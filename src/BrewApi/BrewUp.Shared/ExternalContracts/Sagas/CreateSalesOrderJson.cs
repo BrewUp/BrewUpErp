@@ -12,7 +12,10 @@ public class PlaceSalesOrderJson
     
     [Required]
     public string CustomerId { get; set; } = string.Empty;
-    
+
+    [Required]
+    public string WarehouseId { get; set; } = string.Empty;
+
     public DateTime DeliveryDate { get; set; }
     
     [Required]
