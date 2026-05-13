@@ -7,12 +7,12 @@ namespace BrewUp.Sales.ReadModel.Dtos;
 
 public class Beer : DtoBase
 {
-    public string BeerName { get; set; } = string.Empty;
-    public string BeerStyle { get; set; } = string.Empty;
+    public string BeerName { get; private set; } = string.Empty;
+    public string BeerStyle { get; private set; } = string.Empty;
     public decimal AlcoholByVolume { get; set; }
-    public string Packaging { get; set; } = string.Empty;
-    public decimal Price { get; set; }
-    public bool IsActive { get; set; }
+    public string Packaging { get; private set; } = string.Empty;
+    public decimal Price { get; private set; }
+    public bool IsActive { get; private set; }
     
     protected  Beer()
     {}
