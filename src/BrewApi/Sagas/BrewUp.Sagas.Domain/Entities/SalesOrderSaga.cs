@@ -42,18 +42,6 @@ public class SalesOrderSaga : AggregateRoot
             warehouseId, salesOrderDeliveryDate, rows));
     }
 
-    public CreateSalesOrderJson GetSalesOrderDetails()
-    {
-        return new CreateSalesOrderJson
-        {
-            OrderNumber = _salesOrderNumber,
-            OrderDate = _salesOrderDate,
-            CustomerId = _customerId,
-            DeliveryDate = _salesOrderDeliveryDate,
-            Rows = _rows.ToList()
-        };
-    }
-
     private void Apply(SalesOrderSagaStarted @event)
     {
         Id = @event.AggregateId;
@@ -81,7 +69,16 @@ public class SalesOrderSaga : AggregateRoot
 
     internal void MarkCustomerBudgetAsVerified(CustomerJson customer, Guid correlationId)
     {
-        RaiseEvent(new SagaCustomerBudgetVerified(new CustomerId(_customerId), correlationId, customer));
+        RaiseEvent(new SagaCustomerBudgetVerified(new CustomerId(_customerId), correlationId, 
+            customer,
+            new CreateSalesOrderJson
+            {
+                OrderNumber = _salesOrderNumber,
+                OrderDate = _salesOrderDate,
+                CustomerId = _customerId,
+                DeliveryDate = _salesOrderDeliveryDate,
+                Rows = _rows.ToList()
+            }));
     }
 
     internal void MarkOrderAvailable(Guid correlationId)

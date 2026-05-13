@@ -4,7 +4,7 @@ using MongoDB.Driver;
 using Muflone.Eventstore.gRPC;
 using Muflone.Eventstore.gRPC.Persistence;
 
-namespace BrewUp.Sales.Infrastructure.ReadModel;
+namespace BrewUp.Infrastructure.ReadModel;
 
 public class EventStorePositionRepository : IEventStorePositionRepository
 {

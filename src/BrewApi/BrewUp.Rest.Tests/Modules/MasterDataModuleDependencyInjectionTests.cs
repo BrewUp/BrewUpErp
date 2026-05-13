@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using BrewUp.Infrastructure;
-using BrewUp.MasterData.Domain;
 using BrewUp.MasterData.Domain.Services;
+using BrewUp.MasterData.Entities.Dtos;
 using BrewUp.MasterData.Facade;
-using BrewUp.MasterData.ReadModel.Dtos;
 using BrewUp.Shared.ReadModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

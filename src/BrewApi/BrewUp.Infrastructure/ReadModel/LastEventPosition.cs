@@ -1,6 +1,6 @@
 ﻿using BrewUp.Shared.ReadModel;
 
-namespace BrewUp.Sales.Infrastructure.ReadModel;
+namespace BrewUp.Infrastructure.ReadModel;
 
 public class LastEventPosition : DtoBase
 {
