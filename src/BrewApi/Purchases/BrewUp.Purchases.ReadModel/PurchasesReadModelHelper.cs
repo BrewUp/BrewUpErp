@@ -11,8 +11,10 @@ public static class PurchasesReadModelHelper
     public static IServiceCollection AddReadModel(this IServiceCollection services)
     {
         services.AddScoped<IQueries<Supplier>, SuppliersQueries>();
+        services.AddScoped<IQueries<Beer>, BeersQueries>();
         
         services.AddScoped<ISupplierService, SupplierService>();
+        services.AddScoped<IBeerService, BeerService>();
         
         return services;
     }

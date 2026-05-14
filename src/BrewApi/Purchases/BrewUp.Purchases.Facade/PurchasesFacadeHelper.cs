@@ -20,6 +20,7 @@ public static class PurchasesFacadeHelper
         services.AddInfrastructure(configurationManager);
         
         services.AddIntegrationEventHandler<SupplierCreatedEventHandler>();
+        services.AddIntegrationEventHandler<BeerCreatedEventHandler>();
         
         return services;
     }

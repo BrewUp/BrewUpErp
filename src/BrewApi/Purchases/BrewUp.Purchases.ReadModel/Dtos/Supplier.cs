@@ -1,6 +1,8 @@
-﻿using BrewUp.Shared.CustomTypes;
+﻿using BrewUp.Purchases.SharedKernel.CustomTypes;
+using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.MasterData;
+using BrewUp.Shared.ExternalContracts.MasterData.Suppliers;
 using BrewUp.Shared.ReadModel;
 
 namespace BrewUp.Purchases.ReadModel.Dtos;
@@ -26,4 +28,19 @@ public class Supplier : DtoBase
         PartitaIva = partitaIva;
         Indirizzo = indirizzo;
     }
+
+    public SupplierJson ToJson()
+    {
+        return new SupplierJson
+        {
+            SupplierId = Id,
+            RagioneSociale = RagioneSociale,
+            PartitaIva = PartitaIva,
+            Indirizzo = Indirizzo
+        };
+    }
+    
+    public SupplierType ToSupplierType() => new (
+        new SupplierId(Id),
+        new RagioneSociale(RagioneSociale));
 }
