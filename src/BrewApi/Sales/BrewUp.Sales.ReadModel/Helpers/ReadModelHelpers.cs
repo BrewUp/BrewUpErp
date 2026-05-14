@@ -19,14 +19,4 @@ public static class ReadModelHelpers
                 dto.Quantity,
                 dto.Price));
     }
-    
-    public static IndirizzoJson ToIndirizzoJson(this Indirizzo indirizzo) =>
-        new()
-        {
-            Via = indirizzo.Via.Value,
-            Citta = indirizzo.Citta.Value,
-            Cap = indirizzo.Cap.Value,
-            Provincia = indirizzo.Provincia.Value,
-            Nazione = indirizzo.Nazione.Value
-        };
 }

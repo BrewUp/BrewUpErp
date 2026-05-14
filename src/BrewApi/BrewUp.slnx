@@ -22,6 +22,14 @@
     <Project Path="MasterData/BrewUp.MasterData.ReadModel/BrewUp.MasterData.ReadModel.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.SharedKernel/BrewUp.MasterData.SharedKernel.csproj" />
   </Folder>
+  <Folder Name="/50 Modules/Purchases/">
+    <Project Path="Purchases/BrewUp.Purchases.Domain/BrewUp.Purchases.Domain.csproj" />
+    <Project Path="Purchases/BrewUp.Purchases.Facade/BrewUp.Purchases.Facade.csproj" />
+    <Project Path="Purchases/BrewUp.Purchases.Infrastructure/BrewUp.Purchases.Infrastructure.csproj" />
+    <Project Path="Purchases/BrewUp.Purchases.ReadModel/BrewUp.Purchases.ReadModel.csproj" />
+    <Project Path="Purchases/BrewUp.Purchases.SharedKernel/BrewUp.Purchases.SharedKernel.csproj" />
+    <Project Path="Purchases/BrewUp.Purchases.Tests/BrewUp.Purchases.Tests.csproj" />
+  </Folder>
   <Folder Name="/50 Modules/Sagas/">
     <Project Path="Sagas/BrewUp.Sagas.Domain/BrewUp.Sagas.Domain.csproj" />
     <Project Path="Sagas/BrewUp.Sagas.Facade/BrewUp.Sagas.Facade.csproj" />
@@ -49,6 +57,7 @@
   </Folder>
   <Folder Name="/80 Infrastructure/">
     <Project Path="BrewUp.Infrastructure/BrewUp.Infrastructure.csproj" />
+    <Project Path="Muflone/Muflone.Transport.RabbitMQ/Muflone.Transport.RabbitMQ.csproj" />
   </Folder>
   <Folder Name="/90 Presentation/">
     <Project Path="BrewUp.Rest.Tests/BrewUp.Rest.Tests.csproj" />

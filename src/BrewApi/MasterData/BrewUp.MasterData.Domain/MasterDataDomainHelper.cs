@@ -10,6 +10,7 @@ public static class MasterDataDomainHelper
     public static IServiceCollection AddMasterDataDomain(this IServiceCollection services)
     {
         services.AddScoped<ICustomerDomainService, CustomerDomainService>();
+        services.AddScoped<ISupplierDomainService, SupplierDomainService>();
         services.AddScoped<IBeerDomainService, BeerDomainService>();
         services.AddScoped<IWarehouseDomainService, WarehouseDomainService>();
         

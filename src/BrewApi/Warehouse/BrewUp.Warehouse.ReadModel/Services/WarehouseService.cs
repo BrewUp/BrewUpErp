@@ -2,7 +2,6 @@
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.ReadModel;
-using BrewUp.Warehouse.ReadModel.Dtos;
 using Lena.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

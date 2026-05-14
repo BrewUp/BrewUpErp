@@ -30,6 +30,7 @@ public static class MasterDataHelper
         });
         
         services.AddScoped<IMasterDataCustomerFacade, MasterDataCustomerFacade>();
+        services.AddScoped<IMasterDataSupplierFacade, MasterDataSupplierFacade>();
         services.AddScoped<IMasterDataWarehouseFacade, MasterDataWarehouseFacade>();
         services.AddScoped<IMasterDataBeerFacade, MasterDataBeerFacade>();
 

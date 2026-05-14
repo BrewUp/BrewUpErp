@@ -12,10 +12,12 @@ public static class ReadModelHelper
     {
         services.AddScoped<IQueries<Beer>, BeerQueries>();
         services.AddScoped<IQueries<Customer>, CustomerQueries>();
+        services.AddScoped<IQueries<Supplier>, SupplierQueries>();
         services.AddScoped<IQueries<Warehouse>, WarehouseQueries>();
         
         services.AddScoped<IBeerQueryService, BeerQueryService>();
         services.AddScoped<ICustomerQueryService, CustomerQueryService>();
+        services.AddScoped<ISupplierQueryService, SupplierQueryService>();
         services.AddScoped<IWarehouseQueryService, WarehouseQueryService>();
         
         return services;

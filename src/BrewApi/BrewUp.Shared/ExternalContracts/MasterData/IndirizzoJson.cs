@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BrewUp.Shared.ExternalContracts.MasterData.Customers;
+namespace BrewUp.Shared.ExternalContracts.MasterData;
 
 public class IndirizzoJson
 {
