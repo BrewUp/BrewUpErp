@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using BrewUp.Purchases.Domain;
 using BrewUp.Purchases.Facade;
 using BrewUp.Shared.Tests;
 using NetArchTest.Rules;
@@ -25,21 +26,21 @@ public class PurchasesArchitectureTests
         Assert.True(result);
     }
     
-    // [Fact]
-    // public void Domain_Should_Not_Depend_On_Outer_Layers()
-    // {
-    //     var types = Types.InAssembly(typeof(DomainHelper).Assembly);
-    //
-    //     var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjectsWithoutDomain("Sales");
-    //     
-    //     var result = types
-    //         .ShouldNot()
-    //         .HaveDependencyOnAny(forbiddenAssemblies.ToArray())
-    //         .GetResult()
-    //         .IsSuccessful;
-    //
-    //     Assert.True(result);
-    // }
+    [Fact]
+    public void Domain_Should_Not_Depend_On_Outer_Layers()
+    {
+        var types = Types.InAssembly(typeof(DomainHelper).Assembly);
+    
+        var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjectsWithoutDomain("Purchases");
+        
+        var result = types
+            .ShouldNot()
+            .HaveDependencyOnAny(forbiddenAssemblies.ToArray())
+            .GetResult()
+            .IsSuccessful;
+    
+        Assert.True(result);
+    }
     
     [Fact]
     public void SalesProjects_Should_Having_Namespace_StartingWith_Sales()
