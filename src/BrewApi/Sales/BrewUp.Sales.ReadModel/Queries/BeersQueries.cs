@@ -30,7 +30,7 @@ internal sealed class BeersQueries(IMongoClient mongoClient) : IQueries<Beer>
         if (--page < 0)
             page = 0;
 
-        var collection = _database.GetCollection<Beer>(nameof(SalesOrder));
+        var collection = _database.GetCollection<Beer>(nameof(Beer));
         var queryable = query != null
             ? collection.AsQueryable()
                 .Where(query)

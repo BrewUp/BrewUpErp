@@ -9,6 +9,7 @@ builder.RegisterModules([
     new InfrastructureModule(),
     new OpenApiModule(),
     new MasterDataModule(),
+    new PurchasesModule(),
     new SalesModule(),
     new WarehouseModule(),
     new DashboardsModule(),
