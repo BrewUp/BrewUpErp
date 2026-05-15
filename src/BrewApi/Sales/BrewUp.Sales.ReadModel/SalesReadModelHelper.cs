@@ -29,4 +29,16 @@ public static class SalesReadModelHelper
         
         return services;
     }
+    
+    public static IServiceCollection AddSalesReadModelForChat(this IServiceCollection services)
+    {
+        services.AddScoped<ISalesOrderService, SalesOrderService>();
+        services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IBeerService, BeerService>();
+        
+        services.AddScoped<IQueries<SalesOrder>, SalesOrderQueries>();
+        services.AddScoped<IQueries<Beer>, BeersQueries>();
+        
+        return services;
+    }
 }
