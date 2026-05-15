@@ -30,7 +30,7 @@ public static class SalesReadModelHelper
         return services;
     }
     
-    public static IServiceCollection AddSalesReadModelForChat(this IServiceCollection services)
+    public static IServiceCollection AddSalesReadModelForMcp(this IServiceCollection services)
     {
         services.AddScoped<ISalesOrderService, SalesOrderService>();
         services.AddScoped<ICustomerService, CustomerService>();

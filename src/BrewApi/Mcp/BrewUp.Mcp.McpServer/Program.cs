@@ -21,7 +21,7 @@ builder.Configuration.GetSection("BrewUp:MongoDbSettings").Bind(mongoDbSettings)
 builder.Services.AddMongoDb(mongoDbSettings);
 builder.Services.AddMasterDataReadModel();
 builder.Services.AddSalesInfrastructure(builder.Configuration);
-builder.Services.AddSalesReadModelForChat();
+builder.Services.AddSalesReadModelForMcp();
 builder.Services.AddBrewUpAi(builder.Configuration);
 
 var app = builder.Build();

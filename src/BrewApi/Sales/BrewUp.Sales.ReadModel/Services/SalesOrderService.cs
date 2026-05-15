@@ -1,5 +1,7 @@
-﻿using BrewUp.Sales.ReadModel.Dtos;
+﻿using System.Linq.Expressions;
+using BrewUp.Sales.ReadModel.Dtos;
 using BrewUp.Sales.SharedKernel.CustomTypes;
+using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ReadModel;
@@ -30,7 +32,8 @@ internal sealed class SalesOrderService([FromKeyedServices("sales")] IPersister 
             });
     }
 
-    public async Task<Result<PagedResult<SalesOrderJson>>> GetSalesOrdersAsync(int page, int pageSize, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<SalesOrderJson>>> GetSalesOrdersAsync(int page, int pageSize,
+        CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         
@@ -84,5 +87,50 @@ internal sealed class SalesOrderService([FromKeyedServices("sales")] IPersister 
         return updateResult.Match(
             _ => Result<string>.Success(salesOrderId.Value),
             _ => Result<string>.Error("Error updating sales order"));
+    }
+
+    public async Task<Result<CustomerTotalPurchased>> GetCustomerTotalPurchasedAsync(CustomerId customerId,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        Expression<Func<SalesOrder, bool>> query = orders => orders.CustomerId == customerId.Value;
+        var queryResult = await orderQueries.GetByFilterAsync(query, 1, 1000, cancellationToken);
+        if (queryResult.IsError)
+            return Result<CustomerTotalPurchased>.Error("Error retrieving sales orders for customer");
+        
+        queryResult.TryGetValue(out PagedResult<SalesOrder> pagedResult);
+
+        if (pagedResult.TotalRecords <= 0) 
+            return Result<CustomerTotalPurchased>.Error("Error retrieving sales orders");
+        
+        var totalPurchased =
+            pagedResult.Results.Sum(order => order.Rows.Sum(row => row.Quantity.Value * row.Price.Value));
+        return Result<CustomerTotalPurchased>.Success(new CustomerTotalPurchased(customerId.Value, pagedResult.Results.First().CustomerName, totalPurchased));
+    }
+
+    public async Task<Result<PagedResult<SalesOrderTotalQuantity>>> GetSalesOrderTotalQuantitiesAsync(
+        string salesOrderId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        Expression<Func<SalesOrder, bool>> query = orders => orders.Id == salesOrderId;
+        var queryResult = await orderQueries.GetByFilterAsync(query, 1, 1000, cancellationToken);
+        
+        return queryResult.Match(
+            _ =>
+            {
+                queryResult.TryGetValue(out PagedResult<SalesOrder> pagedResult);
+                
+                return pagedResult.TotalRecords > 0
+                    ? Result<PagedResult<SalesOrderTotalQuantity>>.Success(new PagedResult<SalesOrderTotalQuantity>(
+                        pagedResult.Results.Select(r => 
+                                new SalesOrderTotalQuantity(r.Id, new Quantity(r.Rows.Sum(row => row.Quantity.Value), "Bottles"))),
+                        pagedResult.Page, 
+                        pagedResult.PageSize, 
+                        pagedResult.TotalRecords))
+                    : Result<PagedResult<SalesOrderTotalQuantity>>.Success(new PagedResult<SalesOrderTotalQuantity>([], 0, 0, 0));
+            },
+            _ => Result<PagedResult<SalesOrderTotalQuantity>>.Error("Error retrieving sales orders"));
     }
 }
