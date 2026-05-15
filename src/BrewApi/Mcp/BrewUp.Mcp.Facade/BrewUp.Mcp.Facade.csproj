@@ -25,7 +25,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\MasterData\BrewUp.MasterData.ReadModel\BrewUp.MasterData.ReadModel.csproj" />
         <ProjectReference Include="..\..\Sales\BrewUp.Sales.ReadModel\BrewUp.Sales.ReadModel.csproj" />
-        <ProjectReference Include="..\BrewUp.AI.SharedKernel\BrewUp.AI.SharedKernel.csproj" />
+        <ProjectReference Include="..\BrewUp.Mcp.SharedKernel\BrewUp.Mcp.SharedKernel.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,9 +1,9 @@
 using System.ComponentModel;
-using BrewUp.AI.Facade.MasterData;
-using BrewUp.AI.Facade.Sales;
+using BrewUp.Mcp.Facade.MasterData;
+using BrewUp.Mcp.Facade.Sales;
 using ModelContextProtocol.Server;
 
-namespace BrewUp.AI.McpServer.Tools;
+namespace BrewUp.Mcp.McpServer.Tools;
 
 [McpServerToolType]
 public sealed class BrewUpMcpTools(

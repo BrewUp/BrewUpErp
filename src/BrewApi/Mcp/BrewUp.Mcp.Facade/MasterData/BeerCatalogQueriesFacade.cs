@@ -1,8 +1,8 @@
-﻿using BrewUp.AI.SharedKernel.Catalog;
-using BrewUp.MasterData.ReadModel.Services;
+﻿using BrewUp.MasterData.ReadModel.Services;
+using BrewUp.Mcp.SharedKernel.Catalog;
 using BrewUp.Shared.ExternalContracts.MasterData.Beers;
 
-namespace BrewUp.AI.Facade.MasterData;
+namespace BrewUp.Mcp.Facade.MasterData;
 
 internal sealed class BeerCatalogQueriesFacade(
     IBeerQueryService beerQueryService) : IBeerCatalogQueriesFacade

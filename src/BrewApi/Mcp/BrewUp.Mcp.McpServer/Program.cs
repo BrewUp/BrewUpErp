@@ -1,7 +1,7 @@
-using BrewUp.AI.Facade;
-using BrewUp.AI.McpServer;
-using BrewUp.AI.McpServer.Tools;
 using BrewUp.MasterData.ReadModel;
+using BrewUp.Mcp.Facade;
+using BrewUp.Mcp.McpServer;
+using BrewUp.Mcp.McpServer.Tools;
 using BrewUp.Sales.Infrastructure;
 using BrewUp.Sales.ReadModel;
 using BrewUp.Shared.Configuration;

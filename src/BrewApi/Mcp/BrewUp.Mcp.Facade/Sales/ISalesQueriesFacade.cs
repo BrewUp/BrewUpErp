@@ -1,6 +1,6 @@
-using BrewUp.AI.SharedKernel.Sales;
+using BrewUp.Mcp.SharedKernel.Sales;
 
-namespace BrewUp.AI.Facade.Sales;
+namespace BrewUp.Mcp.Facade.Sales;
 
 public interface ISalesQueriesFacade
 {

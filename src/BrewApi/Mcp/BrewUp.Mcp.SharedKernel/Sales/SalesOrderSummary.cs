@@ -1,4 +1,4 @@
-namespace BrewUp.AI.SharedKernel.Sales;
+namespace BrewUp.Mcp.SharedKernel.Sales;
 
 public sealed record SalesOrderSummary(
     string OrderId,

@@ -1,8 +1,8 @@
-﻿using BrewUp.AI.SharedKernel.Sales;
+﻿using BrewUp.Mcp.SharedKernel.Sales;
 using BrewUp.Sales.ReadModel.Services;
 using BrewUp.Shared.ExternalContracts.Sales;
 
-namespace BrewUp.AI.Facade.Sales;
+namespace BrewUp.Mcp.Facade.Sales;
 
 internal sealed class SalesQueriesFacade(
     ISalesOrderService salesOrderService) : ISalesQueriesFacade

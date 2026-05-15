@@ -1,14 +1,14 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
-using BrewUp.AI.Facade.Chat;
-using BrewUp.AI.Facade.MasterData;
-using BrewUp.AI.Facade.Sales;
-using BrewUp.AI.Facade.Tools;
+using BrewUp.Mcp.Facade.Chat;
+using BrewUp.Mcp.Facade.MasterData;
+using BrewUp.Mcp.Facade.Sales;
+using BrewUp.Mcp.Facade.Tools;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BrewUp.AI.Facade;
+namespace BrewUp.Mcp.Facade;
 
 public static class BrewUpAiHelper
 {

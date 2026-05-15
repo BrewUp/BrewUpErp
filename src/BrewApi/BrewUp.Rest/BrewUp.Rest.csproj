@@ -29,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AI\BrewUp.AI.Facade\BrewUp.AI.Facade.csproj" />
+      <ProjectReference Include="..\Mcp\BrewUp.Mcp.Facade\BrewUp.Mcp.Facade.csproj" />
       <ProjectReference Include="..\BrewUp.Infrastructure\BrewUp.Infrastructure.csproj" />
       <ProjectReference Include="..\Dashboards\BrewUp.Dashboards.Facade\BrewUp.Dashboards.Facade.csproj" />
       <ProjectReference Include="..\MasterData\BrewUp.MasterData.Facade\BrewUp.MasterData.Facade.csproj" />

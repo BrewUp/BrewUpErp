@@ -1,11 +1,10 @@
 using System.ComponentModel;
-using BrewUp.AI.Facade.MasterData;
-using BrewUp.AI.Facade.Sales;
-using BrewUp.AI.SharedKernel.Catalog;
-using BrewUp.AI.SharedKernel.Sales;
-using Lena.Core;
+using BrewUp.Mcp.Facade.MasterData;
+using BrewUp.Mcp.Facade.Sales;
+using BrewUp.Mcp.SharedKernel.Catalog;
+using BrewUp.Mcp.SharedKernel.Sales;
 
-namespace BrewUp.AI.Facade.Tools;
+namespace BrewUp.Mcp.Facade.Tools;
 
 public sealed class BrewUpAiTools(
     IBeerCatalogQueriesFacade beerCatalogQueries,

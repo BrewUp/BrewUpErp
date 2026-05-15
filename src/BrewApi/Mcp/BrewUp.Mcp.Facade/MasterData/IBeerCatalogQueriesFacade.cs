@@ -1,6 +1,6 @@
-using BrewUp.AI.SharedKernel.Catalog;
+using BrewUp.Mcp.SharedKernel.Catalog;
 
-namespace BrewUp.AI.Facade.MasterData;
+namespace BrewUp.Mcp.Facade.MasterData;
 
 public interface IBeerCatalogQueriesFacade
 {
