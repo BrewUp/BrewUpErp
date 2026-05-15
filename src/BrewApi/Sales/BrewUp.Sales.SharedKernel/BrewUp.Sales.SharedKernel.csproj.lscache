@@ -21,7 +21,7 @@ ProjectAssetsFile=<PATH>obj/project.assets.json
 RootNamespace=BrewUp.Sales.SharedKernel
 RunAnalyzers=
 RunAnalyzersDuringLiveAnalysis=
-SolutionPath=*Undefined*
+SolutionPath=<PATH>../../BrewUp.slnx
 TargetFrameworkIdentifier=.NETCoreApp
 TargetPath=<PATH>bin/Debug/net10.0/BrewUp.Sales.SharedKernel.dll
 TargetRefPath=<PATH>obj/Debug/net10.0/ref/BrewUp.Sales.SharedKernel.dll
@@ -57,12 +57,15 @@ TemporaryDependencyNodeTargetIdentifier=net10.0
 CustomTypes/
  Customer.cs
  CustomerName.cs
+ CustomerTotalPurchased.cs
  ProductId.cs
  ProductName.cs
  SalesOrderDate.cs
  SalesOrderDeliveryDate.cs
  SalesOrderId.cs
  SalesOrderNumber.cs
+ SalesOrderSummary.cs
+ SalesOrderTotalQuantity.cs
 Enums/
  CustomerType.cs
  SalesOrderStatus.cs
