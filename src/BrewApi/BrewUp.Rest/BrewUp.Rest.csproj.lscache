@@ -79,6 +79,7 @@ Program.cs
 [metadataReferences]
 ../
  BrewUp.Infrastructure/obj/Debug/net10.0/ref/BrewUp.Infrastructure.dll
+ BrewUp.ServiceDefaults/obj/Debug/net10.0/ref/BrewUp.ServiceDefaults.dll
  BrewUp.Shared/obj/Debug/net10.0/ref/BrewUp.Shared.dll
  BrewUp.Warehouse.Entities/obj/Debug/net10.0/ref/BrewUp.Warehouse.Entities.dll
  Dashboards/
@@ -430,11 +431,15 @@ Program.cs
  System.Xml.XPath.XDocument.dll
  WindowsBase.dll
 <NUGET>/
+ aspire.mongodb.driver/13.3.0/lib/net10.0/Aspire.MongoDB.Driver.dll
+ aspire.rabbitmq.client/13.3.0/lib/net10.0/Aspire.RabbitMQ.Client.dll
+ aspnetcore.healthchecks.mongodb/9.0.0/lib/net8.0/HealthChecks.MongoDb.dll
+ aspnetcore.healthchecks.rabbitmq/9.0.0/lib/net8.0/HealthChecks.Rabbitmq.dll
  azure.ai.openai/2.1.0/lib/netstandard2.0/Azure.AI.OpenAI.dll
  azure.core/1.54.0/lib/net10.0/Azure.Core.dll
  azure.identity/1.14.2/lib/net8.0/Azure.Identity.dll
  azure.monitor.opentelemetry.exporter/1.8.0/lib/net10.0/Azure.Monitor.OpenTelemetry.Exporter.dll
- dnsclient/1.6.1/lib/net5.0/DnsClient.dll
+ dnsclient/1.8.0/lib/net8.0/DnsClient.dll
  eventstore.client.grpc.streams/23.3.9/lib/net8.0/EventStore.Client.Streams.dll
  eventstore.client.grpc/23.3.9/lib/net8.0/EventStore.Client.dll
  fluentvalidation.aspnetcore/11.3.1/lib/net6.0/FluentValidation.AspNetCore.dll
@@ -458,7 +463,18 @@ Program.cs
  microsoft.extensions.ai.abstractions/10.6.0/lib/net10.0/Microsoft.Extensions.AI.Abstractions.dll
  microsoft.extensions.ai.openai/10.6.0/lib/net10.0/Microsoft.Extensions.AI.OpenAI.dll
  microsoft.extensions.ai/10.6.0/lib/net10.0/Microsoft.Extensions.AI.dll
+ microsoft.extensions.ambientmetadata.application/10.2.0/lib/net10.0/Microsoft.Extensions.AmbientMetadata.Application.dll
+ microsoft.extensions.compliance.abstractions/10.2.0/lib/net10.0/Microsoft.Extensions.Compliance.Abstractions.dll
+ microsoft.extensions.dependencyinjection.autoactivation/10.5.0/lib/net10.0/Microsoft.Extensions.DependencyInjection.AutoActivation.dll
  microsoft.extensions.dependencymodel/10.0.8/lib/net10.0/Microsoft.Extensions.DependencyModel.dll
+ microsoft.extensions.diagnostics.exceptionsummarization/10.2.0/lib/net10.0/Microsoft.Extensions.Diagnostics.ExceptionSummarization.dll
+ microsoft.extensions.http.diagnostics/10.2.0/lib/net10.0/Microsoft.Extensions.Http.Diagnostics.dll
+ microsoft.extensions.http.resilience/10.2.0/lib/net10.0/Microsoft.Extensions.Http.Resilience.dll
+ microsoft.extensions.resilience/10.2.0/lib/net10.0/Microsoft.Extensions.Resilience.dll
+ microsoft.extensions.servicediscovery.abstractions/10.2.0/lib/net10.0/Microsoft.Extensions.ServiceDiscovery.Abstractions.dll
+ microsoft.extensions.servicediscovery/10.2.0/lib/net10.0/Microsoft.Extensions.ServiceDiscovery.dll
+ microsoft.extensions.telemetry.abstractions/10.2.0/lib/net10.0/Microsoft.Extensions.Telemetry.Abstractions.dll
+ microsoft.extensions.telemetry/10.2.0/lib/net10.0/Microsoft.Extensions.Telemetry.dll
  microsoft.identity.client.extensions.msal/4.83.1/lib/net8.0/Microsoft.Identity.Client.Extensions.Msal.dll
  microsoft.identity.client/4.83.1/lib/net8.0/Microsoft.Identity.Client.dll
  microsoft.identitymodel.abstractions/8.14.0/lib/net9.0/Microsoft.IdentityModel.Abstractions.dll
@@ -470,6 +486,7 @@ Program.cs
  microsoft.openapi/2.4.1/lib/net8.0/Microsoft.OpenApi.dll
  microsoft.sqlserver.server/1.0.0/lib/netstandard2.0/Microsoft.SqlServer.Server.dll
  mongodb.bson/3.8.1/lib/net6.0/MongoDB.Bson.dll
+ mongodb.driver.core.extensions.diagnosticsources/3.0.0/lib/net10.0/MongoDB.Driver.Core.Extensions.DiagnosticSources.dll
  mongodb.driver/3.8.1/lib/net6.0/MongoDB.Driver.dll
  muflone.eventstore.grpc/10.0.1/lib/net10.0/Muflone.Eventstore.gRPC.dll
  muflone.saga/10.0.1/lib/net10.0/Muflone.Saga.dll
@@ -490,6 +507,8 @@ Program.cs
  opentelemetry.persistentstorage.filesystem/1.0.3/lib/netstandard2.0/OpenTelemetry.PersistentStorage.FileSystem.dll
  opentelemetry/1.15.3/lib/net10.0/OpenTelemetry.dll
  polly.core/8.6.5/lib/net8.0/Polly.Core.dll
+ polly.extensions/8.4.2/lib/net8.0/Polly.Extensions.dll
+ polly.ratelimiting/8.4.2/lib/net8.0/Polly.RateLimiting.dll
  polly/8.6.5/lib/net6.0/Polly.dll
  rabbitmq.client/7.2.1/lib/net8.0/RabbitMQ.Client.dll
  scalar.aspnetcore/2.14.11/lib/net10.0/Scalar.AspNetCore.dll
@@ -520,7 +539,6 @@ Program.cs
  Microsoft.AspNetCore.App.CodeFixes.dll
  Microsoft.AspNetCore.App.SourceGenerators.dll
  Microsoft.AspNetCore.Components.Analyzers.dll
- Microsoft.Extensions.Logging.Generators.dll
  Microsoft.Extensions.Options.SourceGeneration.dll
  Microsoft.Extensions.Validation.ValidationsGenerator.dll
 <DOTNET>/packs/Microsoft.NETCore.App.Ref/10.0.8/analyzers/dotnet/cs/
@@ -543,6 +561,9 @@ Program.cs
 <NUGET>/
  microsoft.aspnetcore.openapi/10.0.8/analyzers/dotnet/cs/Microsoft.AspNetCore.OpenApi.SourceGenerators.dll
  microsoft.entityframeworkcore.analyzers/10.0.8/analyzers/dotnet/cs/Microsoft.EntityFrameworkCore.Analyzers.dll
+ microsoft.extensions.telemetry.abstractions/10.2.0/analyzers/dotnet/cs/
+  Microsoft.Gen.Logging.dll
+  Microsoft.Gen.Metrics.dll
  system.clientmodel/1.10.0/analyzers/dotnet/cs/System.ClientModel.SourceGeneration.dll
 
 [analyzerConfigFiles]

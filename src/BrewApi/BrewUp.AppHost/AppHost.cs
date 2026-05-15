@@ -1,8 +1,5 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-
-//var serviceBus = builder.AddAzureServiceBus("messaging");
-
 var rabbitMq = builder.AddRabbitMQ("rabbitMq", port: 5672)
     .WithManagementPlugin();
 

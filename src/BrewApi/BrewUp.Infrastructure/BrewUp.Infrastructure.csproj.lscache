@@ -378,7 +378,11 @@ ReadModel/
  System.Xml.XPath.XDocument.dll
  WindowsBase.dll
 <NUGET>/
- dnsclient/1.6.1/lib/net5.0/DnsClient.dll
+ aspire.mongodb.driver/13.3.0/lib/net10.0/Aspire.MongoDB.Driver.dll
+ aspire.rabbitmq.client/13.3.0/lib/net10.0/Aspire.RabbitMQ.Client.dll
+ aspnetcore.healthchecks.mongodb/9.0.0/lib/net8.0/HealthChecks.MongoDb.dll
+ aspnetcore.healthchecks.rabbitmq/9.0.0/lib/net8.0/HealthChecks.Rabbitmq.dll
+ dnsclient/1.8.0/lib/net8.0/DnsClient.dll
  eventstore.client.grpc.streams/23.3.9/lib/net8.0/EventStore.Client.Streams.dll
  eventstore.client.grpc/23.3.9/lib/net8.0/EventStore.Client.dll
  fluentvalidation.aspnetcore/11.3.1/lib/net6.0/FluentValidation.AspNetCore.dll
@@ -391,14 +395,19 @@ ReadModel/
  jetbrains.annotations/2023.3.0/lib/netstandard2.0/JetBrains.Annotations.dll
  lena/1.1.0/lib/net10.0/Lena.dll
  microsoft.bcl.asyncinterfaces/6.0.0/lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll
+ microsoft.extensions.dependencyinjection.autoactivation/10.5.0/lib/net10.0/Microsoft.Extensions.DependencyInjection.AutoActivation.dll
  mongodb.bson/3.8.1/lib/net6.0/MongoDB.Bson.dll
+ mongodb.driver.core.extensions.diagnosticsources/3.0.0/lib/net10.0/MongoDB.Driver.Core.Extensions.DiagnosticSources.dll
  mongodb.driver/3.8.1/lib/net6.0/MongoDB.Driver.dll
  muflone.eventstore.grpc/10.0.1/lib/net10.0/Muflone.Eventstore.gRPC.dll
  muflone.transport.rabbitmq/10.2.0/lib/net10.0/Muflone.Transport.RabbitMQ.dll
  muflone/10.1.1/lib/net10.0/Muflone.dll
  newid/4.0.1/lib/net6.0/NewId.dll
  newtonsoft.json/13.0.3/lib/net6.0/Newtonsoft.Json.dll
- opentelemetry.api/1.15.0/lib/net10.0/OpenTelemetry.Api.dll
+ opentelemetry.api.providerbuilderextensions/1.15.3/lib/net10.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll
+ opentelemetry.api/1.15.3/lib/net10.0/OpenTelemetry.Api.dll
+ opentelemetry.extensions.hosting/1.15.3/lib/net10.0/OpenTelemetry.Extensions.Hosting.dll
+ opentelemetry/1.15.3/lib/net10.0/OpenTelemetry.dll
  polly.core/8.6.5/lib/net8.0/Polly.Core.dll
  polly/8.6.5/lib/net6.0/Polly.dll
  rabbitmq.client/7.2.1/lib/net8.0/RabbitMQ.Client.dll
