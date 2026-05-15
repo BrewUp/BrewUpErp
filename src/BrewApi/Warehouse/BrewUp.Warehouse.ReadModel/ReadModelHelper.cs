@@ -27,4 +27,19 @@ public static class ReadModelHelper
         
         return services;
     }
+
+    public static IServiceCollection AddReadModelForMcp(this IServiceCollection services)
+    {
+        services.AddScoped<IWarehouseService, WarehouseService>();
+        services.AddScoped<IShipmentService, ShipmentService>();
+        services.AddScoped<IAvailabilityService, AvailabilityService>();
+        services.AddScoped<IBeerService, BeerService>();
+
+        services.AddScoped<IQueries<Shipment>, ShipmentQueries>();
+        services.AddScoped<IQueries<Availability>, AvailabilityQueries>();
+        services.AddScoped<IQueries<Dtos.Warehouse>, WarehouseQueries>();
+        services.AddScoped<IQueries<Beer>, BeerQueries>();
+        
+        return services;
+    }
 }

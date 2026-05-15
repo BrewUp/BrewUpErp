@@ -18,8 +18,8 @@ MongoDbSettings mongoDbSettings = new();
 builder.Configuration.GetSection("BrewUp:MongoDbSettings").Bind(mongoDbSettings);
 builder.Services.AddMongoDb(mongoDbSettings);
 builder.Services.AddScoped<IMcpSalesFacade, McpSalesFacade>();
-builder.Services.AddSalesInfrastructure(builder.Configuration);
-builder.Services.AddSalesReadModelForMcp();
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddReadModelForMcp();
 
 var app = builder.Build();
 

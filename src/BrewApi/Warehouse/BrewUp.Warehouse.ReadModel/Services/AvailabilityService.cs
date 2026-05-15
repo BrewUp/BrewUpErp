@@ -2,7 +2,6 @@
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.ReadModel;
-using BrewUp.Warehouse.ReadModel.Dtos;
 using Lena.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -22,7 +21,7 @@ namespace BrewUp.Warehouse.ReadModel.Services
             var queryResult = await queries.GetByIdAsync(id, cancellationToken);
 
             if (!queryResult.IsSuccess) 
-                return Result<AvailabilityJson>.Error("WhAvailability not found");
+                return Result<AvailabilityJson>.Error("Availability not found");
             
             queryResult.TryGetValue(out Availability availabilityDto);
             return Result<AvailabilityJson>.Success(availabilityDto.ToJson());
