@@ -13,18 +13,18 @@ primary
 lastDtbSucceeded
 
 [properties]
-AssemblyName=BrewUp.Sales.ReadModel
+AssemblyName=BrewUp.Sales.McpServer
 CommandLineArgsForDesignTimeEvaluation=-langversion:14.0 -define:TRACE
 CompilerGeneratedFilesOutputPath=
 MaxSupportedLangVersion=14.0
 ProjectAssetsFile=<PATH>obj/project.assets.json
-RootNamespace=BrewUp.Sales.ReadModel
+RootNamespace=BrewUp.Sales.McpServer
 RunAnalyzers=
 RunAnalyzersDuringLiveAnalysis=
 SolutionPath=<PATH>../../BrewUp.slnx
 TargetFrameworkIdentifier=.NETCoreApp
-TargetPath=<PATH>bin/Debug/net10.0/BrewUp.Sales.ReadModel.dll
-TargetRefPath=<PATH>obj/Debug/net10.0/ref/BrewUp.Sales.ReadModel.dll
+TargetPath=<PATH>bin/Debug/net10.0/BrewUp.Sales.McpServer.dll
+TargetRefPath=<PATH>obj/Debug/net10.0/ref/BrewUp.Sales.McpServer.dll
 TemporaryDependencyNodeTargetIdentifier=net10.0
 
 [commandLineArguments]
@@ -39,53 +39,37 @@ TemporaryDependencyNodeTargetIdentifier=net10.0
 /define:TRACE;DEBUG;NET;NET10_0;NETCOREAPP;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NET10_0_OR_GREATER;NETCOREAPP1_0_OR_GREATER;NETCOREAPP1_1_OR_GREATER;NETCOREAPP2_0_OR_GREATER;NETCOREAPP2_1_OR_GREATER;NETCOREAPP2_2_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER
 /highentropyva+
 /nullable:enable
-/features:"InterceptorsNamespaces=;Microsoft.Extensions.Validation.Generated"
+/features:"InterceptorsNamespaces=;Microsoft.AspNetCore.OpenApi.Generated;;Microsoft.Extensions.Validation.Generated"
 /debug+
 /debug:portable
 /filealign:512
 /optimize-
-/out:obj\Debug\net10.0\BrewUp.Sales.ReadModel.dll
-/refout:obj\Debug\net10.0\refint\BrewUp.Sales.ReadModel.dll
-/target:library
+/out:obj\Debug\net10.0\BrewUp.Sales.McpServer.dll
+/refout:obj\Debug\net10.0\refint\BrewUp.Sales.McpServer.dll
+/target:exe
 /warnaserror-
 /utf8output
 /deterministic+
 /langversion:14.0
+/features:use-roslyn-tokenizer=true
 /warnaserror+:NU1605,SYSLIB0011
 
 [sourceFiles]
-Dtos/
- Beer.cs
- Customer.cs
- SalesOrder.cs
- SalesOrderRow.cs
-EventHandlers/
- BeersAddedToCartEventHandler.cs
- SalesOrderCreatedEventHandler.cs
- SalesOrderCreatedForIntegrationEventHandler.cs
- SalesOrderCreatedForSalesOrderPlacedIntegrationEventHandler.cs
- SalesOrderCreatedWithPriceForIntegrationEventHandler.cs
-Helpers/ReadModelHelpers.cs
+IMcpSalesFacade.cs
+McpSalesFacade.cs
+MongoDbHelper.cs
 obj/Debug/net10.0/
  .NETCoreApp,Version=v10.0.AssemblyAttributes.cs
- BrewUp.Sales.ReadModel.AssemblyInfo.cs
- BrewUp.Sales.ReadModel.GlobalUsings.g.cs
-Queries/
- BeersQueries.cs
- SalesOrderQueries.cs
-SalesReadModelHelper.cs
-Services/
- BeerService.cs
- CustomerService.cs
- IBeerService.cs
- ICustomerService.cs
- ISalesOrderService.cs
- SalesOrderService.cs
- ServiceBase.cs
+ BrewUp.Sales.McpServer.AssemblyInfo.cs
+ BrewUp.Sales.McpServer.GlobalUsings.g.cs
+Program.cs
+Tools/SalesTools.cs
 
 [metadataReferences]
 ../
  ../BrewUp.Shared/obj/Debug/net10.0/ref/BrewUp.Shared.dll
+ BrewUp.Sales.Infrastructure/obj/Debug/net10.0/ref/BrewUp.Sales.Infrastructure.dll
+ BrewUp.Sales.ReadModel/obj/Debug/net10.0/ref/BrewUp.Sales.ReadModel.dll
  BrewUp.Sales.SharedKernel/obj/Debug/net10.0/ref/BrewUp.Sales.SharedKernel.dll
 <DOTNET>/packs/Microsoft.AspNetCore.App.Ref/10.0.8/ref/net10.0/
  Microsoft.AspNetCore.Antiforgery.dll
@@ -402,6 +386,12 @@ Services/
  fluentvalidation.dependencyinjectionextensions/11.11.0/lib/netstandard2.1/FluentValidation.DependencyInjectionExtensions.dll
  fluentvalidation/12.1.1/lib/net8.0/FluentValidation.dll
  lena/1.1.0/lib/net10.0/Lena.dll
+ microsoft.aspnetcore.openapi/10.0.8/lib/net10.0/Microsoft.AspNetCore.OpenApi.dll
+ microsoft.extensions.ai.abstractions/10.5.2/lib/net10.0/Microsoft.Extensions.AI.Abstractions.dll
+ microsoft.openapi/2.0.0/lib/net8.0/Microsoft.OpenApi.dll
+ modelcontextprotocol.aspnetcore/1.3.0/lib/net10.0/ModelContextProtocol.AspNetCore.dll
+ modelcontextprotocol.core/1.3.0/lib/net10.0/ModelContextProtocol.Core.dll
+ modelcontextprotocol/1.3.0/lib/net10.0/ModelContextProtocol.dll
  mongodb.bson/3.8.1/lib/net6.0/MongoDB.Bson.dll
  mongodb.driver/3.8.1/lib/net6.0/MongoDB.Driver.dll
  muflone/10.1.1/lib/net10.0/Muflone.dll
@@ -428,10 +418,20 @@ Services/
  Microsoft.Interop.SourceGeneration.dll
  System.Text.Json.SourceGeneration.dll
  System.Text.RegularExpressions.Generator.dll
+<DOTNET>/sdk/10.0.108/Sdks/Microsoft.NET.Sdk.Razor/source-generators/
+ Microsoft.AspNetCore.Razor.Utilities.Shared.dll
+ Microsoft.CodeAnalysis.Razor.Compiler.dll
+ Microsoft.Extensions.ObjectPool.dll
+<DOTNET>/sdk/10.0.108/Sdks/Microsoft.NET.Sdk.Web/analyzers/cs/
+ Microsoft.AspNetCore.Analyzers.dll
+ Microsoft.AspNetCore.Mvc.Analyzers.dll
 <DOTNET>/sdk/10.0.108/Sdks/Microsoft.NET.Sdk/analyzers/
  Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll
  Microsoft.CodeAnalysis.NetAnalyzers.dll
+<NUGET>/
+ microsoft.aspnetcore.openapi/10.0.8/analyzers/dotnet/cs/Microsoft.AspNetCore.OpenApi.SourceGenerators.dll
+ modelcontextprotocol.core/1.3.0/analyzers/dotnet/cs/ModelContextProtocol.Analyzers.dll
 
 [analyzerConfigFiles]
 <DOTNET>/sdk/10.0.108/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_10_default.globalconfig
-obj/Debug/net10.0/BrewUp.Sales.ReadModel.GeneratedMSBuildEditorConfig.editorconfig
+obj/Debug/net10.0/BrewUp.Sales.McpServer.GeneratedMSBuildEditorConfig.editorconfig

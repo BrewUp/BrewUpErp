@@ -21,4 +21,8 @@
       <ProjectReference Include="..\BrewUp.Sales.SharedKernel\BrewUp.Sales.SharedKernel.csproj" />
     </ItemGroup>
     
+    <ItemGroup>
+      <Content Include=".vscode\mcp.json" />
+    </ItemGroup>
+    
 </Project>
