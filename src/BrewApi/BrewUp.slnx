@@ -4,6 +4,11 @@
     <Project Path="BrewUp.Shared/BrewUp.Shared.csproj" />
   </Folder>
   <Folder Name="/50 Modules/" />
+  <Folder Name="/50 Modules/AI/">
+    <Project Path="AI/BrewUp.AI.Facade/BrewUp.AI.Facade.csproj" />
+    <Project Path="AI/BrewUp.AI.McpServer/BrewUp.AI.McpServer.csproj" />
+    <Project Path="AI/BrewUp.AI.SharedKernel/BrewUp.AI.SharedKernel.csproj" />
+  </Folder>
   <Folder Name="/50 Modules/Dashboards/">
     <Project Path="Dashboards/BrewUp.Dashboards.Domain/BrewUp.Dashboards.Domain.csproj" />
     <Project Path="Dashboards/BrewUp.Dashboards.Entities/BrewUp.Dashboards.Entities.csproj" />

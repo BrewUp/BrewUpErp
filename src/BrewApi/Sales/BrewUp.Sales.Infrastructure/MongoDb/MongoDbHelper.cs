@@ -8,7 +8,6 @@ public static class MongoDbHelper
     public static IServiceCollection AddSalesMongoDb(this IServiceCollection services,
         MongoDbSettings mongoDbSettings)
     {
-
         return services;
     }
 }
