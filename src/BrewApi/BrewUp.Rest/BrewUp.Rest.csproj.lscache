@@ -21,7 +21,7 @@ ProjectAssetsFile=<PATH>obj/project.assets.json
 RootNamespace=BrewUp.Rest
 RunAnalyzers=
 RunAnalyzersDuringLiveAnalysis=
-SolutionPath=<PATH>../BrewUp.slnx
+SolutionPath=*Undefined*
 TargetFrameworkIdentifier=.NETCoreApp
 TargetPath=<PATH>bin/Debug/net10.0/BrewUp.Rest.dll
 TargetRefPath=<PATH>obj/Debug/net10.0/ref/BrewUp.Rest.dll
@@ -77,9 +77,6 @@ obj/Debug/net10.0/
 Program.cs
 
 [metadataReferences]
-../AI/
- BrewUp.AI.Facade/obj/Debug/net10.0/ref/BrewUp.AI.Facade.dll
- BrewUp.AI.SharedKernel/obj/Debug/net10.0/ref/BrewUp.AI.SharedKernel.dll
 ../
  BrewUp.Infrastructure/obj/Debug/net10.0/ref/BrewUp.Infrastructure.dll
  BrewUp.Shared/obj/Debug/net10.0/ref/BrewUp.Shared.dll
@@ -98,6 +95,9 @@ Program.cs
   BrewUp.MasterData.Infrastructure/obj/Debug/net10.0/ref/BrewUp.MasterData.Infrastructure.dll
   BrewUp.MasterData.ReadModel/obj/Debug/net10.0/ref/BrewUp.MasterData.ReadModel.dll
   BrewUp.MasterData.SharedKernel/obj/Debug/net10.0/ref/BrewUp.MasterData.SharedKernel.dll
+ Mcp/
+  BrewUp.Mcp.Facade/obj/Debug/net10.0/ref/BrewUp.Mcp.Facade.dll
+  BrewUp.Mcp.SharedKernel/obj/Debug/net10.0/ref/BrewUp.Mcp.SharedKernel.dll
  Purchases/
   BrewUp.Purchases.Domain/obj/Debug/net10.0/ref/BrewUp.Purchases.Domain.dll
   BrewUp.Purchases.Facade/obj/Debug/net10.0/ref/BrewUp.Purchases.Facade.dll
