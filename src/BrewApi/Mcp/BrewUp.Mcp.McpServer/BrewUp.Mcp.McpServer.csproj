@@ -10,8 +10,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Sales\BrewUp.Sales.Infrastructure\BrewUp.Sales.Infrastructure.csproj" />
-    <ProjectReference Include="..\BrewUp.AI.SharedKernel\BrewUp.AI.SharedKernel.csproj" />
-    <ProjectReference Include="..\BrewUp.AI.Facade\BrewUp.AI.Facade.csproj" />
+    <ProjectReference Include="..\BrewUp.Mcp.SharedKernel\BrewUp.Mcp.SharedKernel.csproj" />
+    <ProjectReference Include="..\BrewUp.Mcp.Facade\BrewUp.Mcp.Facade.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="appsettings.Development.json">

@@ -1,9 +1,9 @@
-using BrewUp.AI.Facade.Tools;
-using BrewUp.AI.SharedKernel.Chat;
+using BrewUp.Mcp.Facade.Tools;
+using BrewUp.Mcp.SharedKernel.Chat;
 using Microsoft.Extensions.AI;
-using ChatResponse = BrewUp.AI.SharedKernel.Chat.ChatResponse;
+using ChatResponse = BrewUp.Mcp.SharedKernel.Chat.ChatResponse;
 
-namespace BrewUp.AI.Facade.Chat;
+namespace BrewUp.Mcp.Facade.Chat;
 
 public sealed class BrewUpChatService(
     IChatClient chatClient,

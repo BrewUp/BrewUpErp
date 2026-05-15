@@ -1,11 +1,10 @@
-﻿using BrewUp.AI.Facade.Chat;
-using BrewUp.AI.Facade.MasterData;
-using BrewUp.AI.SharedKernel.Chat;
+﻿using BrewUp.Mcp.Facade.Chat;
+using BrewUp.Mcp.Facade.MasterData;
+using BrewUp.Mcp.SharedKernel.Chat;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace BrewUp.AI.Facade.Endpoints;
+namespace BrewUp.Mcp.Facade.Endpoints;
 
 public static class AiChatEndpoints
 {

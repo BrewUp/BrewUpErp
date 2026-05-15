@@ -1,7 +1,7 @@
 ﻿using BrewUp.Shared.Configuration;
 using MongoDB.Driver;
 
-namespace BrewUp.AI.McpServer;
+namespace BrewUp.Mcp.McpServer;
 
 public static class MongoDbHelper
 {

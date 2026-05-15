@@ -1,5 +1,5 @@
-﻿using BrewUp.AI.Facade;
-using BrewUp.AI.Facade.Endpoints;
+﻿using BrewUp.Mcp.Facade;
+using BrewUp.Mcp.Facade.Endpoints;
 
 namespace BrewUp.Rest.Module;
 

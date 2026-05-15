@@ -1,4 +1,4 @@
-namespace BrewUp.AI.Facade;
+namespace BrewUp.Mcp.Facade;
 
 public sealed class AzureOpenAiOptions
 {

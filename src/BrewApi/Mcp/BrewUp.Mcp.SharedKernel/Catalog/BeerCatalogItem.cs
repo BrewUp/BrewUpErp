@@ -1,4 +1,4 @@
-namespace BrewUp.AI.SharedKernel.Catalog;
+namespace BrewUp.Mcp.SharedKernel.Catalog;
 
 public sealed record BeerCatalogItem(
     string BeerId,
