@@ -17,5 +17,6 @@
     <Content Update="appsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include=".vscode\mcp.json" />
   </ItemGroup>
 </Project>

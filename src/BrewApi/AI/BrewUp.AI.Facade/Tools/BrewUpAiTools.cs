@@ -12,7 +12,7 @@ public sealed class BrewUpAiTools(
     ISalesQueriesFacade salesOrderQueries)
 {
     [Description("Use this tool whenever the user asks for the active beers available or beers catalog.")]
-    public Task<Result<IReadOnlyCollection<BeerCatalogItem>>> GetCatalogBeersAsync(
+    public Task<IReadOnlyCollection<BeerCatalogItem>> GetCatalogBeersAsync(
         CancellationToken cancellationToken = default)
         => beerCatalogQueries.GetCatalogBeersAsync(activeOnly: true, cancellationToken);
 

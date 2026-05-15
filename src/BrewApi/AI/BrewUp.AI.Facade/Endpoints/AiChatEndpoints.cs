@@ -3,6 +3,7 @@ using BrewUp.AI.Facade.MasterData;
 using BrewUp.AI.SharedKernel.Chat;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace BrewUp.AI.Facade.Endpoints;
 
@@ -29,10 +30,8 @@ public static class AiChatEndpoints
         cancellationToken.ThrowIfCancellationRequested();
 
         var catalog = await beerCatalogQueriesFacade.GetCatalogBeersAsync(true, cancellationToken);
-    
-        return catalog.Match<IResult>(
-            Results.Ok,
-            error => Results.Problem(error.Message, statusCode: StatusCodes.Status500InternalServerError));
+        
+        return TypedResults.Ok(catalog);
     }
     
     private static async Task<IResult> HandleRequestBeersCatalog(
