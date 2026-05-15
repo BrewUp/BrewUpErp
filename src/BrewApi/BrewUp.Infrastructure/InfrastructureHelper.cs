@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Muflone.Eventstore.gRPC;
 using Muflone.Transport.RabbitMQ;
 using Muflone.Transport.RabbitMQ.Models;
 
@@ -43,6 +44,11 @@ public static class InfrastructureHelper
         services.AddMufloneTransportRabbitMQ(
             loggerFactory,
             rabbitMqConfiguration);
+        
+        EventStoreSettings eventStoreSettings = new();
+        configurationManager.GetSection("BrewUp:EventStore").Bind(eventStoreSettings);
+        services.AddMufloneEventStore(eventStoreSettings.ConnectionString);
+
 
         return services;
     }

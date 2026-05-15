@@ -19,6 +19,7 @@ public static class WarehouseFacadeHelper
 
         services.AddIntegrationEventHandler<WarehouseCreatedEventHandler>();
         services.AddIntegrationEventHandler<SalesOrderCreatedIntegrationEventHandler>();
+        services.AddIntegrationEventHandler<BeerCreatedEventHandler>();
         
         return services;
     }

@@ -9,10 +9,12 @@ builder.RegisterModules([
     new InfrastructureModule(),
     new OpenApiModule(),
     new MasterDataModule(),
+    new PurchasesModule(),
     new SalesModule(),
     new WarehouseModule(),
     new DashboardsModule(),
-    new SagasModule()
+    new SagasModule(),
+    new ChatModule()
 ]);
 
 var app = builder.Build();

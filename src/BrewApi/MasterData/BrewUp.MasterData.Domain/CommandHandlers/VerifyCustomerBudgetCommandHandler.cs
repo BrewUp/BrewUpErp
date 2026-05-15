@@ -1,4 +1,4 @@
-﻿using BrewUp.MasterData.ReadModel.Dtos;
+﻿using BrewUp.MasterData.Entities.Dtos;
 using BrewUp.MasterData.SharedKernel.Messages.Commands;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.Messages.Events.Sagas;

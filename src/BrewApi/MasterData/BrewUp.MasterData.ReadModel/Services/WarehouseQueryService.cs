@@ -1,4 +1,4 @@
-﻿using BrewUp.MasterData.ReadModel.Dtos;
+﻿using BrewUp.MasterData.Entities.Dtos;
 using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.ReadModel;
 using Lena.Core;

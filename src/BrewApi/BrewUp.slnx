@@ -16,10 +16,24 @@
   <Folder Name="/50 Modules/MasterData/">
     <Project Path="BrewUp.MasterData.Tests/BrewUp.MasterData.Tests.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Domain/BrewUp.MasterData.Domain.csproj" />
+    <Project Path="MasterData/BrewUp.MasterData.Entities/BrewUp.MasterData.Entities.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Facade/BrewUp.MasterData.Facade.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Infrastructure/BrewUp.MasterData.Infrastructure.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.ReadModel/BrewUp.MasterData.ReadModel.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.SharedKernel/BrewUp.MasterData.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/50 Modules/Mcp/">
+    <Project Path="Mcp/BrewUp.Mcp.Facade/BrewUp.Mcp.Facade.csproj" />
+    <Project Path="Mcp/BrewUp.Mcp.McpServer/BrewUp.Mcp.McpServer.csproj" />
+    <Project Path="Mcp/BrewUp.Mcp.SharedKernel/BrewUp.Mcp.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/50 Modules/Purchases/">
+    <Project Path="Purchases/BrewUp.Purchases.Domain/BrewUp.Purchases.Domain.csproj" />
+    <Project Path="Purchases/BrewUp.Purchases.Facade/BrewUp.Purchases.Facade.csproj" />
+    <Project Path="Purchases/BrewUp.Purchases.Infrastructure/BrewUp.Purchases.Infrastructure.csproj" />
+    <Project Path="Purchases/BrewUp.Purchases.ReadModel/BrewUp.Purchases.ReadModel.csproj" />
+    <Project Path="Purchases/BrewUp.Purchases.SharedKernel/BrewUp.Purchases.SharedKernel.csproj" />
+    <Project Path="Purchases/BrewUp.Purchases.Tests/BrewUp.Purchases.Tests.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Sagas/">
     <Project Path="Sagas/BrewUp.Sagas.Domain/BrewUp.Sagas.Domain.csproj" />
@@ -38,6 +52,7 @@
     <Project Path="Sales/BrewUp.Sales.Tests/BrewUp.Sales.Tests.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Warehouse/">
+    <Project Path="BrewUp.Warehouse.Entities/BrewUp.Warehouse.Entities.csproj" Id="f9d677f2-b4b5-4aa5-814a-9286eb3e1699" />
     <Project Path="Warehouse/BrewUp.Warehouse.Domain/BrewUp.Warehouse.Domain.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.Facade/BrewUp.Warehouse.Facade.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.Infrastructure/BrewUp.Warehouse.Infrastructure.csproj" />

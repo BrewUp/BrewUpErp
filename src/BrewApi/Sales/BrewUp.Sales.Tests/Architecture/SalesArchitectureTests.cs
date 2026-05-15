@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using BrewUp.Sales.Domain;
 using BrewUp.Sales.Facade;
 using BrewUp.Shared.Tests;
 using NetArchTest.Rules;
@@ -16,6 +17,22 @@ public class SalesArchitectureTests
         
         var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjects(true, ["Sales"]);
 
+        var result = types
+            .ShouldNot()
+            .HaveDependencyOnAny(forbiddenAssemblies.ToArray())
+            .GetResult()
+            .IsSuccessful;
+
+        Assert.True(result);
+    }
+    
+    [Fact]
+    public void Domain_Should_Not_Depend_On_Outer_Layers()
+    {
+        var types = Types.InAssembly(typeof(DomainHelper).Assembly);
+
+        var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjectsWithoutDomain("Sales");
+        
         var result = types
             .ShouldNot()
             .HaveDependencyOnAny(forbiddenAssemblies.ToArray())

@@ -37,7 +37,6 @@ public class SalesOrder : AggregateRoot
         List<SalesOrderRowJson> rowsList = [];
         if (customer is not null && customer.CustomerType.Equals(CustomerType.Gold))
         {
-            
             rowsList.AddRange(rows.Select(row => new SalesOrderRowJson
             {
                 BeerId = row.BeerId, BeerName = row.BeerName, Quantity = row.Quantity, Price = new Shared.CustomTypes.Price(row.Price.Value * 0.9m, row.Price.Currency) // Apply a 10% discount for Gold customers

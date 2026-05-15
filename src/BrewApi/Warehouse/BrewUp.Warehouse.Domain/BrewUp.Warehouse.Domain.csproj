@@ -8,11 +8,12 @@
 
     <ItemGroup>
         <PackageReference Include="Lena" Version="1.1.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.7" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
         <PackageReference Include="Muflone" Version="10.1.1" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\BrewUp.Warehouse.Entities\BrewUp.Warehouse.Entities.csproj" />
       <ProjectReference Include="..\BrewUp.Warehouse.SharedKernel\BrewUp.Warehouse.SharedKernel.csproj" />
     </ItemGroup>
 

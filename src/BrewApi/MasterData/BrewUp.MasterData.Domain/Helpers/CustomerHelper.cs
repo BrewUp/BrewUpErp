@@ -1,9 +1,9 @@
-﻿using BrewUp.MasterData.ReadModel.Dtos;
+﻿using BrewUp.MasterData.Entities.Dtos;
 using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
+using BrewUp.Shared.ExternalContracts.MasterData;
 using BrewUp.Shared.ExternalContracts.MasterData.Customers;
 using BrewUp.Shared.Helpers;
-using BrewUp.Shared.Messages.Events;
 using BrewUp.Shared.Messages.Events.MasterData;
 
 namespace BrewUp.MasterData.Domain.Helpers;

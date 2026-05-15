@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using BrewUp.MasterData.ReadModel.Dtos;
+using BrewUp.MasterData.Entities.Dtos;
 using BrewUp.Shared.ReadModel;
 using Lena.Core;
 using MongoDB.Driver;
@@ -13,6 +13,8 @@ internal sealed class CustomerQueries(IMongoClient mongoClient) : IQueries<Custo
 
     public async Task<Result<Customer>> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+        
         var collection = _database.GetCollection<Customer>(nameof(Customer));
         var filter = Builders<Customer>.Filter.Eq("_id", id);
         
@@ -23,6 +25,8 @@ internal sealed class CustomerQueries(IMongoClient mongoClient) : IQueries<Custo
 
     public async Task<Result<PagedResult<Customer>>> GetByFilterAsync(Expression<Func<Customer, bool>>? query, int page, int pageSize, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+        
         if (--page < 0)
             page = 0;
 
