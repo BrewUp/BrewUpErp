@@ -1,6 +1,6 @@
 ﻿# BrewUpErp
 
-BrewUpErp is an end‑to‑end sample ERP built to demonstrate
+BrewUpErp is an end‑to‑end sample ERP built to demonstrate:
 
 - Domain‑Driven Design (DDD)
 - Modular / bounded‑context architecture
@@ -10,7 +10,7 @@ BrewUpErp is an end‑to‑end sample ERP built to demonstrate
 The solution is intentionally realistic but still small enough to study.
 It consists of:
 
-- **BrewApi** – backend HTTP API
+- **BrewApi** – backend HTTP API (ASP.NET Core, .NET 10)
 - **BrewSpa** – Blazor web front‑end
 - **BrewApp** – .NET MAUI mobile application
 
@@ -23,64 +23,125 @@ It consists of:
 
 High‑level folder layout:
 
-- `src/BrewApi` – backend API and domain implementation
-	- `BrewUp.Rest` – ASP.NET Core Web API host
-	- `BrewUp.Shared` – shared abstractions, value objects, helpers
-	- `MasterData/*` – Master Data bounded context (domain, facade, read model, infrastructure, shared kernel)
-	- `Sales/*` – Sales bounded context (domain, facade, read model, infrastructure, shared kernel, tests)
-	- `BrewUp.Infrastructure` – cross‑cutting infrastructure (MongoDB, RabbitMQ, logging, etc.)
-	- `BrewUp.*.Tests` – backend/unit/architecture tests
-- `BrewSpa` – Blazor front‑end
-	- `BrewSpa` – main Blazor app (layouts, pages, wwwroot)
-	- `BrewSpa.Shared` – shared client models and helpers
-	- `BrewSpa.Shared.Components`, `Dashboards`, `MasterData`, `Sales` – modularized UI feature areas
-- `BrewApp` – .NET MAUI mobile solution
-	- `src/*` – MAUI shell, shared UI/core libraries, feature modules
-	- `tests/*` – mobile/UI tests
-- `BrewErp` – Bruno API contracts & examples (e.g. `GetCustomers.bru`)
-- `docker` – `docker-compose.yml` and helper script for local infrastructure
-- `Docs` – sample API payloads and documentation fragments
+```
+src/
+├── BrewApi/          # Backend API, domain, and infrastructure
+├── BrewSpa/          # Blazor web front‑end
+└── BrewApp/          # .NET MAUI mobile app
+BrewDocs/             # Bruno API contracts & example payloads
+docker/               # docker-compose.yml and helper script
+```
 
-### Bounded Contexts & Modules
+### BrewApi
 
-The ERP is decomposed into modules that map to bounded contexts:
+The backend solution (`src/BrewApi/BrewUp.slnx`) hosts all domain logic and HTTP endpoints.
 
-- **MasterData** – core catalog and reference data (e.g., customers, products)
-- **Sales** – sales orders and related workflows
-- (Additional contexts like Purchase/Warehouse are being modelled incrementally.)
+**Infrastructure & cross‑cutting projects:**
 
-Each context follows a similar layout:
+| Project | Purpose |
+|---|---|
+| `BrewUp.Rest` | ASP.NET Core Web API host – composition root with explicit module registration |
+| `BrewUp.Shared` | Shared abstractions: value objects, domain IDs, messages (commands/events), read‑model contracts, validators, helpers |
+| `BrewUp.Infrastructure` | Cross‑cutting infrastructure: MongoDB helper, RabbitMQ settings, read‑model base |
+| `BrewUp.AppHost` | .NET Aspire AppHost for local orchestration |
+| `BrewUp.ServiceDefaults` | .NET Aspire service defaults (OpenTelemetry, health checks, etc.) |
+| `BrewUp.Mediator` | Custom lightweight mediator |
+| `BrewUp.Warehouse.Entities` | Shared Warehouse DTO/entity types used across layers |
 
-- `*.Domain` – Aggregates, value objects, domain events, domain services
-- `*.SharedKernel` – types shared only inside the bounded context
-- `*.Infrastructure` – persistence and integration (MongoDB, messaging, etc.)
-- `*.ReadModel` – denormalized read models and projections
-- `*.Facade` – application services / use‑case orchestration
+**Bounded contexts** (each contains `Domain`, `Facade`, `Infrastructure`, `ReadModel`, `SharedKernel`, `Tests`):
 
-This structure keeps the domain model independent from infrastructure and UI,
-and encourages explicit module boundaries.
+| Context | Description |
+|---|---|
+| `MasterData/` | Beer catalog, customers, and core reference data (also has a `.Entities` project) |
+| `Sales/` | Sales orders and related workflows |
+| `Purchases/` | Purchase orders |
+| `Warehouse/` | Warehouse and stock management |
+| `Dashboards/` | Cross‑context dashboard aggregations (also has a `.Entities` project) |
+| `Sagas/` | Long‑running process managers / sagas |
+
+**AI & MCP integration:**
+
+| Project | Purpose |
+|---|---|
+| `Mcp/BrewUp.Mcp.McpServer` | Standalone MCP (Model Context Protocol) server exposing ERP tools over HTTP |
+| `Mcp/BrewUp.Mcp.Facade` | AI chat service, MCP tool façades, Azure OpenAI integration endpoints |
+| `Mcp/BrewUp.Mcp.SharedKernel` | Shared types for the MCP layer |
+| `AI/BrewUp.AI.Facade` | AI façade contracts |
+| `AI/BrewUp.AI.SharedKernel` | AI shared kernel types |
+
+**Module composition in `BrewUp.Rest`:**
+
+`Program.cs` uses an explicit composition‑root pattern — each feature registers itself as an `IModule`:
+
+```
+CorsModule · LoggingModule · InfrastructureModule · OpenApiModule
+MasterDataModule · PurchasesModule · SalesModule · WarehouseModule
+DashboardsModule · SagasModule · ChatModule
+```
+
+### BrewSpa
+
+The Blazor front‑end solution (`src/BrewSpa/BrewSpa.slnx`) mirrors the API's bounded‑context decomposition:
+
+| Project | Purpose |
+|---|---|
+| `BrewSpa/BrewSpa` | Main Blazor app – shell, layouts, pages (`Home`, `NotFound`), `wwwroot` |
+| `BrewSpa/BrewSpa.Shared` | Shared client models, helpers, and shared tests |
+| `BrewSpa/BrewSpa.Shared.Components` | Reusable Razor components, custom types, JS interop, messages |
+| `Dashboards/` | `BrewSpa.Dashboards.ApplicationServices`, `BrewSpa.Dashboards.Facade`, `BrewSpa.Dashboards.Tests` |
+| `MasterData/` | `BrewSpa.MasterData.Application`, `BrewSpa.MasterData.Facade` |
+| `Sales/` | `BrewSpa.Sales.Application`, `BrewSpa.Sales.Facade` |
+
+### BrewApp
+
+The .NET MAUI mobile solution lives under `src/BrewApp/mobile/`:
+
+| Folder | Purpose |
+|---|---|
+| `mobile/src/` | `BrewApp.Mobile` – `AppShell`, features, components, services, models, platform targets |
+| `mobile/tests/` | Mobile UI / integration tests |
+| `specs/` | Specification/acceptance tests (`.specify`) |
+
+### Bounded Context Layer Layout
+
+Each bounded context follows the same layered structure:
+
+| Layer | Responsibility |
+|---|---|
+| `*.Domain` | Aggregates, value objects, domain events, domain services |
+| `*.SharedKernel` | Types shared only within the bounded context |
+| `*.Infrastructure` | Persistence and integration (MongoDB, event store, messaging) |
+| `*.ReadModel` | Denormalized read models and projections |
+| `*.Facade` | Application services / use‑case orchestration |
 
 ---
 
 ## Technology Stack
 
-- **Runtime**: .NET (currently targeting `net10.0` for the API)
+- **Runtime**: .NET 10 (`net10.0`)
 - **API**: ASP.NET Core Web API
-	- OpenAPI/Swagger via Swashbuckle and Scalar
-	- Observability with OpenTelemetry and Azure Monitor exporter
-	- Logging with Serilog (console + file)
+  - OpenAPI via Scalar
+  - Observability with OpenTelemetry and Azure Monitor exporter
+  - Logging with Serilog (console + file sinks)
+  - Explicit module composition root pattern
 - **Architecture**:
-	- DDD with explicit domain and application layers
-	- Modular monolith style, grouped by bounded context
-	- CQRS and message‑driven patterns inspired by **Muflone**
+  - DDD with explicit domain and application layers
+  - Modular monolith style, grouped by bounded context
+  - CQRS and message‑driven patterns powered by **Muflone**
+  - Custom lightweight mediator (`BrewUp.Mediator`)
+  - .NET Aspire for local orchestration
 - **Persistence & Messaging**:
-	- MongoDB (document storage)
-	- RabbitMQ (message bus)
-- **Web UI**: Blazor (server or WebAssembly, depending on configuration)
+  - MongoDB – read‑model document store (separate instances per context)
+  - KurrentDB (EventStoreDB) – event store for domain events and sagas
+  - RabbitMQ 4.x with Stream plugin – message bus
+- **AI / MCP**:
+  - Azure OpenAI integration (chat completions)
+  - Model Context Protocol (MCP) server exposing ERP tools to AI agents
+- **Web UI**: Blazor (server‑side, `net10.0`)
 - **Mobile**: .NET MAUI (Android / iOS / Windows)
 
 > Check individual `*.csproj` files and `docker/docker-compose.yml` for
-> exact framework versions and external dependencies.
+> exact package versions and external dependencies.
 
 ---
 
@@ -88,14 +149,14 @@ and encourages explicit module boundaries.
 
 ### Prerequisites
 
-- .NET SDK compatible with the target frameworks
-	- For the backend: `.NET 10` (as `net10.0` is targeted)
-- Docker Desktop (for local MongoDB, RabbitMQ, and other backing services)
-- A recent IDE: Visual Studio, Rider, or VS Code with C# support
+- **.NET 10 SDK**
+- **Docker Desktop** – for local backing services (MongoDB, RabbitMQ, KurrentDB)
+- A recent IDE: Visual Studio 2022+, JetBrains Rider, or VS Code with C# Dev Kit
 
 Optional (but recommended):
 
 - `git` for source control
+- **Bruno** (API client) to run the contracts in `BrewDocs/`
 - A modern browser for Blazor debugging tools
 
 ---
@@ -106,14 +167,21 @@ The `docker` folder contains a `docker-compose.yml` and helper script.
 
 From the repository root:
 
-```bash
+```powershell
 cd docker
-./run-docker-compose.bat   # on Windows PowerShell / CMD
+.\run-docker-compose.bat
 ```
 
-This typically starts the required supporting services (MongoDB,
-RabbitMQ, etc.). Inspect `docker-compose.yml` for details and port
-configuration.
+This starts all required backing services:
+
+| Service | Container | Host port(s) |
+|---|---|---|
+| KurrentDB (EventStoreDB) | `sales-eventstore` | `4113` (gRPC/HTTP) |
+| MongoDB (sagas) | `sagas-mongodb` | `27017` |
+| MongoDB (sales read model) | `sales-mongodb` | `37017` |
+| RabbitMQ (+ stream plugin) | `rabbitmq` | `5672` AMQP · `5552` stream · `15672` management UI |
+
+Inspect `docker/docker-compose.yml` for full configuration details.
 
 ---
 
@@ -121,79 +189,107 @@ configuration.
 
 The main API host is in `src/BrewApi/BrewUp.Rest`.
 
-From the repository root:
-
-```bash
+```powershell
 cd src/BrewApi
 dotnet run --project BrewUp.Rest/BrewUp.Rest.csproj
 ```
 
-By default the API will expose:
+By default the API exposes:
 
-- HTTP endpoints for each bounded context (e.g., MasterData, Sales)
-- OpenAPI/Swagger UI (and/or Scalar UI) for interactive exploration
+- REST endpoints for all registered modules (MasterData, Sales, Purchases, Warehouse, Dashboards, Sagas, Chat/AI)
+- Scalar OpenAPI UI for interactive exploration
+- AI chat endpoint (`ChatModule`)
 
-Configuration is managed via `appsettings.json` and environment‑specific
-files such as `appsettings.Development.json` inside `BrewUp.Rest`.
+Configuration lives in `BrewUp.Rest/appsettings.json` (and `appsettings.Development.json`).
+Key sections to configure before running:
+
+```json
+"BrewUp": {
+  "MongoDbSettings": { "ConnectionString": "...", "DatabaseName": "BrewUp" },
+  "EventStore":      { "ConnectionString": "esdb://localhost:4113?tls=false" },
+  "RabbitMQ":        { "Host": "localhost", "Username": "guest", "Password": "guest", ... }
+},
+"AzureOpenAI": {
+  "Endpoint": "...",
+  "ApiKey": "...",
+  "DeploymentName": "..."
+}
+```
+
+---
+
+## Running the MCP Server
+
+The standalone Model Context Protocol server is in `src/BrewApi/Mcp/BrewUp.Mcp.McpServer`.
+
+```powershell
+cd src/BrewApi/Mcp/BrewUp.Mcp.McpServer
+dotnet run
+```
+
+It exposes a stateless HTTP MCP endpoint at `/mcp` with the following tools:
+
+| Tool | Description |
+|---|---|
+| `get_catalog_beers` | Returns active beers in the catalog |
+| `get_open_sales_orders` | Returns currently open sales orders |
+| `get_orders_by_customer` | Returns sales orders filtered by customer name |
+| `get_late_sales_orders` | Returns late orders as of a given business date |
 
 ---
 
 ## Running the Web Front‑End (BrewSpa)
 
-The Blazor web app lives under `BrewSpa/BrewSpa`.
+The Blazor app lives under `src/BrewSpa/BrewSpa`.
 
-From the repository root:
-
-```bash
-cd BrewSpa/BrewSpa
+```powershell
+cd src/BrewSpa/BrewSpa
 dotnet run
 ```
 
-Then navigate to the URL printed in the console (commonly
-`https://localhost:xxxx`).
+Navigate to the URL printed in the console (commonly `https://localhost:xxxx`).
 
-The SPA consumes the BrewApi endpoints and is structured into
-feature‑specific modules (Dashboards, MasterData, Sales, etc.), plus
-shared components and models.
+The SPA consumes BrewApi endpoints and is decomposed into feature modules:
+Dashboards, MasterData, and Sales — each with their own `Application` and `Facade` layers.
 
 ---
 
 ## Running the Mobile App (BrewApp)
 
-The .NET MAUI application is under `BrewApp`.
+The .NET MAUI application is under `src/BrewApp/mobile/src/`.
 
-Typical workflow:
-
-1. Open `BrewApp/BrewUpErp.Mobile.slnx` in Visual Studio or Rider.
+1. Open the solution in Visual Studio 2022+ or JetBrains Rider.
 2. Select the desired target (Android, iOS, Windows).
 3. Build and run from the IDE.
 
-The mobile app uses a shell navigation structure and references
-feature modules (MasterData, Sales, Warehouse, etc.) and shared
-libraries (`BrewApp.Shared.Core`, `BrewApp.Shared.UI`).
+The mobile app (`BrewApp.Mobile`) uses an `AppShell` navigation structure with
+feature modules, services, components, and platform‑specific configurations.
 
 ---
 
 ## Tests
 
-The solution includes several test projects under `src/BrewApi` and
-`BrewApp/tests`.
+Test projects are distributed across the solution:
 
-Examples:
+| Project | Scope |
+|---|---|
+| `BrewUp.MasterData.Tests` | MasterData domain & architecture |
+| `BrewUp.Rest.Tests` | API integration & architecture |
+| `BrewUp.Shared.Tests` | Shared utilities |
+| `Sales/BrewUp.Sales.Tests` | Sales domain |
+| `Purchases/BrewUp.Purchases.Tests` | Purchases domain |
+| `Warehouse/BrewUp.Warehouse.Tests` | Warehouse domain |
+| `Dashboards/BrewUp.Dashboards.Tests` | Dashboards |
+| `Sagas/BrewUp.Sagas.Tests` | Sagas |
+| `BrewSpa/Dashboards/BrewSpa.Dashboards.Tests` | Blazor dashboards |
+| `BrewApp/mobile/tests/` | Mobile UI / integration |
 
-- `src/BrewApi/BrewUp.MasterData.Tests`
-- `src/BrewApi/BrewUp.Rest.Tests`
-- `src/BrewApi/Sales/BrewUp.Sales.Tests`
+Run all backend tests:
 
-Run all backend tests from the repository root with:
-
-```bash
+```powershell
 cd src/BrewApi
 dotnet test
 ```
-
-Additional mobile/UI tests can be run from the appropriate `tests`
-projects under `BrewApp` using your IDE or `dotnet test`.
 
 ---
 
@@ -216,10 +312,13 @@ projects under `BrewApp` using your IDE or `dotnet test`.
 
 - Each bounded context lives in its own folder tree and assemblies.
 - Cross‑context communication goes through explicit contracts and
-	messages rather than shared tables or implicit coupling.
+	messages (commands/events in `BrewUp.Shared/Messages/`) rather than shared
+	tables or implicit coupling.
 - Shared code is pushed either into
 	- `BrewUp.Shared` for truly cross‑cutting concerns, or
 	- `*.SharedKernel` for types shared inside a single context.
+- The `BrewUp.Rest` composition root registers modules explicitly in
+	`Program.cs`, making the feature surface immediately visible.
 
 ### Functional‑Style Modelling
 
@@ -230,6 +329,13 @@ with a functional mindset:
 - Clear input/output contracts for use cases
 - Reduced side effects, with IO pushed to the infrastructure layer
 
+### AI & MCP
+
+- The `ChatModule` in `BrewUp.Rest` exposes AI chat endpoints backed by Azure OpenAI.
+- `BrewUp.Mcp.McpServer` is a separate, independently deployable ASP.NET Core
+	application that wraps ERP queries as MCP tools, enabling AI agents to
+	interact with the ERP system via the Model Context Protocol.
+
 ---
 
 ## Roadmap & Status
@@ -237,7 +343,7 @@ with a functional mindset:
 This repository is under active development. Some planned or ongoing
 areas include:
 
-- Completing end‑to‑end flows for all modules (not only Sales/MasterData)
+- Completing end‑to‑end flows for all bounded contexts
 - Expanding test coverage (unit, integration, and contract tests)
 - Hardening observability (distributed tracing, metrics dashboards)
 - Improving documentation for each bounded context and module
