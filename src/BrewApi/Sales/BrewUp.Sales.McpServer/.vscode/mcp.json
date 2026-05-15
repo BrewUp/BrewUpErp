@@ -2,7 +2,7 @@
   "servers": {
     "brewup": {
       "type": "http",
-      "url": "http://localhost:5052/mcp"
+      "url": "http://localhost:5229/mcp"
     }
   }
 }
