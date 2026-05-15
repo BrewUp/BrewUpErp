@@ -31,7 +31,7 @@ public sealed class SalesTools(
     [McpServerTool(Name = "get_customer_total_purchased")]
     [Description("Returns the total purchases per customer")]
     public async Task<object> GetCustomerTotalPurchased(
-        [Description("Total purchases per customer.")]
+        [Description("The customerId, or part of the customer id.")]
         string customerId,
         CancellationToken cancellationToken)
         => await mcpSalesFacade.GetCustomerTotalPurchasedAsync(customerId, cancellationToken);
@@ -39,7 +39,7 @@ public sealed class SalesTools(
     [McpServerTool(Name = "get_sales_order_total_quantities")]
     [Description("Returns the total beers for order")]
     public async Task<object> GetSalesOrderTotalQuantities(
-        [Description("Total beers for order.")]
+        [Description("The salesOrderId.")]
         string salesOrderId,
         CancellationToken cancellationToken)
         => await mcpSalesFacade.GetSalesOrderTotalQuantitiesAsync(salesOrderId, cancellationToken);

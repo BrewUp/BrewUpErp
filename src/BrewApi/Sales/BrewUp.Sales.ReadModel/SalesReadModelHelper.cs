@@ -10,7 +10,7 @@ namespace BrewUp.Sales.ReadModel;
 
 public static class SalesReadModelHelper
 {
-    public static IServiceCollection AddSalesReadModel(this IServiceCollection services)
+    public static IServiceCollection AddReadModel(this IServiceCollection services)
     {
         services.AddScoped<ISalesOrderService, SalesOrderService>();
         services.AddScoped<ICustomerService, CustomerService>();
@@ -30,7 +30,7 @@ public static class SalesReadModelHelper
         return services;
     }
     
-    public static IServiceCollection AddSalesReadModelForMcp(this IServiceCollection services)
+    public static IServiceCollection AddReadModelForMcp(this IServiceCollection services)
     {
         services.AddScoped<ISalesOrderService, SalesOrderService>();
         services.AddScoped<ICustomerService, CustomerService>();

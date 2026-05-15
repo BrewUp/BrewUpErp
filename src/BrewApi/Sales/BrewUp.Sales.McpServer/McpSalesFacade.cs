@@ -1,10 +1,8 @@
 ﻿using BrewUp.Sales.ReadModel.Services;
 using BrewUp.Sales.SharedKernel.CustomTypes;
-using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ReadModel;
-using Lena.Core;
 
 namespace BrewUp.Sales.McpServer;
 

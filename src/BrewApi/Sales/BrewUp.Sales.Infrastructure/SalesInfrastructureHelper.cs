@@ -8,7 +8,7 @@ namespace BrewUp.Sales.Infrastructure;
 
 public static class SalesInfrastructureHelper
 {
-    public static IServiceCollection AddSalesInfrastructure(this IServiceCollection services,
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services,
         IConfigurationManager configurationManager)
     {
         MongoDbSettings mongoDbSettings = new();

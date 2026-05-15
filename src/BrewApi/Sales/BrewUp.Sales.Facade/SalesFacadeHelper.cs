@@ -34,8 +34,8 @@ public static class SalesFacadeHelper
         services.AddScoped<ISalesFacade, SalesFacade>();
 
         services.AddSalesDomain();
-        services.AddSalesReadModel();
-        services.AddSalesInfrastructure(configurationManager);
+        services.AddReadModel();
+        services.AddInfrastructure(configurationManager);
         
         services.AddIntegrationEventHandler<CustomerCreatedEventHandler>();
         services.AddIntegrationEventHandler<CustomerUpdatedEventHandler>();

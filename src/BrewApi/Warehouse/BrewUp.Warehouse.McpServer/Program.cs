@@ -1,10 +1,8 @@
-using BrewUp.MasterData.ReadModel;
-using BrewUp.Mcp.Facade;
-using BrewUp.Mcp.McpServer;
-using BrewUp.Mcp.McpServer.Tools;
-using BrewUp.Sales.Infrastructure;
-using BrewUp.Sales.ReadModel;
 using BrewUp.Shared.Configuration;
+using BrewUp.Warehouse.Infrastructure;
+using BrewUp.Warehouse.McpServer;
+using BrewUp.Warehouse.McpServer.Tools;
+using BrewUp.Warehouse.ReadModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,19 +12,17 @@ builder.Services
     {
         options.Stateless = true;
     })
-    .WithTools<BrewUpMcpTools>();
-
+    .WithTools<WarehouseTools>();
+    
 MongoDbSettings mongoDbSettings = new();
 builder.Configuration.GetSection("BrewUp:MongoDbSettings").Bind(mongoDbSettings);
 builder.Services.AddMongoDb(mongoDbSettings);
-builder.Services.AddMasterDataReadModel();
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddScoped<IMcpWarehouseFacade, McpWarehouseFacade>();
+builder.Services.AddInfrastructure();
 builder.Services.AddReadModelForMcp();
-builder.Services.AddBrewUpAi(builder.Configuration);
-
+    
 var app = builder.Build();
 
-app.MapGet("/", () => "BrewUp MCP Server is running");
 app.MapMcp("/mcp");
 
 app.Run();
