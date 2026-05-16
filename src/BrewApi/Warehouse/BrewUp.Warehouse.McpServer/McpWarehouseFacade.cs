@@ -1,19 +1,40 @@
-﻿using BrewUp.Shared.ExternalContracts.Warehouse;
+﻿using BrewUp.Shared.DomainIds;
+using BrewUp.Shared.ExternalContracts.Warehouse;
+using BrewUp.Warehouse.ReadModel.Services;
 using BrewUp.Warehouse.SharedKernel.CustomTypes;
 
 namespace BrewUp.Warehouse.McpServer;
 
-internal sealed class McpWarehouseFacade : IMcpWarehouseFacade
+internal sealed class McpWarehouseFacade(
+    IAvailabilityService availabilityService
+    ) : IMcpWarehouseFacade
 {
-    public Task<AvailabilityJson> GetBeerAvailabilityAsync(string beerId, CancellationToken cancellationToken)
+    public async Task<AvailabilityJson> GetBeerAvailabilityAsync(string beerId, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        throw new NotImplementedException();
+        var availabilityResult =
+            await availabilityService.GetAvailabilityByBeerIdAsync(new BeerId(beerId), cancellationToken);
+        
+        if (availabilityResult.IsError)
+            return new AvailabilityJson();
+        
+        return availabilityResult.TryGetValue(out var availability) 
+            ? availability 
+            : new AvailabilityJson();
     }
 
-    public Task<ReorderThresold> GetReorderThresholdAsync(string beerId, CancellationToken cancellationToken)
+    public async Task<ReorderThreshold> GetReorderThresholdAsync(string beerId, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        throw new NotImplementedException();
+
+        var thresholdResult =
+            await availabilityService.GetReorderThresholdByBeerIdAsync(new BeerId(beerId), cancellationToken);
+        
+        if (thresholdResult.IsError)
+            return new ReorderThreshold(new BeerId(beerId),  new ThresholdQuantity(0, "Bottle"));
+        
+        return thresholdResult.TryGetValue(out var threshold)
+            ? threshold
+            : new ReorderThreshold(new BeerId(beerId),  new ThresholdQuantity(0, "Bottle"));
     }
 }

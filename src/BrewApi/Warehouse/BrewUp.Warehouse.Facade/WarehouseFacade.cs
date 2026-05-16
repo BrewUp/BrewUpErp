@@ -27,7 +27,7 @@ internal sealed class WarehouseFacade(IShipmentService shipmentService,
         if (warehouseResult.IsError)
             return Result<string>.Error("Warehouse not found");
 
-        var chkAvailability = await availabilityService.GetByWarehouseIdAndBeerIdAsync(new WarehouseId(json.WarehouseId), new BeerId(json.BeerId),
+        var chkAvailability = await availabilityService.GetAvailabilityByWarehouseIdAndBeerIdAsync(new WarehouseId(json.WarehouseId), new BeerId(json.BeerId),
             cancellationToken);
 
         if (chkAvailability.IsError)
