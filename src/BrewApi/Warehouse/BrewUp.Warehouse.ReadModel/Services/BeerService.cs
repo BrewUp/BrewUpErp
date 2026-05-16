@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BrewUp.Warehouse.ReadModel.Services;
 
-internal sealed class BeerService([FromKeyedServices("sales")] IPersister persister,
+internal sealed class BeerService([FromKeyedServices("warehouse")] IPersister persister,
     IQueries<Beer> beersQuery,
     ILoggerFactory loggerFactory) 
     : ServiceBase(persister, loggerFactory),IBeerService

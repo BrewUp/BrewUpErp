@@ -2,6 +2,7 @@
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.ReadModel;
+using BrewUp.Warehouse.SharedKernel.CustomTypes;
 using Lena.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -57,7 +58,7 @@ namespace BrewUp.Warehouse.ReadModel.Services
                 _ => Result<string>.Error("Error updating warehouse availability"));
         }
 
-        public async Task<Result<AvailabilityJson>> GetByWarehouseIdAndBeerIdAsync(WarehouseId warehouseId, BeerId beerId, 
+        public async Task<Result<AvailabilityJson>> GetAvailabilityByWarehouseIdAndBeerIdAsync(WarehouseId warehouseId, BeerId beerId, 
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -66,12 +67,36 @@ namespace BrewUp.Warehouse.ReadModel.Services
                 && a.BeerId == beerId.Value, 0, 1, cancellationToken);
 
             if (!queryResult.IsSuccess) 
-                return Result<AvailabilityJson>.Error("WhAvailability not found");
+                return Result<AvailabilityJson>.Error("Availability not found");
             
             queryResult.TryGetValue(out PagedResult<Availability> availabilityDto);
             return availabilityDto.Results.Any() 
                 ? Result<AvailabilityJson>.Success(availabilityDto.Results.First().ToJson())
                 : Result<AvailabilityJson>.Error("No availability found");
+        }
+
+        public async Task<Result<AvailabilityJson>> GetAvailabilityByBeerIdAsync(BeerId beerId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var queryResult = await queries.GetByFilterAsync(a => a.BeerId == beerId.Value, 0, 1, cancellationToken);
+
+            if (!queryResult.IsSuccess) 
+                return Result<AvailabilityJson>.Error("Availability not found");
+            
+            queryResult.TryGetValue(out PagedResult<Availability> availabilityDto);
+            return availabilityDto.Results.Any() 
+                ? Result<AvailabilityJson>.Success(availabilityDto.Results.First().ToJson())
+                : Result<AvailabilityJson>.Error("No availability found");
+        }
+
+        public Task<Result<ReorderThreshold>> GetReorderThresholdByBeerIdAsync(BeerId beerId,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            ReorderThreshold reorderThresold = new (beerId, new ThresholdQuantity(300, "Bottle"));
+            return Task.FromResult(Result<ReorderThreshold>.Success(reorderThresold));
         }
     }
 }
