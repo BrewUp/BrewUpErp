@@ -8,6 +8,22 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8"/>
+        <PackageReference Include="MongoDB.Driver" Version="3.8.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.8" />
+        <PackageReference Include="ModelContextProtocol.AspNetCore" Version="1.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include=".vscode\mcp.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
+      <ProjectReference Include="..\BrewUp.MasterData.Infrastructure\BrewUp.MasterData.Infrastructure.csproj" />
+      <ProjectReference Include="..\BrewUp.MasterData.ReadModel\BrewUp.MasterData.ReadModel.csproj" />
     </ItemGroup>
 
 </Project>
