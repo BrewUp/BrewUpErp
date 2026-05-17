@@ -4,6 +4,10 @@
     <Project Path="BrewUp.Shared/BrewUp.Shared.csproj" />
   </Folder>
   <Folder Name="/50 Modules/" />
+  <Folder Name="/50 Modules/Chat/">
+    <Project Path="Chat/BrewUp.Chat.Facade/BrewUp.Chat.Facade.csproj" />
+    <Project Path="Chat/BrewUp.Chat.SharedKernel/BrewUp.Chat.SharedKernel.csproj" />
+  </Folder>
   <Folder Name="/50 Modules/Dashboards/">
     <Project Path="Dashboards/BrewUp.Dashboards.Domain/BrewUp.Dashboards.Domain.csproj" />
     <Project Path="Dashboards/BrewUp.Dashboards.Entities/BrewUp.Dashboards.Entities.csproj" />
@@ -23,13 +27,8 @@
     <Project Path="MasterData/BrewUp.MasterData.ReadModel/BrewUp.MasterData.ReadModel.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.SharedKernel/BrewUp.MasterData.SharedKernel.csproj" />
   </Folder>
-  <Folder Name="/50 Modules/Mcp/" />
-  <Folder Name="/50 Modules/Mcp/Chat/">
-    <Project Path="Mcp/BrewUp.Mcp.Facade/BrewUp.Mcp.Facade.csproj" />
-    <Project Path="Mcp/BrewUp.Mcp.McpServer/BrewUp.Mcp.McpServer.csproj" />
-    <Project Path="Mcp/BrewUp.Mcp.SharedKernel/BrewUp.Mcp.SharedKernel.csproj" />
-  </Folder>
   <Folder Name="/50 Modules/Mother/">
+    <Project Path="Mother/BrewUp.Mother.Tests/BrewUp.Mother.Tests.csproj" />
     <Project Path="Mother/BrewUp.Mother/BrewUp.Mother.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Purchases/">

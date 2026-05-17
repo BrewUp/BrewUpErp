@@ -11,6 +11,14 @@ public sealed class SalesTools(
     [Description("Returns the currently open sales orders.")]
     public async Task<object> GetOpenSalesOrders(CancellationToken cancellationToken)
         => await mcpSalesFacade.GetOpenOrdersAsync(cancellationToken);
+    
+    [McpServerTool(Name = "get_sales_order_details")]
+    [Description("Returns the details of a sales order, searching by sales order id. Use this tool when someone asks for details of a sales order.")]
+    public async Task<object> GetSalesOrderDetails(
+        [Description("The sales order id, or part of the sales order id.")]
+        string salesOrderId,
+        CancellationToken cancellationToken)
+        => await mcpSalesFacade.GetOrderDetailsAsync(salesOrderId, cancellationToken);
 
     [McpServerTool(Name = "get_orders_by_customer")]
     [Description("Returns the sales orders for a customer, searching by customer name.")]
