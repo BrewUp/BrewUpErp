@@ -31,4 +31,20 @@ internal class BeerQueryService(ILoggerFactory loggerFactory,
             },
             _ => Result<PagedResult<BeerJson>>.Error("Error retrieving beers"));
     }
+
+    public async Task<Result<BeerJson>> GetBeerByIdAsync(string beerId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        var queryResult = await beerQueries.GetByIdAsync(beerId, cancellationToken);
+        
+        return queryResult.Match(
+            _ =>
+            {
+                queryResult.TryGetValue(out Beer result);
+                
+                return Result<BeerJson>.Success(result.ToJson());
+            },
+            _ => Result<BeerJson>.Error($"Error retrieving beer with ID {beerId}"));
+    }
 }
