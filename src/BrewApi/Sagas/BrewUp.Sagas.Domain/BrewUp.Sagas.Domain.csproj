@@ -9,17 +9,13 @@
     <ItemGroup>
         <PackageReference Include="Lena" Version="1.1.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
-        <PackageReference Include="Muflone" Version="10.1.1" />
+        <PackageReference Include="Muflone" Version="10.2.0" />
         <PackageReference Include="Muflone.Saga" Version="10.0.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
       <ProjectReference Include="..\BrewUp.Sagas.SharedKernel\BrewUp.Sagas.SharedKernel.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="CommandHandlers\" />
     </ItemGroup>
 
 </Project>

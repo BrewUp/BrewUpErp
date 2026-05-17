@@ -18,7 +18,7 @@
             <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.15.1" />
             <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.1" />
             <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.15.2" />
-            <PackageReference Include="Scalar.AspNetCore" Version="2.14.11" />
+            <PackageReference Include="Scalar.AspNetCore" Version="2.14.14" />
             <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
             <PackageReference Include="xunit.extensibility.core" Version="2.9.3" />
             <PackageReference Include="Serilog" Version="4.3.1" />
