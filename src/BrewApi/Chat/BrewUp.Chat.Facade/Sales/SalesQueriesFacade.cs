@@ -1,13 +1,11 @@
-﻿using BrewUp.Sales.ReadModel.Services;
-using BrewUp.Sales.SharedKernel.CustomTypes;
-using BrewUp.Shared.DomainIds;
+﻿using BrewUp.Chat.SharedKernel.Sales;
+using BrewUp.Sales.ReadModel.Services;
 using BrewUp.Shared.ExternalContracts.Sales;
-using BrewUp.Shared.ReadModel;
 
-namespace BrewUp.Sales.McpServer;
+namespace BrewUp.Chat.Facade.Sales;
 
-internal sealed class McpSalesFacade(
-    ISalesOrderService salesOrderService) : IMcpSalesFacade
+internal sealed class SalesQueriesFacade(
+    ISalesOrderService salesOrderService) : ISalesQueriesFacade
 {
     private const int DefaultPageNumber = 1;
     private const int DefaultPageSize = 250;
@@ -59,46 +57,6 @@ internal sealed class McpSalesFacade(
             .ToArray();
     }
 
-    public async Task<CustomerTotalPurchased> GetCustomerTotalPurchasedAsync(string customerId, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        
-        var result = await salesOrderService.GetCustomerTotalPurchasedAsync(new CustomerId(customerId), cancellationToken);
-
-        if (!result.IsSuccess)
-            return new CustomerTotalPurchased(customerId, string.Empty, 0);
-
-        return result.TryGetValue(out CustomerTotalPurchased totalPurchased) 
-            ? totalPurchased 
-            : new CustomerTotalPurchased(customerId, string.Empty, 0);
-    }
-
-    public async Task<PagedResult<SalesOrderTotalQuantity>> GetSalesOrderTotalQuantitiesAsync(string salesOrderId,
-        CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        
-        var queryResult = await salesOrderService.GetSalesOrderTotalQuantitiesAsync(salesOrderId, cancellationToken);
-        if (queryResult.IsError)
-            return new PagedResult<SalesOrderTotalQuantity>([], 0, 0, 0);
-        
-        queryResult.TryGetValue(out PagedResult<SalesOrderTotalQuantity> pagedResult);
-        return pagedResult;
-    }
-
-    public async Task<SalesOrderJson> GetOrderDetailsAsync(string salesOrderId, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        
-        var orderResult = await salesOrderService.GetSalesOrderByIdAsync(salesOrderId, cancellationToken);
-        if (orderResult.IsError)
-            return new SalesOrderJson();
-        
-        return orderResult.TryGetValue(out SalesOrderJson result) 
-            ? result 
-            : new SalesOrderJson();
-    }
-
     private async Task<IReadOnlyCollection<SalesOrderJson>> GetAllOrdersAsync(
         CancellationToken cancellationToken)
     {
@@ -110,7 +68,7 @@ internal sealed class McpSalesFacade(
         if (!result.IsSuccess)
             return [];
 
-        result.TryGetValue(out PagedResult<SalesOrderJson> page);
+        result.TryGetValue(out BrewUp.Shared.ReadModel.PagedResult<SalesOrderJson> page);
 
         return page.Results.ToArray();
     }

@@ -9,6 +9,7 @@ public static class MotherHelper
     public static IServiceCollection AddMother(this IServiceCollection services)
     {
         services.AddScoped<IMcpToolClient, McpToolClient>();
+        services.AddScoped<IRecommendationWriter, RecommendationWriter>();
         services.AddIntegrationEventHandler<InventoryRiskAgent>();
         
         return services;

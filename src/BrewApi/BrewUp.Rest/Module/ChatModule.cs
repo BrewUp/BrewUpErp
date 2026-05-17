@@ -1,5 +1,5 @@
-﻿using BrewUp.Mcp.Facade;
-using BrewUp.Mcp.Facade.Endpoints;
+﻿using BrewUp.Chat.Facade;
+using BrewUp.Chat.Facade.Endpoints;
 
 namespace BrewUp.Rest.Module;
 
@@ -26,7 +26,7 @@ public class ChatModule : IModule
     /// <returns></returns>
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
-        builder.Services.AddBrewUpAi(builder.Configuration);
+        builder.Services.AddBrewUpChat(builder.Configuration);
         
         return builder.Services;
     }
@@ -39,7 +39,7 @@ public class ChatModule : IModule
     /// <returns></returns>
     public WebApplication Configure(WebApplication app)
     {
-        app.MapAiChatEndpoints();
+        app.MapChatEndpoints();
         
         return app;
     }

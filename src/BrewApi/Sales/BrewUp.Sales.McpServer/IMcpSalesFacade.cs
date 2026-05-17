@@ -1,4 +1,5 @@
 ﻿using BrewUp.Sales.SharedKernel.CustomTypes;
+using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ReadModel;
 
 namespace BrewUp.Sales.McpServer;
@@ -22,4 +23,6 @@ public interface IMcpSalesFacade
 
     Task<PagedResult<SalesOrderTotalQuantity>> GetSalesOrderTotalQuantitiesAsync(string salesOrderId,
         CancellationToken cancellationToken);
+
+    Task<SalesOrderJson> GetOrderDetailsAsync(string salesOrderId, CancellationToken cancellationToken);
 }

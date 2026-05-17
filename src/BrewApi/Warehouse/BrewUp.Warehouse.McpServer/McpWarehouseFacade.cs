@@ -9,18 +9,26 @@ internal sealed class McpWarehouseFacade(
     IAvailabilityService availabilityService
     ) : IMcpWarehouseFacade
 {
-    public async Task<AvailabilityJson> GetBeerAvailabilityAsync(string beerId, CancellationToken cancellationToken)
+    public async Task<AvailabilityWithThresholdJson> GetBeerAvailabilityAsync(string beerId, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         var availabilityResult =
             await availabilityService.GetAvailabilityByBeerIdAsync(new BeerId(beerId), cancellationToken);
         
         if (availabilityResult.IsError)
-            return new AvailabilityJson();
+            return new AvailabilityWithThresholdJson();
         
         return availabilityResult.TryGetValue(out var availability) 
-            ? availability 
-            : new AvailabilityJson();
+            ? new AvailabilityWithThresholdJson
+            {
+                Id = availability.Id,
+                WarehouseId = availability.WarehouseId,
+                BeerId = availability.BeerId,
+                Quantity = availability.Quantity,
+                ReorderThreshold = 300,
+                UnitOfMeasure = availability.UnitOfMeasure
+            }
+            : new AvailabilityWithThresholdJson();
     }
 
     public async Task<ReorderThreshold> GetReorderThresholdAsync(string beerId, CancellationToken cancellationToken)
