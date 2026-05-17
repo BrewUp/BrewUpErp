@@ -9,6 +9,7 @@ public static class ModulesProjectUtils
         "BrewUp.MasterData.Infrastructure",
         "BrewUp.MasterData.ReadModel", 
         "BrewUp.MasterData.SharedKernel",
+        "BrewUp.MasterData.McpServer",
         "BrewUp.MasterData.Tests",
         
         "BrewUp.Sales.Domain",
@@ -17,6 +18,7 @@ public static class ModulesProjectUtils
         "BrewUp.Sales.Infrastructure",
         "BrewUp.Sales.ReadModel", 
         "BrewUp.Sales.SharedKernel",
+        "BrewUp.Sales.McpServer",
         "BrewUp.Sales.Tests",
         
         "BrewUp.Warehouse.Domain",
@@ -25,6 +27,7 @@ public static class ModulesProjectUtils
         "BrewUp.Warehouse.Infrastructure",
         "BrewUp.Warehouse.ReadModel", 
         "BrewUp.Warehouse.SharedKernel",
+        "BrewUp.Warehouse.McpServer",
         "BrewUp.Warehouse.Tests",
         
         "BrewUp.Dashboards.Domain",
@@ -49,6 +52,7 @@ public static class ModulesProjectUtils
         "BrewUp.Purchases.Infrastructure",
         "BrewUp.Purchases.ReadModel", 
         "BrewUp.Purchases.SharedKernel",
+        "BrewUp.Purchase.McpServer",
         "BrewUp.Purchases.Tests"
     ];
 

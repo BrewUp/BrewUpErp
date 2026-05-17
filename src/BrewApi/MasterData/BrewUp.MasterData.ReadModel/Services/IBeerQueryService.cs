@@ -8,4 +8,5 @@ public interface IBeerQueryService
 {
     Task<Result<PagedResult<BeerJson>>> GetBeersAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken);
+    Task<Result<BeerJson>> GetBeerByIdAsync(string beerId, CancellationToken cancellationToken);
 }
