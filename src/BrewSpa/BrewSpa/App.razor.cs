@@ -74,12 +74,15 @@ public class AppBase : ComponentBase, IDisposable
 
                 case "brewchat":
                 {
+                  if (Configuration!.GetValue<bool>("Modules:EnableChat"))
+                  {
                     var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>
-                                            {
-                                                "BrewSpa.Chat.Facade.wasm"
-                                            });
+                          {
+                              "BrewSpa.Chat.Facade.wasm"
+                          });
                     LazyLoadedAssemblies.AddRange(assemblies);
-                    break;
+                  }
+                  break;
                 }
             }
         }

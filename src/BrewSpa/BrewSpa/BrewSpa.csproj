@@ -22,6 +22,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BrewSpa.Shared.Components\BrewSpa.Shared.Components.csproj" />
+      <ProjectReference Include="..\Chat\BrewSpa.Chat.Facade\BrewSpa.Chat.Facade.csproj" />
       <ProjectReference Include="..\Dashboards\BrewSpa.Dashboards.ApplicationServices\BrewSpa.Dashboards.ApplicationServices.csproj" />
       <ProjectReference Include="..\Dashboards\BrewSpa.Dashboards.Facade\BrewSpa.Dashboards.Facade.csproj" />
       <ProjectReference Include="..\MasterData\BrewSpa.MasterData.Facade\BrewSpa.MasterData.Facade.csproj" />

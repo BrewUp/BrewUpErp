@@ -11,11 +11,13 @@ public partial class NavMenu : ComponentBase, IDisposable
 
   protected bool IsDataMasterEnabled { get; set; }
   protected bool IsSalesEnabled { get; set; }
+  protected bool IsChatEnabled { get; set; }
 
   protected override void OnInitialized()
   {
     IsDataMasterEnabled = Configuration!.GetValue<bool>("Modules:EnableDataMaster");
     IsSalesEnabled = Configuration!.GetValue<bool>("Modules:EnableSales");
+    IsChatEnabled = Configuration!.GetValue<bool>("Modules:EnableChat");
   }
 
   private string? NavMenuCssClass => CollapseNavMenu ? "collapse" : null;

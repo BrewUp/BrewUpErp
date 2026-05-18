@@ -1,0 +1,93 @@
+@page "/brewchat"
+
+@using BrewSpa.Chat.Application.Models
+
+<PageTitle>BrewUp Chat</PageTitle>
+
+<div class="chat-container">
+    <div class="header-section">
+        <h1 class="page-title">BrewUp AI Assistant</h1>
+        <p class="page-subtitle">Ask me anything about our beer catalog and sales!</p>
+    </div>
+
+    @if (_isLoading)
+    {
+        <p class="loading-message">Loading chat interface...</p>
+    }
+    else
+    {
+        <div class="chat-layout">
+            <!-- Beer Catalog Sidebar -->
+            <div class="beer-catalog-panel">
+                <h2 class="panel-title">Beer Catalog</h2>
+                @if (_beerCatalog.Any())
+                {
+                    <div class="beer-list">
+                        @foreach (var beer in _beerCatalog)
+                        {
+                            <div class="beer-item @(!beer.IsActive ? "inactive" : "")">
+                                <h3 class="beer-name">@beer.Name</h3>
+                                <p class="beer-style">@beer.Style</p>
+                                @if (beer.AlcoholByVolume.HasValue)
+                                {
+                                    <p class="beer-abv">ABV: @beer.AlcoholByVolume.Value%</p>
+                                }
+                                @if (!beer.IsActive)
+                                {
+                                    <span class="beer-status">Inactive</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="empty-message">No beers available</p>
+                }
+            </div>
+
+            <!-- Chat Panel -->
+            <div class="chat-panel">
+                <div class="chat-messages">
+                    @foreach (var message in _chatHistory)
+                    {
+                        <div class="chat-message @(message.IsUser ? "user" : "assistant")">
+                            <div class="message-header">
+                                <strong>@(message.IsUser ? "You" : "BrewUp Assistant")</strong>
+                            </div>
+                            <div class="message-content">
+                                @message.Content
+                            </div>
+                        </div>
+                    }
+                    @if (_isProcessing)
+                    {
+                        <div class="chat-message assistant">
+                            <div class="message-header">
+                                <strong>BrewUp Assistant</strong>
+                            </div>
+                            <div class="message-content">
+                                <span class="typing-indicator">Thinking...</span>
+                            </div>
+                        </div>
+                    }
+                    <div @ref="_messagesEndRef"></div>
+                </div>
+
+                <div class="chat-input-area">
+                    <input type="text"
+                           class="chat-input"
+                           placeholder="Ask me something about beers or sales..."
+                           @bind="_userMessage"
+                           @onkeydown="OnKeyDown"
+                           disabled="@_isProcessing" />
+                    <button class="send-btn"
+                            @onclick="SendMessageAsync"
+                            disabled="@(string.IsNullOrWhiteSpace(_userMessage) || _isProcessing)">
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
