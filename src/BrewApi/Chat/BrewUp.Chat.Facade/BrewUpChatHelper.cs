@@ -15,7 +15,7 @@ public static class BrewUpChatHelper
     public static IServiceCollection AddBrewUpChat(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddScoped<BrewUpAiTools>();
+        services.AddScoped<BrewUpChatTools>();
         
         var options = configuration
                           .GetSection(AzureOpenAiOptions.SectionName)

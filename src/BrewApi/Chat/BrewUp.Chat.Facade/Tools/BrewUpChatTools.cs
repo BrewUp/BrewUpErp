@@ -6,7 +6,7 @@ using BrewUp.Chat.SharedKernel.Sales;
 
 namespace BrewUp.Chat.Facade.Tools;
 
-public sealed class BrewUpAiTools(
+public sealed class BrewUpChatTools(
     IBeerCatalogQueriesFacade beerCatalogQueries,
     ISalesQueriesFacade salesOrderQueries)
 {

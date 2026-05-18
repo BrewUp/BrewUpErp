@@ -26,6 +26,7 @@
       <ProjectReference Include="..\Dashboards\BrewSpa.Dashboards.ApplicationServices\BrewSpa.Dashboards.ApplicationServices.csproj" />
       <ProjectReference Include="..\Dashboards\BrewSpa.Dashboards.Facade\BrewSpa.Dashboards.Facade.csproj" />
       <ProjectReference Include="..\MasterData\BrewSpa.MasterData.Facade\BrewSpa.MasterData.Facade.csproj" />
+      <ProjectReference Include="..\Sales\BrewSpa.Sales.Application\BrewSpa.Sales.Application.csproj" />
       <ProjectReference Include="..\Sales\BrewSpa.Sales.Facade\BrewSpa.Sales.Facade.csproj" />
     </ItemGroup>
 

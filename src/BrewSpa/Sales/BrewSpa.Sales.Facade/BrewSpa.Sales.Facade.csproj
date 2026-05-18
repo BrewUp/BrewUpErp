@@ -13,10 +13,12 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.7" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.7" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\BrewSpa.Shared.Components\BrewSpa.Shared.Components.csproj" />
+      <ProjectReference Include="..\BrewSpa.Sales.Application\BrewSpa.Sales.Application.csproj" />
     </ItemGroup>
 
 </Project>
