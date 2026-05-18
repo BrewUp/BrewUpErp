@@ -1,8 +1,61 @@
 ﻿@page "/sales/salesorders"
 @using BrewSpa.Shared.Components.Components
+@using Microsoft.AspNetCore.Components.QuickGrid
 
 <PageTitle>Sales Orders</PageTitle>
 
 <div class="salesorders-container">
     <Toolbar CurrentContext="@_currentContext"/>
+
+    @if (_isLoading)
+    {
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading sales orders...</p>
+        </div>
+    }
+    else if (_salesOrders.Any())
+    {
+        <div class="grid-container">
+            <QuickGrid ItemsProvider="@_gridItemsProvider" 
+                       Pagination="@_pagination"
+                       ItemKey="@(o => o.Id)"
+                       RowClass="@(order => GetRowClass(order))">
+                <PropertyColumn Title="Order Number" Property="@(o => o.OrderNumber)" Sortable="true">
+                    <ColumnOptions>
+                        <div class="search-box">
+                            <input type="search" autofocus @bind="_orderNumberFilter" @bind:event="oninput" placeholder="Order Number..."/>
+                        </div>
+                    </ColumnOptions>
+                </PropertyColumn>
+                <PropertyColumn Title="Customer" Property="@(o => o.CustomerName)" Sortable="true"/>
+                <PropertyColumn Title="Order Date" Property="@(o => o.OrderDate)" Format="dd/MM/yyyy" Sortable="true"/>
+                <PropertyColumn Title="Delivery Date" Property="@(o => o.DeliveryDate)" Format="dd/MM/yyyy" Sortable="true"/>
+                <PropertyColumn Title="Status" Property="@(o => o.Status)" Sortable="true"/>
+                <TemplateColumn Title="Actions">
+                    <button class="btn btn-sm btn-primary" @onclick="() => SelectOrder(context)">
+                        Select
+                    </button>
+                    <button class="btn btn-sm btn-info" @onclick="() => ViewOrderDetails(context)">
+                        Details
+                    </button>
+                </TemplateColumn>
+            </QuickGrid>
+        </div>
+        <Paginator State="@_pagination" />
+    }
+    else
+    {
+        <div class="no-data">
+            <i class="fas fa-shopping-cart fa-3x"></i>
+            <h3>No sales orders found</h3>
+            <p>Click the Add button to create your first sales order.</p>
+        </div>
+    }
 </div>
+
+<AddSalesOrder 
+    IsVisible="_showDialog" 
+    Order="_selectedOrder"
+    OnSubmit="OnDialogSubmit"
+    OnCancel="OnDialogCancel" />

@@ -7,7 +7,7 @@ namespace BrewUp.Chat.Facade.Chat;
 
 public sealed class BrewUpChatService(
     IChatClient chatClient,
-    BrewUpAiTools tools)
+    BrewUpChatTools tools)
 {
     public async Task<ChatResponse> AskAsync(
         ChatRequest request,
@@ -35,6 +35,7 @@ public sealed class BrewUpChatService(
             new(ChatRole.User, request.Message)
         };
 
+        // Inferred Functions
         var options = new ChatOptions
         {
             Tools =

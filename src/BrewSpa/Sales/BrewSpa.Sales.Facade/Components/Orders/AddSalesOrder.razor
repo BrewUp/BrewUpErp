@@ -1,0 +1,109 @@
+@using BrewSpa.Sales.Application.Models
+
+@if (IsVisible)
+{
+    <div class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>@(string.IsNullOrEmpty(Order?.Id) ? "New Sales Order" : "Edit Sales Order")</h2>
+                <button class="close-button" @onclick="OnCancel">×</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="orderNumber">Order Number *</label>
+                    <input id="orderNumber" 
+                           type="text" 
+                           class="form-control" 
+                           @bind="Order!.OrderNumber" 
+                           placeholder="Enter order number" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerId">Customer ID *</label>
+                    <input id="customerId" 
+                           type="text" 
+                           class="form-control" 
+                           @bind="Order!.CustomerId" 
+                           placeholder="Enter customer ID" />
+                </div>
+                
+                <div class="form-group">
+                    <label for="customerName">Customer Name *</label>
+                    <input id="customerName" 
+                           type="text" 
+                           class="form-control" 
+                           @bind="Order!.CustomerName" 
+                           placeholder="Enter customer name" />
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="orderDate">Order Date *</label>
+                        <input id="orderDate" 
+                               type="date" 
+                               class="form-control" 
+                               @bind="Order!.OrderDate" />
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="deliveryDate">Delivery Date</label>
+                        <input id="deliveryDate" 
+                               type="date" 
+                               class="form-control" 
+                               @bind="Order!.DeliveryDate" />
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Order Items</h3>
+                    <button class="btn btn-sm btn-secondary" @onclick="AddOrderRow">
+                        <i class="fas fa-plus"></i> Add Item
+                    </button>
+                    
+                    @if (Order!.Rows.Any())
+                    {
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Beer ID</th>
+                                    <th>Beer Name</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Price</th>
+                                    <th>Currency</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var (row, index) in Order.Rows.Select((r, i) => (r, i)))
+                                {
+                                    <tr>
+                                        <td><input type="text" @bind="row.BeerId" class="form-control-sm" /></td>
+                                        <td><input type="text" @bind="row.BeerName" class="form-control-sm" /></td>
+                                        <td><input type="number" @bind="row.Quantity.Value" class="form-control-sm" /></td>
+                                        <td><input type="text" @bind="row.Quantity.UnitOfMeasure" class="form-control-sm" placeholder="L" /></td>
+                                        <td><input type="number" @bind="row.Price.Value" class="form-control-sm" step="0.01" /></td>
+                                        <td><input type="text" @bind="row.Price.Currency" class="form-control-sm" placeholder="EUR" /></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger" @onclick="() => RemoveOrderRow(index)">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @onclick="OnCancel">Cancel</button>
+                <button class="btn btn-primary" @onclick="HandleSubmit" disabled="@(!IsValid())">
+                    @(string.IsNullOrEmpty(Order?.Id) ? "Create" : "Save")
+                </button>
+            </div>
+        </div>
+    </div>
+}

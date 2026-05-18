@@ -18,6 +18,7 @@
     <Project Path="MasterData/BrewSpa.MasterData.Facade/BrewSpa.MasterData.Facade.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Sales/">
+    <Project Path="Sales/BrewSpa.Sales.Application/BrewSpa.Sales.Application.csproj" Id="fcabb9de-173a-4b93-8891-9ffaffdebe65" />
     <Project Path="Sales/BrewSpa.Sales.Facade/BrewSpa.Sales.Facade.csproj" />
   </Folder>
   <Folder Name="/90 Presentation/">
