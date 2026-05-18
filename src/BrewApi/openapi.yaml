@@ -18,6 +18,10 @@ tags:
     description: Warehouse and shipment management
   - name: Dashboards
     description: Dashboard analytics
+  - name: Purchases
+    description: Purchase order management
+  - name: BrewUp-Chat
+    description: AI-powered chat assistant and beer catalog queries
 
 paths:
 
@@ -322,6 +326,31 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  # ─── Purchases ──────────────────────────────────────────────────────────────
+
+  /v1/purchases:
+    post:
+      tags: [Purchases]
+      operationId: CreatePurchaseOrder
+      summary: Create a new purchase order
+      description: Creates a new purchase order. This endpoint is used to add a new purchase order.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePurchaseOrderJson'
+      responses:
+        '201':
+          description: Purchase order created successfully
+          headers:
+            Location:
+              description: URL of the newly created purchase order
+              schema:
+                type: string
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   # ─── Dashboards ───────────────────────────────────────────────────────────
 
   /v1/dashboards/customers:
@@ -359,6 +388,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PagedResultSalesByProductsJson'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ─── Chat / AI ────────────────────────────────────────────────────────────
+
+  /ai/beers:
+    get:
+      tags: [BrewUp-Chat]
+      operationId: GetBeersCatalog
+      summary: Get the beer catalog
+      description: Returns the list of all active beers available in the catalog.
+      responses:
+        '200':
+          description: List of beer catalog items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BeerCatalogItem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /ai/sales:
+    post:
+      tags: [BrewUp-Chat]
+      operationId: AskBrewUpChat
+      summary: Ask the BrewUp AI assistant
+      description: Sends a message to the BrewUp AI assistant and returns the answer. Optionally continues an existing conversation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: AI assistant response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -824,6 +895,88 @@ components:
           format: decimal
         unitOfMeasure:
           type: string
+
+    # ── Purchases ────────────────────────────────────────────────────────────
+
+    PurchaseOrderRowJson:
+      type: object
+      required: [beerId, beerName, quantity, price]
+      properties:
+        beerId:
+          type: string
+          description: Unique identifier of the beer
+        beerName:
+          type: string
+          description: Name of the beer
+        quantity:
+          $ref: '#/components/schemas/Quantity'
+        price:
+          $ref: '#/components/schemas/Price'
+
+    CreatePurchaseOrderJson:
+      type: object
+      required: [orderNumber, orderDate, supplierId, rows]
+      properties:
+        orderNumber:
+          type: string
+          description: Human-readable order number
+        orderDate:
+          type: string
+          format: date-time
+          description: Date and time the order was placed
+        supplierId:
+          type: string
+          description: Unique identifier of the supplier
+        deliveryDate:
+          type: string
+          format: date-time
+          description: Requested delivery date
+        rows:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/PurchaseOrderRowJson'
+
+    # ── Chat / AI ────────────────────────────────────────────────────────────
+
+    BeerCatalogItem:
+      type: object
+      properties:
+        beerId:
+          type: string
+        name:
+          type: string
+        style:
+          type: string
+        alcoholByVolume:
+          type: number
+          format: decimal
+          nullable: true
+        isActive:
+          type: boolean
+
+    ChatRequest:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          description: The message to send to the AI assistant
+        conversationId:
+          type: string
+          nullable: true
+          description: Optional conversation ID to continue an existing conversation
+
+    ChatResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+          description: The AI assistant's answer
+        conversationId:
+          type: string
+          nullable: true
+          description: Conversation ID for continuing the conversation
 
     # ── Problem Details ──────────────────────────────────────────────────
 

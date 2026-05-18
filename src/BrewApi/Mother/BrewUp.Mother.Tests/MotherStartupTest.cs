@@ -3,6 +3,7 @@ using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.Messages.Events.Sagas;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Muflone;
 using Muflone.Transport.InMemory;
@@ -10,6 +11,7 @@ using NSubstitute;
 
 namespace BrewUp.Mother.Tests;
 
+[Collection(MotherTestCollection.Name)]
 public class MotherStartupTest : IAsyncLifetime
 {
     private IHost _host = null!;
@@ -29,9 +31,10 @@ public class MotherStartupTest : IAsyncLifetime
             .ConfigureServices(services =>
             {
                 services.AddMufloneTransportInMemory();
-                // AddMother registers IMcpToolClient; override it AFTER so last registration wins.
                 services.AddMother();
-                services.AddScoped<IMcpToolClient>(_ => mcpToolClient);
+                // Replace (not add) so that the real McpToolClient — which needs
+                // IHttpClientFactory — is removed. Otherwise ValidateOnBuild fails.
+                services.Replace(ServiceDescriptor.Scoped<IMcpToolClient>(_ => mcpToolClient));
                 services.AddHostedService<Worker>();
             })
             .Build();

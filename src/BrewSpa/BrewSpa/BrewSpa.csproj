@@ -17,6 +17,7 @@
         <BlazorWebAssemblyLazyLoad Include="BrewSpa.Dashboards.Facade.wasm" />
         <BlazorWebAssemblyLazyLoad Include="BrewSpa.MasterData.Facade.wasm" />
         <BlazorWebAssemblyLazyLoad Include="BrewSpa.Sales.Facade.wasm" />
+        <BlazorWebAssemblyLazyLoad Include="BrewSpa.Chat.Facade.wasm" />
     </ItemGroup>
 
     <ItemGroup>
