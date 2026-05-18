@@ -1,0 +1,246 @@
+.chat-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header-section {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.loading-message {
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 2rem;
+    color: #666;
+}
+
+.chat-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 1.5rem;
+    height: calc(100vh - 200px);
+}
+
+/* Beer Catalog Panel */
+.beer-catalog-panel {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.panel-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.beer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.beer-item {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #007bff;
+}
+
+.beer-item.inactive {
+    opacity: 0.6;
+    border-left-color: #6c757d;
+}
+
+.beer-name {
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 0 0 0.5rem 0;
+    color: #333;
+}
+
+.beer-style {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0 0 0.3rem 0;
+}
+
+.beer-abv {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0;
+}
+
+.beer-status {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    background: #6c757d;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+.empty-message {
+    text-align: center;
+    color: #888;
+    padding: 2rem;
+}
+
+/* Chat Panel */
+.chat-panel {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.chat-message {
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-message.user {
+    align-self: flex-end;
+}
+
+.chat-message.assistant {
+    align-self: flex-start;
+}
+
+.message-header {
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+    color: #666;
+}
+
+.message-content {
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    word-wrap: break-word;
+}
+
+.chat-message.user .message-content {
+    background: #007bff;
+    color: white;
+}
+
+.chat-message.assistant .message-content {
+    background: #f1f3f5;
+    color: #333;
+}
+
+.typing-indicator {
+    font-style: italic;
+    color: #888;
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.chat-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.chat-input:disabled {
+    background: #e9ecef;
+    cursor: not-allowed;
+}
+
+.send-btn {
+    padding: 0.75rem 1.5rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.send-btn:hover:not(:disabled) {
+    background: #0056b3;
+}
+
+.send-btn:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .chat-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .beer-catalog-panel {
+        max-height: 300px;
+    }
+
+    .chat-panel {
+        height: 500px;
+    }
+
+    .chat-message {
+        max-width: 85%;
+    }
+}

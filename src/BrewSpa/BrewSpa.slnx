@@ -4,6 +4,10 @@
     <Project Path="BrewSpa.Shared/BrewSpa.Shared.csproj" />
   </Folder>
   <Folder Name="/50 Modules/" />
+  <Folder Name="/50 Modules/Chat/">
+    <Project Path="Chat/BrewSpa.Chat.Application/BrewSpa.Chat.Application.csproj" Id="121642a1-378b-4344-8b65-55b48895a285" />
+    <Project Path="Chat/BrewSpa.Chat.Facade/BrewSpa.Chat.Facade.csproj" Id="a70ec93d-7282-4b74-9754-f35b780109d5" />
+  </Folder>
   <Folder Name="/50 Modules/Dashboards/">
     <Project Path="Dashboards/BrewSpa.Dashboards.ApplicationServices/BrewSpa.Dashboards.ApplicationServices.csproj" />
     <Project Path="Dashboards/BrewSpa.Dashboards.Facade/BrewSpa.Dashboards.Facade.csproj" />

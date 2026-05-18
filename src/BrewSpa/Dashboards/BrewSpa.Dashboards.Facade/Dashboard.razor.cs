@@ -21,7 +21,7 @@ public partial class Dashboard : ComponentBase, IAsyncDisposable
     protected override async Task OnInitializedAsync()
     {
       _hubConnection = new HubConnectionBuilder()
-        .WithUrl(new Uri("http://localhost:5094/hubs/dashboards"))
+        .WithUrl(new Uri("http://localhost:6094/hubs/dashboards"))
         .WithAutomaticReconnect()
         .Build();
       

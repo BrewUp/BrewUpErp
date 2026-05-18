@@ -1,4 +1,5 @@
 using BrewSpa;
+using BrewSpa.Chat.Application.Extensions;
 using BrewSpa.Dashboards.ApplicationServices.Extensions;
 using BrewSpa.MasterData.Application.Extensions;
 using BrewSpa.Shared.Components;
@@ -22,5 +23,6 @@ builder.Services.AddSharedComponents();
 
 builder.Services.AddMasterDataServices(builder.Configuration);
 builder.Services.AddDashboardsApplicationServices(builder.Configuration);
+builder.Services.AddChatApplicationServices(builder.Configuration);
 
 await builder.Build().RunAsync();
