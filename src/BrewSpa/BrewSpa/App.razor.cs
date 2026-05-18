@@ -71,6 +71,16 @@ public class AppBase : ComponentBase, IDisposable
                     }
                     break;
                 }
+
+                case "brewchat":
+                {
+                    var assemblies = await AssemblyLoader.LoadAssembliesAsync(new List<string>
+                                            {
+                                                "BrewSpa.Chat.Facade.wasm"
+                                            });
+                    LazyLoadedAssemblies.AddRange(assemblies);
+                    break;
+                }
             }
         }
         catch (Exception ex)

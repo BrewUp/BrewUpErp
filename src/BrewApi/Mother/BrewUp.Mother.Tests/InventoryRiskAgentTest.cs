@@ -7,6 +7,7 @@ using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.Messages.Events.Sagas;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Muflone;
 using Muflone.Transport.InMemory;
@@ -19,6 +20,7 @@ namespace BrewUp.Mother.Tests;
 /// <see cref="SalesOrderConfirmed"/> integration event published on the
 /// InMemory bus and executes its full processing pipeline.
 /// </summary>
+[Collection(MotherTestCollection.Name)]
 public sealed class InventoryRiskAgentTest : IAsyncLifetime
 {
     // ── shared mocks ───────────────────────────────────────────────────────────
@@ -27,7 +29,7 @@ public sealed class InventoryRiskAgentTest : IAsyncLifetime
 
     // ── test data ──────────────────────────────────────────────────────────────
     private readonly string _salesOrderId = Guid.CreateVersion7().ToString();
-    private const string BeerId = "beer-golden-ale-001";
+    private readonly string _beerId = Guid.CreateVersion7().ToString();
     private const string BeerName = "Golden Ale";
 
     // The order requires 10 units; availability is 12 with a reorder threshold of 5.
@@ -62,7 +64,7 @@ public sealed class InventoryRiskAgentTest : IAsyncLifetime
                 [
                     new SalesOrderRowJson
                     {
-                        BeerId = BeerId,
+                        BeerId = _beerId,
                         BeerName = BeerName,
                         Quantity = new Quantity(RequiredQty, "pcs"),
                         Price = new Price(5.00m, "EUR")
@@ -81,7 +83,7 @@ public sealed class InventoryRiskAgentTest : IAsyncLifetime
             {
                 Id = Guid.CreateVersion7().ToString(),
                 WarehouseId = Guid.CreateVersion7().ToString(),
-                BeerId = BeerId,
+                BeerId = _beerId,
                 Quantity = AvailableQty,
                 ReorderThreshold = ReorderThreshold,
                 UnitOfMeasure = "pcs"
@@ -104,9 +106,11 @@ public sealed class InventoryRiskAgentTest : IAsyncLifetime
                 // so we override them AFTER so the last registration wins.
                 services.AddMother();
 
-                // Override with stubs AFTER AddMother (last registration wins in .NET DI).
-                services.AddScoped<IMcpToolClient>(_ => _mcpToolClient);
-                services.AddScoped<IRecommendationWriter>(_ => _recommendationWriter);
+                // Replace the real McpToolClient (which needs IHttpClientFactory) and
+                // RecommendationWriter with stubs so that DI validation at host build
+                // time does not fail because IHttpClientFactory is not registered in tests.
+                services.Replace(ServiceDescriptor.Scoped<IMcpToolClient>(_ => _mcpToolClient));
+                services.Replace(ServiceDescriptor.Scoped<IRecommendationWriter>(_ => _recommendationWriter));
 
                 // Start the Worker BackgroundService (as in production).
                 services.AddHostedService<Worker>();
@@ -168,7 +172,7 @@ public sealed class InventoryRiskAgentTest : IAsyncLifetime
         await _recommendationWriter.Received(1)
             .WriteAsync(
                 Arg.Is<StockRiskDetected>(r =>
-                    r.BeerId == BeerId &&
+                    r.BeerId == _beerId &&
                     r.RequiredQuantity == RequiredQty &&
                     r.AvailableQuantity == AvailableQty &&
                     r.ReorderThreshold == ReorderThreshold),
@@ -191,7 +195,7 @@ public sealed class InventoryRiskAgentTest : IAsyncLifetime
             {
                 Id = Guid.CreateVersion7().ToString(),
                 WarehouseId = Guid.CreateVersion7().ToString(),
-                BeerId = BeerId,
+                BeerId = _beerId,
                 Quantity = 100m,
                 ReorderThreshold = ReorderThreshold,
                 UnitOfMeasure = "pcs"

@@ -8,6 +8,7 @@ public static class MotherHelper
 {
     public static IServiceCollection AddMother(this IServiceCollection services)
     {
+        services.AddHttpClient("mcp");
         services.AddScoped<IMcpToolClient, McpToolClient>();
         services.AddScoped<IRecommendationWriter, RecommendationWriter>();
         services.AddIntegrationEventHandler<InventoryRiskAgent>();
