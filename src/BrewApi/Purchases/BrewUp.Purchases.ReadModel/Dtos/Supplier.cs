@@ -40,7 +40,7 @@ public class Supplier : DtoBase
         };
     }
     
-    public SupplierType ToSupplierType() => new (
+    public SharedKernel.CustomTypes.Supplier ToSupplierType() => new (
         new SupplierId(Id),
         new RagioneSociale(RagioneSociale));
 }

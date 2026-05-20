@@ -17,6 +17,13 @@ internal sealed class PurchasesFacade(IPurchaseDomainService purchaseDomainServi
         
         var supplierResult = await supplierService.GetSupplierByIdAsync(new SupplierId(body.SupplierId), cancellationToken);
         supplierResult.TryGetValue(out var supplier);
+
+        foreach (var row in body.Rows)
+        {
+            var beerResult = await beerService.GetBeerByIdAsync(new BeerId(row.BeerId), cancellationToken);
+            if (beerResult.IsError)
+                return Result<string>.Error($"No beer was found with Id {row.BeerId}");
+        }
         
         return Result<string>.Success(string.Empty);
     }

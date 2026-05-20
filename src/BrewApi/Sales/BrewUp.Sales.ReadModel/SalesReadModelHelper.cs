@@ -15,6 +15,8 @@ public static class SalesReadModelHelper
         services.AddScoped<ISalesOrderService, SalesOrderService>();
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IBeerService, BeerService>();
+        services.AddScoped<ISalesByCustomerService, SalesByCustomerService>();
+            
         
         services.AddScoped<IQueries<SalesOrder>, SalesOrderQueries>();
         services.AddScoped<IQueries<Beer>, BeersQueries>();
@@ -24,6 +26,7 @@ public static class SalesReadModelHelper
         // services.AddDomainEventHandler<SalesOrderCreatedForIntegrationEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedWithPriceForIntegrationEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedForSalesOrderPlacedIntegrationEventHandler>();
+        services.AddDomainEventHandler<SalesOrderCreatedForCustomerSalesEventHandler>();
 
         services.AddDomainEventHandler<BeersAddedToCartEventHandler>();
         

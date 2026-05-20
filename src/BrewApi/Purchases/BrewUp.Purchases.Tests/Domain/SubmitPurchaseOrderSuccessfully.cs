@@ -24,7 +24,7 @@ public sealed class SubmitPurchaseOrderSuccessfully : CommandSpecification<Submi
     }
 
     protected override SubmitPurchaseOrder When() => new(_purchaseOrderId, _purchaseOrderNumber,
-        new SupplierType(_supplierId, _ragioneSociale), _purchaseOrderDate, _rows);
+        new Supplier(_supplierId, _ragioneSociale), _purchaseOrderDate, _rows);
 
     protected override ICommandHandlerAsync<SubmitPurchaseOrder> OnHandler()
     {
@@ -34,6 +34,6 @@ public sealed class SubmitPurchaseOrderSuccessfully : CommandSpecification<Submi
     protected override IEnumerable<DomainEvent> Expect()
     {
         yield return new PurchaseOrderSubmitted(_purchaseOrderId, _purchaseOrderNumber,
-            new SupplierType(_supplierId, _ragioneSociale), _purchaseOrderDate, _rows);
+            new Supplier(_supplierId, _ragioneSociale), _purchaseOrderDate, _rows);
     }
 }
