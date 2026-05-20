@@ -2,6 +2,7 @@
 using BrewUp.Sales.SharedKernel.Enums;
 using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
+using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ReadModel;
 using Lena.Core;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,5 +33,27 @@ internal sealed class SalesOrderSummaryService([FromKeyedServices("sales")] IPer
                 Logger.LogError("Error creating sales order sumary: {Error}", error);
                 return Result<bool>.Error($"Error creating sales order summary: {error}");
             });
+    }
+
+    public async Task<Result<PagedResult<SalesOrderSummaryJson>>> GetSalesOrdersAsync(int page, int pageSize, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        var queryResult = await orderSummaryQueries.GetByFilterAsync(null, page, pageSize, cancellationToken);
+        
+        return queryResult.Match(
+            _ =>
+            {
+                queryResult.TryGetValue(out PagedResult<SalesOrderSummary> pagedResult);
+                
+                return pagedResult.TotalRecords > 0
+                    ? Result<PagedResult<SalesOrderSummaryJson>>.Success(new PagedResult<SalesOrderSummaryJson>(
+                        pagedResult.Results.Select(r => r.ToJson()), 
+                        pagedResult.Page, 
+                        pagedResult.PageSize, 
+                        pagedResult.TotalRecords))
+                    : Result<PagedResult<SalesOrderSummaryJson>>.Success(new PagedResult<SalesOrderSummaryJson>([], 0, 0, 0));
+            },
+            _ => Result<PagedResult<SalesOrderSummaryJson>>.Error("Error retrieving sales orders"));
     }
 }
