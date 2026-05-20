@@ -6,12 +6,12 @@ namespace BrewUp.Purchases.SharedKernel.Messages.Events;
 
 public sealed class PurchaseOrderSubmitted(PurchaseOrderId aggregateId,
     PurchaseOrderNumber purchaseOrderNumber,
-    SupplierType supplier,
+    Supplier supplier,
     PurchaseOrderDate purchaseOrderDate,
     IEnumerable<BeerType> rows) : DomainEvent(aggregateId)
 {
     public PurchaseOrderNumber PurchaseOrderNumber { get; private set; } = purchaseOrderNumber;
-    public SupplierType Supplier { get; private set; } = supplier;
+    public Supplier Supplier { get; private set; } = supplier;
     public PurchaseOrderDate PurchaseOrderDate { get; private set; } = purchaseOrderDate;
     public IEnumerable<BeerType> Rows { get; private set; } = rows;
 }

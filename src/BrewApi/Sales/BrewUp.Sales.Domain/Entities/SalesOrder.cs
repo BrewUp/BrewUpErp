@@ -34,12 +34,28 @@ public class SalesOrder : AggregateRoot
         IEnumerable<SalesOrderRowJson> rows, Guid correlationId)
     {
         // Business logic validations can be added here
+        foreach (var row in rows)
+        {
+            if (row.Quantity.Value <= 0)
+            {
+                // You must raise an event in case of error.
+                RaiseEvent(new QuantityErrorRaised(aggregateId, correlationId, new List<SalesOrderRowJson>
+                {
+                    row
+                }, "Quantity must be greater than zero."));
+                return;
+            }
+        }
+        
         List<SalesOrderRowJson> rowsList = [];
         if (customer is not null && customer.CustomerType.Equals(CustomerType.Gold))
         {
             rowsList.AddRange(rows.Select(row => new SalesOrderRowJson
             {
-                BeerId = row.BeerId, BeerName = row.BeerName, Quantity = row.Quantity, Price = new Shared.CustomTypes.Price(row.Price.Value * 0.9m, row.Price.Currency) // Apply a 10% discount for Gold customers
+                BeerId = row.BeerId, 
+                BeerName = row.BeerName, 
+                Quantity = row.Quantity, 
+                Price = new Shared.CustomTypes.Price(row.Price.Value * 0.9m, row.Price.Currency) // Apply a 10% discount for Gold customers
             }));
         }
         
@@ -61,6 +77,12 @@ public class SalesOrder : AggregateRoot
         _rows = @event.Rows.Select(r => r.ToEntity()).ToList();
         
         _salesOrderStatus = SalesOrderStatus.Accepted;
+    }
+    
+    private void Apply(QuantityErrorRaised @event)
+    {
+        // Handle the quantity error, e.g., log it or set a flag
+        // For this example, we will just set the sales order status to Rejected
     }
 
     internal void AddBeers(IEnumerable<SalesOrderRowJson> rows)

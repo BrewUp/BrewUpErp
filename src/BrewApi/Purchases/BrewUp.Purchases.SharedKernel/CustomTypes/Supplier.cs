@@ -3,4 +3,4 @@ using BrewUp.Shared.DomainIds;
 
 namespace BrewUp.Purchases.SharedKernel.CustomTypes;
 
-public record SupplierType(SupplierId SupplierId, RagioneSociale RagioneSociale);
+public record Supplier(SupplierId SupplierId, RagioneSociale RagioneSociale);
