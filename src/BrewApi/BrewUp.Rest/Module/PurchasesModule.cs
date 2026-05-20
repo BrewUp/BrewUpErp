@@ -1,4 +1,5 @@
 ﻿using BrewUp.Purchases.Facade;
+using BrewUp.Purchases.Facade.Endpoints;
 
 namespace BrewUp.Rest.Module;
 
@@ -38,6 +39,7 @@ public class PurchasesModule : IModule
     /// <returns></returns>
     public WebApplication Configure(WebApplication app)
     {
+        app.MapPurchasesEndpoints();
         return app;
     }
 }
