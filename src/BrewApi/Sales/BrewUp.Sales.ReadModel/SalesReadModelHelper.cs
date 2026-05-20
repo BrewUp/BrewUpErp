@@ -12,20 +12,14 @@ public static class SalesReadModelHelper
 {
     public static IServiceCollection AddReadModel(this IServiceCollection services)
     {
-        services.AddScoped<ISalesOrderService, SalesOrderService>();
-        services.AddScoped<ICustomerService, CustomerService>();
-        services.AddScoped<IBeerService, BeerService>();
-        services.AddScoped<ISalesByCustomerService, SalesByCustomerService>();
-            
-        
-        services.AddScoped<IQueries<SalesOrder>, SalesOrderQueries>();
-        services.AddScoped<IQueries<Beer>, BeersQueries>();
+        AddReadModelForMcp(services);
 
         services.AddDomainEventHandler<SalesOrderCreatedEventHandler>();
         // If you want to use Saga, you have to disable this event handler
         // services.AddDomainEventHandler<SalesOrderCreatedForIntegrationEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedWithPriceForIntegrationEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedForSalesOrderPlacedIntegrationEventHandler>();
+        services.AddDomainEventHandler<SalesOrderCreatedForSalesSummaryEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedForCustomerSalesEventHandler>();
 
         services.AddDomainEventHandler<BeersAddedToCartEventHandler>();
@@ -38,8 +32,11 @@ public static class SalesReadModelHelper
         services.AddScoped<ISalesOrderService, SalesOrderService>();
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IBeerService, BeerService>();
+        services.AddScoped<ISalesOrderSummaryService, SalesOrderSummaryService>();
+        services.AddScoped<ISalesByCustomerService, SalesByCustomerService>();
         
         services.AddScoped<IQueries<SalesOrder>, SalesOrderQueries>();
+        services.AddScoped<IQueries<SalesOrderSummary>, SalesOrderSummaryQueries>();
         services.AddScoped<IQueries<Beer>, BeersQueries>();
         
         return services;
