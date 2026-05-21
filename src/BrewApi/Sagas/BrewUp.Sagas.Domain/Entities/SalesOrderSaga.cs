@@ -1,6 +1,7 @@
 ﻿using BrewUp.Sagas.SharedKernel.CustomTypes;
 using BrewUp.Sagas.SharedKernel.Enums;
 using BrewUp.Sagas.SharedKernel.Messages.Events;
+using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.MasterData.Customers;
 using BrewUp.Shared.ExternalContracts.Sales;
@@ -10,6 +11,7 @@ namespace BrewUp.Sagas.Domain.Entities;
 
 public class SalesOrderSaga : AggregateRoot
 {
+    private string _salesOrderId = string.Empty;
     private string _salesOrderNumber = string.Empty;
     private DateTime _salesOrderDate;
     private string _customerId = string.Empty;
@@ -45,6 +47,7 @@ public class SalesOrderSaga : AggregateRoot
     private void Apply(SalesOrderSagaStarted @event)
     {
         Id = @event.AggregateId;
+        _salesOrderId = @event.AggregateId.Value;
         _salesOrderNumber = @event.SalesOrderNumber;
         _salesOrderDate = @event.SalesOrderDate;
         _customerId = @event.CustomerId;
@@ -81,9 +84,15 @@ public class SalesOrderSaga : AggregateRoot
             }));
     }
 
-    internal void MarkOrderAvailable(Guid correlationId)
+    internal void MarkAvailabilityChecked(Guid correlationId, IEnumerable<ItemRequested> rows)
     {
-        RaiseEvent(new SagaOrderRequestAccepted(new WarehouseId(_warehouseId), correlationId));
+        RaiseEvent(new SagaSalesOrderAvailablityChecked(new IntegrationId(Id.Value), 
+            correlationId, Id.Value, rows));
+    }
+
+    private void Apply(SagaSalesOrderAvailablityChecked @event)
+    {
+        // just to set the new state into EventStore
     }
 
     internal void MarkOrderNotAvailable(string message, Guid correlationId)
@@ -98,6 +107,23 @@ public class SalesOrderSaga : AggregateRoot
 
     internal void MarkSalesOrderAsPlaced(Guid correlationId)
     {
-        
+        RaiseEvent(new SagaSalesOrderPlaced(new IntegrationId(Id.Value), correlationId,
+            _warehouseId, _rows));
+    }
+    
+    private void Apply(SagaSalesOrderPlaced @event)
+    {
+        _status = SagaState.Accepted;
+    }
+
+    internal void MarkSagaAsSuccessfullyCompleted(Guid correlationId)
+    {
+        RaiseEvent(new SagaSalesOrderSuccessfullyCompleted(new IntegrationId(Id.Value), correlationId));
+    }
+    
+    private void Apply(SagaSalesOrderSuccessfullyCompleted @event)
+    {
+        _endDate = DateTime.UtcNow;
+        _status = SagaState.Closed;
     }
 }

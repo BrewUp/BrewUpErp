@@ -14,6 +14,7 @@ public static class DomainHelper
         services.AddCommandHandler<AddBeersToCartCommandHandler>();
         services.AddCommandHandler<CloseSalesOrderCommandHandler>();
         services.AddCommandHandler<PlaceSalesOrderCommandHandler>();
+        services.AddCommandHandler<AcceptSalesOrderCommandHandler>();
         
         return services;
     }

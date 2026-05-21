@@ -36,15 +36,15 @@ public class SalesOrder : AggregateRoot
         // Business logic validations can be added here
         foreach (var row in rows)
         {
-            if (row.Quantity.Value <= 0)
+            if (row.Quantity.Value > 0) 
+                continue;
+            
+            // You must raise an event in case of error.
+            RaiseEvent(new QuantityErrorRaised(aggregateId, correlationId, new List<SalesOrderRowJson>
             {
-                // You must raise an event in case of error.
-                RaiseEvent(new QuantityErrorRaised(aggregateId, correlationId, new List<SalesOrderRowJson>
-                {
-                    row
-                }, "Quantity must be greater than zero."));
-                return;
-            }
+                row
+            }, "Quantity must be greater than zero."));
+            return;
         }
         
         List<SalesOrderRowJson> rowsList = [];
@@ -112,6 +112,16 @@ public class SalesOrder : AggregateRoot
         }
         
         RaiseEvent(new SalesOrderClosed(new SalesOrderId(Id.Value), salesOrderDeliveryDate, correlationId));
+    }
+
+    internal void AcceptOrder(Guid correlationId)
+    {
+        RaiseEvent(new SalesOrderAccepted(new SalesOrderId(Id.Value), correlationId));        
+    }
+    
+    private void Apply(SalesOrderAccepted @event)
+    {
+        _salesOrderStatus = SalesOrderStatus.Accepted;
     }
 
     private void Apply(SalesOrderClosed @event)

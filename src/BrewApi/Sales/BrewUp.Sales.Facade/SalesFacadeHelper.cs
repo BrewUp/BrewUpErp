@@ -43,6 +43,8 @@ public static class SalesFacadeHelper
 
         services.AddIntegrationEventHandler<BeerCreatedEventHandler>();
         services.AddIntegrationEventHandler<SagaCustomerBudgetVerifiedSagaCustomerBudgetVerifiedIntegrationEventHandler>();
+        services.AddIntegrationEventHandler<SagaSalesOrderAvailabilityCheckedForNotificationIntegrationEventHandler>();
+        services.AddIntegrationEventHandler<SagaSalesOrderAvailabilityCheckedIntegrationEventHandler>();
 
         return services;
     }

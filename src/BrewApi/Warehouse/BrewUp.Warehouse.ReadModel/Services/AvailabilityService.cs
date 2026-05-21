@@ -64,9 +64,9 @@ namespace BrewUp.Warehouse.ReadModel.Services
             cancellationToken.ThrowIfCancellationRequested();
 
             var queryResult = await queries.GetByFilterAsync(a => a.WarehouseId == warehouseId.Value 
-                && a.BeerId == beerId.Value, 0, 1, cancellationToken);
+                && a.BeerId == beerId.Value, 1, int.MaxValue, cancellationToken);
 
-            if (!queryResult.IsSuccess) 
+            if (!queryResult.IsSuccess)
                 return Result<AvailabilityJson>.Error("Availability not found");
             
             queryResult.TryGetValue(out PagedResult<Availability> availabilityDto);

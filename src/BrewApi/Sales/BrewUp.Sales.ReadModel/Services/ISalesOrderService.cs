@@ -1,4 +1,5 @@
 ﻿using BrewUp.Sales.SharedKernel.CustomTypes;
+using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ReadModel;
@@ -20,4 +21,6 @@ public interface ISalesOrderService
     Task<Result<CustomerTotalPurchased>> GetCustomerTotalPurchasedAsync(CustomerId customerId, CancellationToken cancellationToken);
 
     Task<Result<PagedResult<SalesOrderTotalQuantity>>> GetSalesOrderTotalQuantitiesAsync(string salesOrderId, CancellationToken cancellationToken);
+    
+    Task<Result<bool>> ChkAvailabilityForSagaRowsAsync(IEnumerable<ItemRequested> items, CancellationToken cancellationToken);
 }
