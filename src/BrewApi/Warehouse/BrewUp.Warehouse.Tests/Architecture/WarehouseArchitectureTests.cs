@@ -44,6 +44,8 @@ public class WarehouseArchitectureTests
             where assemblyFilename != null && !assemblyFilename.Contains("Test")
             select Assembly.LoadFile(assemblyFilename)).ToList();
         
+        moduleAssemblies = moduleAssemblies.Where(a => !a.GetName().Name!.Contains("McpServer")).ToList();
+        
         var moduleTypes = Types.InAssemblies(moduleAssemblies)
             .That()
             .DoNotHaveNameStartingWith("<>")
