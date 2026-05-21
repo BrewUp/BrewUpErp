@@ -7,7 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="EventHandlers\" />
+      <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
+      <PackageReference Include="Muflone" Version="10.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BrewUp.Sagas.Infrastructure\BrewUp.Sagas.Infrastructure.csproj" />
+      <ProjectReference Include="..\BrewUp.Sagas.SharedKernel\BrewUp.Sagas.SharedKernel.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Dtos\" />
     </ItemGroup>
 
 </Project>

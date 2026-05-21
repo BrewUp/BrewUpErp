@@ -21,6 +21,7 @@ public static class SalesReadModelHelper
         services.AddDomainEventHandler<SalesOrderCreatedForSalesOrderPlacedIntegrationEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedForSalesSummaryEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedForCustomerSalesEventHandler>();
+        services.AddDomainEventHandler<SalesOrderAcceptedEventHandler>();
 
         services.AddDomainEventHandler<BeersAddedToCartEventHandler>();
         

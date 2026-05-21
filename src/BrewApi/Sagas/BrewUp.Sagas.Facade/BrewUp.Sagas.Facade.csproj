@@ -18,6 +18,8 @@
     <ItemGroup>
       <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
       <ProjectReference Include="..\BrewUp.Sagas.Domain\BrewUp.Sagas.Domain.csproj" />
+      <ProjectReference Include="..\BrewUp.Sagas.Infrastructure\BrewUp.Sagas.Infrastructure.csproj" />
+      <ProjectReference Include="..\BrewUp.Sagas.ReadModel\BrewUp.Sagas.ReadModel.csproj" />
     </ItemGroup>
 
 </Project>

@@ -133,4 +133,21 @@ internal sealed class SalesOrderService([FromKeyedServices("sales")] IPersister 
             },
             _ => Result<PagedResult<SalesOrderTotalQuantity>>.Error("Error retrieving sales orders"));
     }
+
+    public Task<Result<bool>> ChkAvailabilityForSagaRowsAsync(IEnumerable<ItemRequested> items,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        bool canConfirmSalesOrder = true;
+        foreach (var row in items)   
+        {
+            if (row.QuantityOrdered.Value > row.QuantityAvailable.Value)
+                canConfirmSalesOrder = false;
+        }
+        
+        return canConfirmSalesOrder
+            ? Task.FromResult(Result<bool>.Success(canConfirmSalesOrder))
+            : Task.FromResult(Result<bool>.Error("Error charging sales orders"));
+    }
 }

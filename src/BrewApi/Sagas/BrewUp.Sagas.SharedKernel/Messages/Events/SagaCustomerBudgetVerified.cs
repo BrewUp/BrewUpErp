@@ -7,8 +7,8 @@ namespace BrewUp.Sagas.SharedKernel.Messages.Events;
 
 public sealed class SagaCustomerBudgetVerified(CustomerId aggregateId, Guid correlationId,
     CustomerJson customer,
-    CreateSalesOrderJson orderJson) : DomainEvent(aggregateId, correlationId)
+    CreateSalesOrderJson order) : DomainEvent(aggregateId, correlationId)
 {
     public CustomerJson Customer { get; private set; } = customer;
-    public CreateSalesOrderJson Order { get; private set; } = orderJson;
+    public CreateSalesOrderJson Order { get; private set; } = order;
 }
