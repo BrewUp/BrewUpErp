@@ -1,6 +1,108 @@
 @BrewUp.MasterData.McpServer_HostAddress = http://localhost:5007
 
-GET {{BrewUp.MasterData.McpServer_HostAddress}}/weatherforecast/
-Accept: application/json
+### Initialize MCP session (list available tools)
+POST {{BrewUp.MasterData.McpServer_HostAddress}}/mcp
+Accept: application/json, text/event-stream
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "initialize",
+  "id": "1",
+  "params": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {},
+    "clientInfo": {
+      "name": "http-test-client",
+      "version": "1.0.0"
+    }
+  }
+}
+
+###
+
+### List available tools
+POST {{BrewUp.MasterData.McpServer_HostAddress}}/mcp
+Accept: application/json, text/event-stream
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/list",
+  "id": "2",
+  "params": {}
+}
+
+###
+
+### Call get_catalog_beers tool
+POST {{BrewUp.MasterData.McpServer_HostAddress}}/mcp
+Accept: application/json, text/event-stream
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "3",
+  "params": {
+    "name": "get_catalog_beers",
+    "arguments": {}
+  }
+}
+
+###
+
+### Call get_beer_details tool
+POST {{BrewUp.MasterData.McpServer_HostAddress}}/mcp
+Accept: application/json, text/event-stream
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "4",
+  "params": {
+    "name": "get_beer_details",
+    "arguments": {
+      "beerId": "some-beer-id"
+    }
+  }
+}
+
+###
+
+### Call get_active_customers tool
+POST {{BrewUp.MasterData.McpServer_HostAddress}}/mcp
+Accept: application/json, text/event-stream
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "5",
+  "params": {
+    "name": "get_active_customers",
+    "arguments": {}
+  }
+}
+
+###
+
+### Call get_customer_info tool
+POST {{BrewUp.MasterData.McpServer_HostAddress}}/mcp
+Accept: application/json, text/event-stream
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "6",
+  "params": {
+    "name": "get_customer_info",
+    "arguments": {
+      "customerId": "some-customer-id"
+    }
+  }
+}
 
 ###

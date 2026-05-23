@@ -1,6 +1,153 @@
 @BrewUp.Sales.McpServer_HostAddress = http://localhost:5229
 
-GET {{BrewUp.Sales.McpServer_HostAddress}}/weatherforecast/
+### Initialize MCP session
+POST {{BrewUp.Sales.McpServer_HostAddress}}/mcp
+Content-Type: application/json
 Accept: application/json
+Accept: text/event-stream
+
+{
+  "jsonrpc": "2.0",
+  "method": "initialize",
+  "id": "1",
+  "params": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {},
+    "clientInfo": { "name": "rider-http-client", "version": "1.0.0" }
+  }
+}
+
+###
+
+### List available tools
+POST {{BrewUp.Sales.McpServer_HostAddress}}/mcp
+Content-Type: application/json
+Accept: application/json
+Accept: text/event-stream
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/list",
+  "id": "2",
+  "params": {}
+}
+
+###
+
+### Call get_open_sales_orders
+POST {{BrewUp.Sales.McpServer_HostAddress}}/mcp
+Content-Type: application/json
+Accept: application/json
+Accept: text/event-stream
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "3",
+  "params": {
+    "name": "get_open_sales_orders",
+    "arguments": {}
+  }
+}
+
+###
+
+### Call get_sales_order_details
+POST {{BrewUp.Sales.McpServer_HostAddress}}/mcp
+Content-Type: application/json
+Accept: application/json
+Accept: text/event-stream
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "4",
+  "params": {
+    "name": "get_sales_order_details",
+    "arguments": {
+      "salesOrderId": "REPLACE-WITH-ORDER-ID"
+    }
+  }
+}
+
+###
+
+### Call get_orders_by_customer
+POST {{BrewUp.Sales.McpServer_HostAddress}}/mcp
+Content-Type: application/json
+Accept: application/json
+Accept: text/event-stream
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "5",
+  "params": {
+    "name": "get_orders_by_customer",
+    "arguments": {
+      "customerName": "Acme"
+    }
+  }
+}
+
+###
+
+### Call get_late_sales_orders
+POST {{BrewUp.Sales.McpServer_HostAddress}}/mcp
+Content-Type: application/json
+Accept: application/json
+Accept: text/event-stream
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "6",
+  "params": {
+    "name": "get_late_sales_orders",
+    "arguments": {
+      "businessDate": "2026-05-23"
+    }
+  }
+}
+
+###
+
+### Call get_customer_total_purchased
+POST {{BrewUp.Sales.McpServer_HostAddress}}/mcp
+Content-Type: application/json
+Accept: application/json
+Accept: text/event-stream
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "7",
+  "params": {
+    "name": "get_customer_total_purchased",
+    "arguments": {
+      "customerId": "REPLACE-WITH-CUSTOMER-ID"
+    }
+  }
+}
+
+###
+
+### Call get_sales_order_total_quantities
+POST {{BrewUp.Sales.McpServer_HostAddress}}/mcp
+Content-Type: application/json
+Accept: application/json
+Accept: text/event-stream
+
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "id": "8",
+  "params": {
+    "name": "get_sales_order_total_quantities",
+    "arguments": {
+      "salesOrderId": "REPLACE-WITH-ORDER-ID"
+    }
+  }
+}
 
 ###
