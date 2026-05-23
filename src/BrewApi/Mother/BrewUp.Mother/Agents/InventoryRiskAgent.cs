@@ -2,7 +2,7 @@
 using BrewUp.Mother.CustomTypes;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ExternalContracts.Warehouse;
-using BrewUp.Shared.Messages.Events.Sagas;
+using BrewUp.Shared.Messages.Events.Sales;
 using Muflone.Messages.Events;
 
 namespace BrewUp.Mother.Agents;
@@ -10,11 +10,11 @@ namespace BrewUp.Mother.Agents;
 public sealed class InventoryRiskAgent(
     IMcpToolClient mcpToolClient,
     IRecommendationWriter recommendationWriter,
-    ILoggerFactory loggerFactory) : IntegrationEventHandlerAsync<SalesOrderConfirmed>(loggerFactory)
+    ILoggerFactory loggerFactory) : IntegrationEventHandlerAsync<SalesOrderCreatedIntegrationEvent>(loggerFactory)
 {
     private readonly ILogger<InventoryRiskAgent> _logger = loggerFactory.CreateLogger<InventoryRiskAgent>();
     
-    public override async Task HandleAsync(SalesOrderConfirmed @event, CancellationToken cancellationToken = new ())
+    public override async Task HandleAsync(SalesOrderCreatedIntegrationEvent @event, CancellationToken cancellationToken = new ())
     {
         cancellationToken.ThrowIfCancellationRequested();
         

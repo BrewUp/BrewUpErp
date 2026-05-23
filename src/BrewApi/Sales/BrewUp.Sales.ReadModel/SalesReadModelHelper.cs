@@ -16,8 +16,8 @@ public static class SalesReadModelHelper
 
         services.AddDomainEventHandler<SalesOrderCreatedEventHandler>();
         // If you want to use Saga, you have to disable this event handler
-        // services.AddDomainEventHandler<SalesOrderCreatedForIntegrationEventHandler>();
-        services.AddDomainEventHandler<SalesOrderCreatedWithPriceForIntegrationEventHandler>();
+        services.AddDomainEventHandler<SalesOrderCreatedForIntegrationEventHandler>();
+        //services.AddDomainEventHandler<SalesOrderCreatedWithPriceForIntegrationEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedForSalesOrderPlacedIntegrationEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedForSalesSummaryEventHandler>();
         services.AddDomainEventHandler<SalesOrderCreatedForCustomerSalesEventHandler>();
