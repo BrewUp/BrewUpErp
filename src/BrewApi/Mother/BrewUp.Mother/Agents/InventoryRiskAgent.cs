@@ -47,6 +47,9 @@ public sealed class InventoryRiskAgent(
 
             return;
         }
+        
+        await hubHelper.TellChildrenThatSalesOrderWasFound(
+            $"Sales order {@event.AggregateId.Value} found by Sales MCP", cancellationToken);
 
         foreach (var row in order.Rows)
         {
@@ -78,7 +81,7 @@ public sealed class InventoryRiskAgent(
                 Reason:
                 "The confirmed sales order would reduce warehouse availability below the reorder threshold.");
             
-            await hubHelper.TellChildrenThatSalesOrderWasNotFound(
+            await hubHelper.StockRiskDetectionRecommendation(
                 "The confirmed sales order would reduce warehouse availability below the reorder threshold.", cancellationToken);
 
             await recommendationWriter.WriteAsync(
