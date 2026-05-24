@@ -1,5 +1,6 @@
 ﻿using BrewUp.Mother.Agents;
-using BrewUp.Mother.Clients;
+using BrewUp.Mother.Hubs;
+using BrewUp.Mother.McpClients;
 using BrewUp.Mother.RabbitMq;
 using Muflone;
 using Muflone.Transport.RabbitMQ;
@@ -24,6 +25,9 @@ public static class MotherHelper
             client.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("text/event-stream"));
         });
+        
+        services.AddSignalR();
+        services.AddSingleton<IMotherHubHelper, MotherHubHelper>();
         
         RabbitMqSettings rabbitMqSettings = new();
         configurationManager.GetSection("RabbitMQ").Bind(rabbitMqSettings);

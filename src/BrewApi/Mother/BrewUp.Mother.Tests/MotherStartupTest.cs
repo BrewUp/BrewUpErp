@@ -1,4 +1,4 @@
-﻿using BrewUp.Mother.Clients;
+﻿using BrewUp.Mother.McpClients;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.Messages.Events.Sagas;
