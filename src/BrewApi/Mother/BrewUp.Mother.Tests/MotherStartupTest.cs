@@ -2,6 +2,7 @@
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.Messages.Events.Sagas;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -30,8 +31,10 @@ public class MotherStartupTest : IAsyncLifetime
         _host = Host.CreateDefaultBuilder()
             .ConfigureServices(services =>
             {
+                ServiceProvider tempProvider = services.BuildServiceProvider();
+                IConfigurationManager configurationManager = tempProvider.GetRequiredService<IConfigurationManager>();
                 services.AddMufloneTransportInMemory();
-                services.AddMother();
+                services.AddMother(configurationManager);
                 // Replace (not add) so that the real McpToolClient — which needs
                 // IHttpClientFactory — is removed. Otherwise ValidateOnBuild fails.
                 services.Replace(ServiceDescriptor.Scoped<IMcpToolClient>(_ => mcpToolClient));

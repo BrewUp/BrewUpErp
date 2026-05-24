@@ -16,6 +16,15 @@ public static class MotherHelper
         using var serviceProvider = services.BuildServiceProvider();
         var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
         
+        services.AddHttpClient("mcp", client =>
+        {
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("text/event-stream"));
+        });
+        
         RabbitMqSettings rabbitMqSettings = new();
         configurationManager.GetSection("RabbitMQ").Bind(rabbitMqSettings);
         
