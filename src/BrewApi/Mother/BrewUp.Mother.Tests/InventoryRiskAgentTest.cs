@@ -6,9 +6,11 @@ using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.Messages.Events.Sagas;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Muflone;
 using Muflone.Transport.InMemory;
 using NSubstitute;
@@ -100,11 +102,15 @@ public sealed class InventoryRiskAgentTest : IAsyncLifetime
             {
                 // InMemory broker: events published in-process, no RabbitMq needed.
                 services.AddMufloneTransportInMemory();
+                services.AddLogging();
+                
+                ServiceProvider tempProvider = services.BuildServiceProvider();
+                IConfigurationManager configurationManager = tempProvider.GetRequiredService<IConfigurationManager>();
 
                 // Registers InventoryRiskAgent as an IntegrationEventHandler.
                 // AddMother also registers IMcpToolClient and IRecommendationWriter,
                 // so we override them AFTER so the last registration wins.
-                services.AddMother();
+                services.AddMother(configurationManager);
 
                 // Replace the real McpToolClient (which needs IHttpClientFactory) and
                 // RecommendationWriter with stubs so that DI validation at host build
