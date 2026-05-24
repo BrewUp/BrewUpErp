@@ -5,6 +5,7 @@ using BrewSpa.Shared.Components.CustomTypes;
 using BrewSpa.Shared.Components.Messages;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.QuickGrid;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
 
 namespace BrewSpa.Sales.Facade.Components.Orders;
@@ -23,6 +24,8 @@ public partial class SalesOrders : ComponentBase, IDisposable
     private SalesOrderJson? _selectedOrder;
     private bool _isLoading = true;
     private bool _showDialog;
+    
+    private HubConnection? _hubConnection;
 
     private readonly CurrentContext _currentContext = new ("SalesOrders");
 
@@ -32,6 +35,11 @@ public partial class SalesOrders : ComponentBase, IDisposable
 
     protected override async Task OnInitializedAsync()
     {
+        // _hubConnection = new HubConnectionBuilder()
+        //     .WithUrl(new Uri("http://localhost:6094/hubs/mother"))
+        //     .WithAutomaticReconnect()
+        //     .Build();
+        
         MessagingService.Subscribe<ToolbarItemClicked>(HandleToolbarClickAsync);
         await LoadSalesOrders();
     }
@@ -114,14 +122,24 @@ public partial class SalesOrders : ComponentBase, IDisposable
 
     private void AddNewOrder()
     {
+        var orderDate = DateTime.Now;
         _selectedOrder = new SalesOrderJson
         {
-            OrderNumber = "",
-            OrderDate = DateTime.Now,
-            CustomerName = "",
-            CustomerId = "",
+            OrderNumber = $"{orderDate.Year:0000}{orderDate.Month:00}{orderDate.Day:00}-{orderDate.Hour:00}{orderDate.Minute:00}",
+            OrderDate = orderDate,
+            CustomerId = "019ddda1-6039-7583-95fc-cc185b2f3966",
+            CustomerName = "Il Bevitore SrL",
             DeliveryDate = DateTime.Now.AddDays(7),
-            Rows = []
+            Rows =
+            [
+                new SalesOrderRowJson
+                {
+                    BeerId = "019dfdbf-1d1c-74c7-b3c2-3a24cf6fa436",
+                    BeerName = "Muflone Weiss",
+                    Quantity = new Quantity {Value = 300, UnitOfMeasure = "Bottle"},
+                    Price = new Price {Value = 3.5m, Currency = "EUR"}
+                }
+            ]
         };
 
         _showDialog = true;
@@ -148,7 +166,7 @@ public partial class SalesOrders : ComponentBase, IDisposable
             Rows = order.Rows
         };
 
-        var result = await SalesService.CreateSalesOrderViaSagaAsync(createOrder);
+        var result = await SalesService.CreateSalesOrderAsync(createOrder);
 
         result.Match(
             success =>

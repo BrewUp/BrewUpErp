@@ -6,7 +6,7 @@ namespace BrewSpa.Dashboards.ApplicationServices.Extensions;
 
 public static class DashboardsApplicationHelper
 {
-    public static IServiceCollection AddDashboardsApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddDashboardsServices(this IServiceCollection services,
         WebAssemblyHostConfiguration configurationManager)
     {
         services.AddHttpClient<IDashboardService, DashboardService>(client =>

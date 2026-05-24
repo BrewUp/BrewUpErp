@@ -6,7 +6,7 @@ namespace BrewSpa.Chat.Application.Extensions;
 
 public static class ChatApplicationHelper
 {
-    public static IServiceCollection AddChatApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddChatServices(this IServiceCollection services,
         WebAssemblyHostConfiguration configurationManager)
     {
         services.AddHttpClient<IChatService, ChatService>(client =>

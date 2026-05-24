@@ -23,8 +23,8 @@ builder.Services.AddSingleton<IConfiguration>(configuration);
 builder.Services.AddSharedComponents();
 
 builder.Services.AddMasterDataServices(builder.Configuration);
-builder.Services.AddDashboardsApplicationServices(builder.Configuration);
-builder.Services.AddChatApplicationServices(builder.Configuration);
+builder.Services.AddDashboardsServices(builder.Configuration);
 builder.Services.AddSalesServices(builder.Configuration);
+builder.Services.AddChatServices(builder.Configuration);
 
 await builder.Build().RunAsync();

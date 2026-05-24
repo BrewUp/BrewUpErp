@@ -5,7 +5,7 @@ using Lena.Core;
 
 namespace BrewSpa.Chat.Application.Services;
 
-internal class ChatService(HttpClient httpClient) : IChatService
+internal sealed class ChatService(HttpClient httpClient) : IChatService
 {
     public async Task<Result<List<BeerCatalogItem>>> GetBeersCatalogAsync()
     {
