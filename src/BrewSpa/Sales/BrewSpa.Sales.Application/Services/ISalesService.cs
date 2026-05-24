@@ -8,5 +8,5 @@ public interface ISalesService
 {
     Task<Result<PagedResult<SalesOrderJson>>> GetSalesOrdersAsync(int page = 1, int pageSize = 10);
     Task<Result<SalesOrderJson>> GetSalesOrderByIdAsync(string orderId);
-    Task<Result<SalesOrderJson>> CreateSalesOrderViaSagaAsync(CreateSalesOrderJson order);
+    Task<Result<SalesOrderJson>> CreateSalesOrderAsync(CreateSalesOrderJson order);
 }

@@ -54,11 +54,11 @@ internal class SalesService(HttpClient httpClient, HttpClient sagaHttpClient) : 
         }
     }
 
-    public async Task<Result<SalesOrderJson>> CreateSalesOrderViaSagaAsync(CreateSalesOrderJson order)
+    public async Task<Result<SalesOrderJson>> CreateSalesOrderAsync(CreateSalesOrderJson order)
     {
         try
         {
-            var response = await sagaHttpClient.PostAsJsonAsync("sagas", order);
+            var response = await sagaHttpClient.PostAsJsonAsync("sales", order);
             response.EnsureSuccessStatusCode();
             
             var createdOrder = await response.Content.ReadFromJsonAsync<SalesOrderJson>();
@@ -66,7 +66,7 @@ internal class SalesService(HttpClient httpClient, HttpClient sagaHttpClient) : 
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[SalesService] CreateSalesOrderViaSagaAsync failed: {ex.Message}");
+            Console.WriteLine($"[SalesService] CreateSalesOrderAsync failed: {ex.Message}");
             return Result<SalesOrderJson>.Error($"Failed to create sales order: {ex.Message}");
         }
     }

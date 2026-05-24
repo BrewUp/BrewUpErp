@@ -12,26 +12,27 @@ public partial class AddSalesOrder : ComponentBase
 
     private void AddOrderRow()
     {
-        if (Order != null)
+        if (Order == null) 
+            return;
+
+        var item = new SalesOrderRowJson
         {
-            Order.Rows.Add(new SalesOrderRowJson
-            {
-                BeerId = "",
-                BeerName = "",
-                Quantity = new Quantity { Value = 1, UnitOfMeasure = "L" },
-                Price = new Price { Value = 0, Currency = "EUR" }
-            });
-            StateHasChanged();
-        }
+            BeerId = "",
+            BeerName = "",
+            Quantity = new Quantity { Value = 1, UnitOfMeasure = "L" },
+            Price = new Price { Value = 0, Currency = "EUR" }
+        };
+        Order.Rows.Add(item);
+        StateHasChanged();
     }
 
     private void RemoveOrderRow(int index)
     {
-        if (Order != null && index >= 0 && index < Order.Rows.Count)
-        {
-            Order.Rows.RemoveAt(index);
-            StateHasChanged();
-        }
+        if (Order == null || index < 0 || index >= Order.Rows.Count) 
+            return;
+        
+        Order.Rows.RemoveAt(index);
+        StateHasChanged();
     }
 
     private bool IsValid()
