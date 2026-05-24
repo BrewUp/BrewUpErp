@@ -1,5 +1,6 @@
-﻿using BrewUp.Mother.Clients;
-using BrewUp.Mother.CustomTypes;
+﻿using BrewUp.Mother.CustomTypes;
+using BrewUp.Mother.Hubs;
+using BrewUp.Mother.McpClients;
 using BrewUp.Shared.ExternalContracts.Sales;
 using BrewUp.Shared.ExternalContracts.Warehouse;
 using BrewUp.Shared.Messages.Events.Sales;
@@ -10,6 +11,7 @@ namespace BrewUp.Mother.Agents;
 public sealed class InventoryRiskAgent(
     IMcpToolClient mcpToolClient,
     IRecommendationWriter recommendationWriter,
+    IMotherHubHelper hubHelper,
     ILoggerFactory loggerFactory) : IntegrationEventHandlerAsync<SalesOrderCreatedIntegrationEvent>(loggerFactory)
 {
     private readonly ILogger<InventoryRiskAgent> _logger = loggerFactory.CreateLogger<InventoryRiskAgent>();
@@ -21,6 +23,9 @@ public sealed class InventoryRiskAgent(
         _logger.LogInformation(
             "BrewUp.Mother InventoryRiskAgent received SalesOrderConfirmed {SalesOrderId}",
             @event.AggregateId.Value);
+        await hubHelper.TellChildrenThatMotherReceivedIntegrationEvent(
+            $"BrewUp.Mother InventoryRiskAgent received SalesOrderConfirmed {@event.AggregateId.Value}",
+            cancellationToken);
 
         var order = await mcpToolClient.CallToolAsync<SalesOrderJson>(
             serverName: "sales",
@@ -36,6 +41,9 @@ public sealed class InventoryRiskAgent(
             _logger.LogWarning(
                 "Sales order {SalesOrderId} not found by Sales MCP",
                 @event.AggregateId.Value);
+
+            await hubHelper.TellChildrenThatSalesOrderWasNotFound(
+                $"Sales order {@event.AggregateId.Value} not found by Sales MCP", cancellationToken);
 
             return;
         }
@@ -69,6 +77,9 @@ public sealed class InventoryRiskAgent(
                 ReorderThreshold: availability.ReorderThreshold,
                 Reason:
                 "The confirmed sales order would reduce warehouse availability below the reorder threshold.");
+            
+            await hubHelper.TellChildrenThatSalesOrderWasNotFound(
+                "The confirmed sales order would reduce warehouse availability below the reorder threshold.", cancellationToken);
 
             await recommendationWriter.WriteAsync(
                 recommendation,

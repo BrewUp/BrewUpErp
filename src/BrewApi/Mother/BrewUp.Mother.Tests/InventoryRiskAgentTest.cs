@@ -1,6 +1,6 @@
 ﻿using BrewUp.Mother.Agents;
-using BrewUp.Mother.Clients;
 using BrewUp.Mother.CustomTypes;
+using BrewUp.Mother.McpClients;
 using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;

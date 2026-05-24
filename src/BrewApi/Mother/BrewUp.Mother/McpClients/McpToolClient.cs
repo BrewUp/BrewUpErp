@@ -2,7 +2,7 @@
 using System.Text.Json;
 using BrewUp.Mother.CustomTypes;
 
-namespace BrewUp.Mother.Clients;
+namespace BrewUp.Mother.McpClients;
 
 internal sealed class McpToolClient(
     IHttpClientFactory httpClientFactory,
