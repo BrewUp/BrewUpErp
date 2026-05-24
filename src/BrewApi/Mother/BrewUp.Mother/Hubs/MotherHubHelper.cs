@@ -20,6 +20,14 @@ internal sealed class MotherHubHelper(IHubContext<MotherHub> hubContext) : IMoth
             .ConfigureAwait(false);
     }
 
+    public async Task TellChildrenThatSalesOrderWasFound(string message, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        await hubContext.Clients.All.SendAsync("SalesOrderFound", message, CancellationToken.None)
+            .ConfigureAwait(false);
+    }
+
     public async Task StockRiskDetectionRecommendation(string message, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
