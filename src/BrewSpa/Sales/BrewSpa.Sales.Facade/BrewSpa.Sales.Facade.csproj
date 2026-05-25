@@ -14,7 +14,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.7" />
         <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.7" />
-        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client.Core" Version="10.0.7" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.7" />
     </ItemGroup>
 
     <ItemGroup>

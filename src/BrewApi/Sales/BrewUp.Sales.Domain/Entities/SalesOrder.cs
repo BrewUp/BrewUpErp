@@ -34,7 +34,8 @@ public class SalesOrder : AggregateRoot
         IEnumerable<SalesOrderRowJson> rows, Guid correlationId)
     {
         // Business logic validations can be added here
-        foreach (var row in rows)
+        var rowArray = rows as SalesOrderRowJson[] ?? rows.ToArray();
+        foreach (var row in rowArray)
         {
             if (row.Quantity.Value > 0) 
                 continue;
@@ -50,7 +51,7 @@ public class SalesOrder : AggregateRoot
         List<SalesOrderRowJson> rowsList = [];
         if (customer is not null && customer.CustomerType.Equals(CustomerType.Gold))
         {
-            rowsList.AddRange(rows.Select(row => new SalesOrderRowJson
+            rowsList.AddRange(rowArray.Select(row => new SalesOrderRowJson
             {
                 BeerId = row.BeerId, 
                 BeerName = row.BeerName, 
@@ -60,7 +61,7 @@ public class SalesOrder : AggregateRoot
         }
         
         rowsList = !rowsList.Any()
-            ? rowsList = rows.ToList()
+            ? rowArray.ToList()
             : rowsList;
             
         RaiseEvent(new SalesOrderCreated(aggregateId, salesOrderNumber, salesOrderDate, customer,

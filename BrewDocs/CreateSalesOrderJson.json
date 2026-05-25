@@ -1,0 +1,21 @@
+{
+  "orderNumber": "20260523-1111",
+  "orderDate": "2026-05-23",
+  "customerId": "019ddda1-6039-7583-95fc-cc185b2f3966",
+  "customerName": "Il Bevitore SrL",
+  "deliveryDate": "2026-06-04",
+  "rows": [
+    {
+      "beerId": "019dfdbf-1d1c-74c7-b3c2-3a24cf6fa436",
+      "beerName": "Muflone Weiss",
+      "quantity": {
+        "value": 100,
+        "unitOfMeasure": "Bottle"
+      },
+      "price": {
+        "value": 5,
+        "currency": "EUR"
+      }
+    }
+  ]
+}

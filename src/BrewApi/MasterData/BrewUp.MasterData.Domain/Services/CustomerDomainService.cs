@@ -34,8 +34,6 @@ internal sealed class CustomerDomainService([FromKeyedServices("masterdata")] IP
     {
         cancellationToken.ThrowIfCancellationRequested();
         
-        cancellationToken.ThrowIfCancellationRequested();
-        
         var customerResult = await persister.GetByIdAsync<Customer>(customerProperties.CustomerId, cancellationToken);
         if (!customerResult.IsSuccess) 
             return Result<bool>.Error($"Failed to update customer properties: {customerProperties.CustomerId}");
