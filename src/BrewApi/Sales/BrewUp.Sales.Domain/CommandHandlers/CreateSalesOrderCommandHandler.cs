@@ -15,7 +15,7 @@ public sealed class CreateSalesOrderCommandHandler(IRepository repository,
     {
         // Verifica sconto
         // Leggere aggretate Customer
-        // Accquisire classe
+        // Acquisire classe
         
         var aggregate = Entities.SalesOrder.Create(new SalesOrderId(command.AggregateId.Value),
             command.SalesOrderNumber,

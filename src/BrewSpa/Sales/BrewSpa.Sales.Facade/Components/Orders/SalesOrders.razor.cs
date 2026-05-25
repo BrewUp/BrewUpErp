@@ -10,7 +10,7 @@ using Microsoft.JSInterop;
 
 namespace BrewSpa.Sales.Facade.Components.Orders;
 
-public partial class SalesOrders : ComponentBase, IDisposable
+public partial class SalesOrders : ComponentBase, IAsyncDisposable
 {
     [Inject] private ISalesService SalesService { get; set; } = null!;
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
@@ -25,6 +25,8 @@ public partial class SalesOrders : ComponentBase, IDisposable
     private bool _isLoading = true;
     private bool _showDialog;
     
+    private IList<string> _motherMessages = [];
+    
     private HubConnection? _hubConnection;
 
     private readonly CurrentContext _currentContext = new ("SalesOrders");
@@ -35,10 +37,12 @@ public partial class SalesOrders : ComponentBase, IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        // _hubConnection = new HubConnectionBuilder()
-        //     .WithUrl(new Uri("http://localhost:6094/hubs/mother"))
-        //     .WithAutomaticReconnect()
-        //     .Build();
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(new Uri("http://localhost:5000/hubs/mother"))
+            .WithAutomaticReconnect()
+            .Build();
+        
+        _hubConnection.On<string>("MotherReceivedIntegrationEvent", UpdateMotherMessagesAsync);
         
         MessagingService.Subscribe<ToolbarItemClicked>(HandleToolbarClickAsync);
         await LoadSalesOrders();
@@ -211,24 +215,23 @@ public partial class SalesOrders : ComponentBase, IDisposable
         Console.WriteLine($"[SUCCESS] {message}");
         await JsRuntime.InvokeVoidAsync("alert", message);
     }
+    
+    private Task UpdateMotherMessagesAsync(string message)
+    {
+        _motherMessages.Add(message);
+        StateHasChanged();
+        
+        return Task.CompletedTask;
+    }
 
     #region Dispose
-    protected virtual void Dispose(bool disposing)
-    {
-        if (disposing)
-        {
-            MessagingService.Unsubscribe<ToolbarItemClicked>(HandleToolbarClickAsync);
-        }
-    }
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
 
-    ~SalesOrders()
+    public async ValueTask DisposeAsync()
     {
-        Dispose(false);
+        MessagingService.Unsubscribe<ToolbarItemClicked>(HandleToolbarClickAsync);
+        if (_hubConnection != null)
+            await _hubConnection.DisposeAsync();
     }
+    
     #endregion   
 }

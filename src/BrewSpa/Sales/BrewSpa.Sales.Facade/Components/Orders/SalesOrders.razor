@@ -17,6 +17,11 @@
     else if (_salesOrders.Any())
     {
         <div class="grid-container">
+            <p>@_motherMessages</p>
+        </div>
+        
+        <hr/>
+        <div class="grid-container">
             <QuickGrid ItemsProvider="@_gridItemsProvider" 
                        Pagination="@_pagination"
                        ItemKey="@(o => o.Id)"
