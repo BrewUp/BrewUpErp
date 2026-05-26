@@ -11,11 +11,11 @@ namespace BrewUp.MasterData.Facade;
 internal sealed class MasterDataSupplierFacade(ISupplierDomainService supplierDomainService,
     ISupplierQueryService supplierQueryService) : IMasterDataSupplierFacade
 {
-    public Task<Result<string>> CreateSupplierAsync(CreateSupplierJson body, CancellationToken cancellationToken)
+    public Task<Result<string>> RegisterSupplierAsync(RegisterSupplierJson body, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         
-        return supplierDomainService.CreateSupplierAsync(new SupplierId(Guid.CreateVersion7().ToString()),
+        return supplierDomainService.RegisterSupplierAsync(new SupplierId(Guid.CreateVersion7().ToString()),
             new RagioneSociale(body.RagioneSociale),
             new PartitaIva(body.PartitaIva),
             new Indirizzo(new Via(body.Indirizzo.Via),

@@ -2,7 +2,7 @@
 
 namespace BrewUp.Shared.ExternalContracts.MasterData.Customers;
 
-public class CreateCustomerJson
+public class RegisterCustomerJson
 {
     [Required]
     public string RagioneSociale { get; set; } = string.Empty;

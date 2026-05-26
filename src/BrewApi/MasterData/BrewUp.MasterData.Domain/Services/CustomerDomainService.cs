@@ -13,7 +13,7 @@ namespace BrewUp.MasterData.Domain.Services;
 internal sealed class CustomerDomainService([FromKeyedServices("masterdata")] IPersister persister,
     IIntegrationEventPublisher integrationEventPublisher) : ICustomerDomainService
 {
-    public async Task<Result<string>> CreateCustomerAsync(CustomerId customerId, RagioneSociale ragioneSociale, PartitaIva partitaIva,
+    public async Task<Result<string>> RegisterCustomerAsync(CustomerId customerId, RagioneSociale ragioneSociale, PartitaIva partitaIva,
         Indirizzo indirizzo, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

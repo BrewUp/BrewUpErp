@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using BrewUp.Shared.ExternalContracts.MasterData.Customers;
 
 namespace BrewUp.Shared.ExternalContracts.MasterData.Suppliers;
 
-public class CreateSupplierJson
+public class RegisterSupplierJson
 {
     [Required]
     public string RagioneSociale { get; set; } = string.Empty;

@@ -11,11 +11,11 @@ namespace BrewUp.MasterData.Facade;
 internal sealed class MasterDataBeerFacade(IBeerDomainService beerDomainService,
     IBeerQueryService beerQueryService) : IMasterDataBeerFacade
 {
-    public Task<Result<string>> CreateBeerAsync(CreateBeerJson body, CancellationToken cancellationToken)
+    public Task<Result<string>> RegisterBeerAsync(RegisterBeerJson body, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        return beerDomainService.CreateBeerAsync(new BeerId(Guid.CreateVersion7().ToString()),
+        return beerDomainService.RegisterBeerAsync(new BeerId(Guid.CreateVersion7().ToString()),
             new BeerName(body.BeerName),
             new BeerStyle(body.BeerStyle),
             new AlcoholByVolume(body.AlcoholByVolume),

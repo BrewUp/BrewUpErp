@@ -13,7 +13,7 @@ internal static class BeersEndpoints
             .WithTags("MasterData");
         
         group.MapPost("/", HandlePostBeer)
-            .AddEndpointFilter<ValidationFilter<CreateBeerJson>>()
+            .AddEndpointFilter<ValidationFilter<RegisterBeerJson>>()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status500InternalServerError)
             .WithSummary("Create a new beer")
@@ -32,12 +32,12 @@ internal static class BeersEndpoints
     
     private static async Task<IResult> HandlePostBeer(
         IMasterDataBeerFacade beerFacade,
-        CreateBeerJson body,
+        RegisterBeerJson body,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var createResult = await beerFacade.CreateBeerAsync(body, cancellationToken);
+        var createResult = await beerFacade.RegisterBeerAsync(body, cancellationToken);
 
         return createResult.Match<IResult>(
             success =>
