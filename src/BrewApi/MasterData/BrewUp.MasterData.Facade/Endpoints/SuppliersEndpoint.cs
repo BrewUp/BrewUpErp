@@ -14,7 +14,7 @@ internal static class SuppliersEndpoint
             .WithTags("MasterData");
         
         group.MapPost("/", HandlePostSupplier)
-            .AddEndpointFilter<ValidationFilter<CreateSupplierJson>>()
+            .AddEndpointFilter<ValidationFilter<RegisterSupplierJson>>()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status500InternalServerError)
             .WithSummary("Create a new supplier")
@@ -41,12 +41,12 @@ internal static class SuppliersEndpoint
     
     private static async Task<IResult> HandlePostSupplier(
         IMasterDataSupplierFacade masterDataFacade,
-        CreateSupplierJson body,
+        RegisterSupplierJson body,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var createResult = await masterDataFacade.CreateSupplierAsync(body, cancellationToken);
+        var createResult = await masterDataFacade.RegisterSupplierAsync(body, cancellationToken);
 
         return createResult.Match<IResult>(
             success =>

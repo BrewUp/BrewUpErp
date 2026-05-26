@@ -6,7 +6,7 @@ namespace BrewUp.MasterData.Facade;
 
 public interface IMasterDataCustomerFacade
 {
-    Task<Result<string>> CreateCustomerAsync(CreateCustomerJson body, CancellationToken cancellationToken);
+    Task<Result<string>> RegisterCustomerAsync(RegisterCustomerJson body, CancellationToken cancellationToken);
     Task<Result<PagedResult<CustomerJson>>> GetCustomersAsync(int pageNumber, int pageSize,
         CancellationToken cancellationToken);
     Task<Result<CustomerJson>> GetCustomerByIdAsync(string customerId, CancellationToken cancellationToken);

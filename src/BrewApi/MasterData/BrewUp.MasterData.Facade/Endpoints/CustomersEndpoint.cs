@@ -14,7 +14,7 @@ internal static class CustomersEndpoint
             .WithTags("MasterData");
         
         group.MapPost("/", HandlePostCustomer)
-            .AddEndpointFilter<ValidationFilter<CreateCustomerJson>>()
+            .AddEndpointFilter<ValidationFilter<RegisterCustomerJson>>()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status500InternalServerError)
             .WithSummary("Create a new customer")
@@ -66,12 +66,12 @@ internal static class CustomersEndpoint
     
     private static async Task<IResult> HandlePostCustomer(
         IMasterDataCustomerFacade masterDataFacade,
-        CreateCustomerJson body,
+        RegisterCustomerJson body,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var createResult = await masterDataFacade.CreateCustomerAsync(body, cancellationToken);
+        var createResult = await masterDataFacade.RegisterCustomerAsync(body, cancellationToken);
 
         return createResult.Match<IResult>(
             success =>

@@ -7,7 +7,7 @@ namespace BrewUp.MasterData.Domain.Services;
 
 public interface ICustomerDomainService
 {
-    Task<Result<string>> CreateCustomerAsync(CustomerId customerId, RagioneSociale ragioneSociale,
+    Task<Result<string>> RegisterCustomerAsync(CustomerId customerId, RagioneSociale ragioneSociale,
         PartitaIva partitaIva, Indirizzo indirizzo, CancellationToken cancellationToken = default);
 
     Task<Result<bool>> SetCustomerPropertiesAsync(CustomerPropertiesJson customerProperties, CancellationToken cancellationToken);

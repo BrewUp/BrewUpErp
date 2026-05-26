@@ -4,7 +4,7 @@ using BrewUp.Shared.Validators;
 
 namespace BrewUp.Shared.ExternalContracts.MasterData.Beers;
 
-public class CreateBeerJson
+public class RegisterBeerJson
 {
     [Required]
     public string BeerName { get; set; } = string.Empty;

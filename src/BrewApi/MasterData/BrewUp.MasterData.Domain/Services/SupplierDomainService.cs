@@ -12,7 +12,7 @@ namespace BrewUp.MasterData.Domain.Services;
 internal sealed class SupplierDomainService([FromKeyedServices("masterdata")] IPersister persister,
     IIntegrationEventPublisher integrationEventPublisher) : ISupplierDomainService
 {
-    public async Task<Result<string>> CreateSupplierAsync(SupplierId supplierId, RagioneSociale ragioneSociale, PartitaIva partitaIva,
+    public async Task<Result<string>> RegisterSupplierAsync(SupplierId supplierId, RagioneSociale ragioneSociale, PartitaIva partitaIva,
         Indirizzo indirizzo, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();

@@ -6,6 +6,6 @@ namespace BrewUp.MasterData.Facade;
 
 internal interface IMasterDataBeerFacade
 {
-    Task<Result<string>> CreateBeerAsync(CreateBeerJson body, CancellationToken cancellationToken);
+    Task<Result<string>> RegisterBeerAsync(RegisterBeerJson body, CancellationToken cancellationToken);
     Task<Result<PagedResult<BeerJson>>> GetBeersAsync(int pageNumber, int pageSize, CancellationToken cancellationToken);
 }

@@ -6,6 +6,6 @@ namespace BrewUp.MasterData.Domain.Services;
 
 public interface ISupplierDomainService
 {
-    Task<Result<string>> CreateSupplierAsync(SupplierId supplierId, RagioneSociale ragioneSociale,
+    Task<Result<string>> RegisterSupplierAsync(SupplierId supplierId, RagioneSociale ragioneSociale,
         PartitaIva partitaIva, Indirizzo indirizzo, CancellationToken cancellationToken = default);
 }

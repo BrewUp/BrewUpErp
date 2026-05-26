@@ -12,7 +12,7 @@ namespace BrewUp.MasterData.Domain.Services;
 internal sealed class BeerDomainService([FromKeyedServices("masterdata")] IPersister persister,
     IIntegrationEventPublisher integrationEventPublisher) : IBeerDomainService
 {
-    public async Task<Result<string>> CreateBeerAsync(BeerId beerId, BeerName beerName, BeerStyle style, AlcoholByVolume abv, Packaging packaging,
+    public async Task<Result<string>> RegisterBeerAsync(BeerId beerId, BeerName beerName, BeerStyle style, AlcoholByVolume abv, Packaging packaging,
         Price price, bool isActive, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
