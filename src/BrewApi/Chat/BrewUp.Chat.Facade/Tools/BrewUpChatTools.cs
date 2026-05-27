@@ -16,9 +16,13 @@ public sealed class BrewUpChatTools(
         => beerCatalogQueries.GetCatalogBeersAsync(activeOnly: true, cancellationToken);
 
     [Description("Use this tool whenever the user asks for open sales orders, pending orders, active orders, orders not completed, or a sales order summary.")]
-    public Task<IReadOnlyCollection<SalesOrderSummary>> GetOpenSalesOrdersAsync(
+    public async Task<IReadOnlyCollection<SalesOrderSummary>> GetOpenSalesOrdersAsync(
         CancellationToken cancellationToken = default)
-        => salesOrderQueries.GetOpenOrdersAsync(cancellationToken);
+    {
+        var result = await salesOrderQueries.GetOpenOrdersAsync(cancellationToken);
+        
+        return result;
+    }  
 
     [Description("Use this tool whenever the user asks for sales orders for a customer, searching by customer name.")]
     public Task<IReadOnlyCollection<SalesOrderSummary>> GetOrdersByCustomerAsync(
