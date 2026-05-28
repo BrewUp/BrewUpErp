@@ -2,12 +2,14 @@
 using BrewUp.Shared.ExternalContracts.MasterData;
 using BrewUp.Shared.ExternalContracts.MasterData.Beers;
 using BrewUp.Shared.ExternalContracts.MasterData.Customers;
+using BrewUp.Shared.ExternalContracts.MasterData.Suppliers;
 
 namespace BrewUp.MasterData.McpServer;
 
 internal sealed class McpMasterDataFacade(
     IBeerQueryService beerQueryService,
-    ICustomerQueryService customerQueryService) : IMcpMasterDataFacade
+    ICustomerQueryService customerQueryService,
+    ISupplierQueryService supplierQueryService) : IMcpMasterDataFacade
 {
     public async Task<IReadOnlyCollection<BeerJson>> GetBeersCatalogAsync(CancellationToken cancellationToken)
     {
@@ -67,5 +69,18 @@ internal sealed class McpMasterDataFacade(
                 string.Empty, 
                 string.Empty, new IndirizzoJson(),
                 0, false);
+    }
+
+    public async Task<IReadOnlyCollection<SupplierJson>> GetActiveSuppliersAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        var suppliersResult = await supplierQueryService.GetSuppliersAsync(1, int.MaxValue,  cancellationToken);
+        if (suppliersResult.IsError)
+            return [];
+        
+        return suppliersResult.TryGetValue(out var suppliers)
+            ? suppliers.Results.ToList()    
+            : Array.Empty<SupplierJson>();
     }
 }
