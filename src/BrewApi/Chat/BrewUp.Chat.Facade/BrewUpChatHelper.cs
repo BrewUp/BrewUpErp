@@ -1,9 +1,7 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
 using BrewUp.Chat.Facade.Chat;
-using BrewUp.Chat.Facade.MasterData;
 using BrewUp.Chat.Facade.Mcp;
-using BrewUp.Chat.Facade.Sales;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,8 +45,6 @@ public static class BrewUpChatHelper
         });
 
         services.AddScoped<BrewUpChatService>();
-        services.AddScoped<IBeerCatalogQueriesFacade, BeerCatalogQueriesFacade>();
-        services.AddScoped<ISalesQueriesFacade, SalesQueriesFacade>();
         
         return services;
     }
