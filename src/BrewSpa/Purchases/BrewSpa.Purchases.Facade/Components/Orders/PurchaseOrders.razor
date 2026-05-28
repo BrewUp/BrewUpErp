@@ -1,0 +1,47 @@
+@page "/purchases/orders"
+@using BrewSpa.Shared.Components.Components
+
+<PageTitle>Purchase Orders</PageTitle>
+
+<div class="purchaseorders-container">
+    <Toolbar CurrentContext="@_currentContext" />
+
+    @if (_isLoading)
+    {
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading purchase orders...</p>
+        </div>
+    }
+    else if (_successMessage != null)
+    {
+        <div class="alert alert-success">
+            <span>@_successMessage</span>
+            <button class="btn btn-sm" @onclick="DismissSuccess">×</button>
+        </div>
+    }
+    else if (_errorMessage != null)
+    {
+        <div class="alert alert-danger">
+            <span>@_errorMessage</span>
+            <button class="btn btn-sm" @onclick="DismissError">×</button>
+        </div>
+    }
+
+    <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none"
+             stroke="#9ca3af" stroke-width="1.5">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 01-8 0"></path>
+        </svg>
+        <h3>No purchase orders yet</h3>
+        <p>Click the Add button to create your first purchase order.</p>
+    </div>
+</div>
+
+<AddPurchaseOrder
+    IsVisible="_showDialog"
+    Order="_currentOrder"
+    OnSubmit="OnDialogSubmit"
+    OnCancel="OnDialogCancel" />

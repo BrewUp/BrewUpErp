@@ -18,6 +18,7 @@
         <BlazorWebAssemblyLazyLoad Include="BrewSpa.MasterData.Facade.wasm" />
         <BlazorWebAssemblyLazyLoad Include="BrewSpa.Sales.Facade.wasm" />
         <BlazorWebAssemblyLazyLoad Include="BrewSpa.Chat.Facade.wasm" />
+        <BlazorWebAssemblyLazyLoad Include="BrewSpa.Purchases.Facade.wasm" />
     </ItemGroup>
 
     <ItemGroup>
@@ -28,6 +29,8 @@
       <ProjectReference Include="..\MasterData\BrewSpa.MasterData.Facade\BrewSpa.MasterData.Facade.csproj" />
       <ProjectReference Include="..\Sales\BrewSpa.Sales.Application\BrewSpa.Sales.Application.csproj" />
       <ProjectReference Include="..\Sales\BrewSpa.Sales.Facade\BrewSpa.Sales.Facade.csproj" />
+      <ProjectReference Include="..\Purchases\BrewSpa.Purchases.Application\BrewSpa.Purchases.Application.csproj" />
+      <ProjectReference Include="..\Purchases\BrewSpa.Purchases.Facade\BrewSpa.Purchases.Facade.csproj" />
     </ItemGroup>
 
 </Project>

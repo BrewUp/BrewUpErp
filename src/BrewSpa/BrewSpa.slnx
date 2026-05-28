@@ -21,6 +21,10 @@
     <Project Path="Sales/BrewSpa.Sales.Application/BrewSpa.Sales.Application.csproj" Id="fcabb9de-173a-4b93-8891-9ffaffdebe65" />
     <Project Path="Sales/BrewSpa.Sales.Facade/BrewSpa.Sales.Facade.csproj" />
   </Folder>
+  <Folder Name="/50 Modules/Purchases/">
+    <Project Path="Purchases/BrewSpa.Purchases.Application/BrewSpa.Purchases.Application.csproj" />
+    <Project Path="Purchases/BrewSpa.Purchases.Facade/BrewSpa.Purchases.Facade.csproj" />
+  </Folder>
   <Folder Name="/90 Presentation/">
     <Project Path="BrewSpa/BrewSpa.csproj" />
   </Folder>

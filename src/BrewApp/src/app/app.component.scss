@@ -1,0 +1,32 @@
+.app-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.app-sidenav-container {
+  margin-top: 64px;
+  height: calc(100vh - 64px);
+}
+
+.app-nav {
+  width: 200px;
+  background-color: #fafafa;
+  border-right: 1px solid #e0e0e0;
+}
+
+.app-content {
+  height: 100%;
+  overflow: hidden;
+}
+
+.active-link {
+  background-color: rgba(63, 81, 181, 0.12) !important;
+  color: #3f51b5 !important;
+
+  mat-icon {
+    color: #3f51b5;
+  }
+}

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <SupportedPlatform Include="browser" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Blazor.Messaging" Version="1.4.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\BrewSpa.Shared.Components\BrewSpa.Shared.Components.csproj" />
+        <ProjectReference Include="..\BrewSpa.Purchases.Application\BrewSpa.Purchases.Application.csproj" />
+    </ItemGroup>
+
+</Project>
