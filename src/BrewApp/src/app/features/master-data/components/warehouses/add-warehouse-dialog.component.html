@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Add Warehouse</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" style="padding-top: 8px;">
+    <mat-form-field appearance="outline" style="width: 100%;">
+      <mat-label>Warehouse Name</mat-label>
+      <input matInput formControlName="name" placeholder="e.g. North Distribution Center" />
+      @if (form.get('name')?.hasError('required')) {
+        <mat-error>Name is required</mat-error>
+      }
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="isSaving()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="isSaving()">
+    @if (isSaving()) { <mat-spinner diameter="20" style="display:inline-block;margin-right:8px"></mat-spinner> }
+    Save
+  </button>
+</mat-dialog-actions>

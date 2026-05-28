@@ -1,0 +1,68 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2 class="page-title">Customers</h2>
+    <button mat-raised-button color="primary" (click)="openAddDialog()">
+      <mat-icon>person_add</mat-icon> Add Customer
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <table mat-table [dataSource]="customers()" class="full-width-table">
+          <ng-container matColumnDef="ragioneSociale">
+            <th mat-header-cell *matHeaderCellDef>Company Name</th>
+            <td mat-cell *matCellDef="let c">{{ c.ragioneSociale }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="partitaIva">
+            <th mat-header-cell *matHeaderCellDef>VAT Number</th>
+            <td mat-cell *matCellDef="let c">{{ c.partitaIva }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="consumerLevel">
+            <th mat-header-cell *matHeaderCellDef>Level</th>
+            <td mat-cell *matCellDef="let c">{{ c.consumerLevel ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="citta">
+            <th mat-header-cell *matHeaderCellDef>City</th>
+            <td mat-cell *matCellDef="let c">{{ c.indirizzo?.citta ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let c">
+              <button mat-icon-button color="primary" (click)="editCustomer(c)" title="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteCustomer(c)" title="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">No customers found.</td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          [length]="totalRecords()"
+          [pageIndex]="pageIndex"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 25]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

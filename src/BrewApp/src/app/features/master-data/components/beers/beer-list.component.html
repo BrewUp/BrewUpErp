@@ -1,0 +1,78 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2 class="page-title">Beer Catalog</h2>
+    <button mat-raised-button color="primary" (click)="openAddDialog()">
+      <mat-icon>add</mat-icon> Add Beer
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <table mat-table [dataSource]="beers()" class="full-width-table">
+          <ng-container matColumnDef="beerName">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let beer">{{ beer.beerName }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="beerStyle">
+            <th mat-header-cell *matHeaderCellDef>Style</th>
+            <td mat-cell *matCellDef="let beer">{{ beer.beerStyle }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="abv">
+            <th mat-header-cell *matHeaderCellDef>ABV %</th>
+            <td mat-cell *matCellDef="let beer">{{ beer.alcoholByVolume ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="packaging">
+            <th mat-header-cell *matHeaderCellDef>Packaging</th>
+            <td mat-cell *matCellDef="let beer">{{ beer.packaging ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef>Price</th>
+            <td mat-cell *matCellDef="let beer">
+              @if (beer.price) {
+                {{ beer.price.value | number:'1.2-2' }} {{ beer.price.currency }}
+              } @else {
+                —
+              }
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let beer">
+              <mat-chip-set>
+                <mat-chip [color]="beer.isActive ? 'primary' : ''" [highlighted]="beer.isActive">
+                  {{ beer.isActive ? 'Active' : 'Inactive' }}
+                </mat-chip>
+              </mat-chip-set>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">No beers found.</td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          [length]="totalRecords()"
+          [pageIndex]="pageIndex"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 25]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

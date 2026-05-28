@@ -1,0 +1,79 @@
+<h2 mat-dialog-title>Add Beers to Order</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <div formArrayName="rows">
+      @for (row of rows.controls; track row; let i = $index) {
+        <div [formGroupName]="i" class="row-container">
+          <span class="row-number">#{{ i + 1 }}</span>
+
+          <mat-form-field appearance="outline" class="beer-field">
+            <mat-label>Beer</mat-label>
+            <mat-select formControlName="beerId" (selectionChange)="onBeerSelected(i, $event.value)">
+              @for (b of beers(); track b.beerId) {
+                <mat-option [value]="b.beerId">{{ b.beerName }}</mat-option>
+              }
+            </mat-select>
+            @if (row.get('beerId')?.hasError('required') && row.get('beerId')?.touched) {
+              <mat-error>Select a beer</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="qty-field">
+            <mat-label>Quantity</mat-label>
+            <input matInput type="number" formControlName="quantityValue" min="1" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="unit-field">
+            <mat-label>Unit</mat-label>
+            <input matInput formControlName="quantityUnit" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="price-field">
+            <mat-label>Unit Price</mat-label>
+            <input matInput type="number" formControlName="priceValue" min="0" step="0.01" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="currency-field">
+            <mat-label>Currency</mat-label>
+            <input matInput formControlName="priceCurrency" />
+          </mat-form-field>
+
+          <button mat-icon-button color="warn" type="button" (click)="removeRow(i)" [disabled]="rows.length === 1">
+            <mat-icon>remove_circle</mat-icon>
+          </button>
+        </div>
+      }
+    </div>
+
+    <button mat-stroked-button color="primary" type="button" (click)="addRow()" class="add-row-btn">
+      <mat-icon>add</mat-icon> Add Another Beer
+    </button>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="isSaving()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="isSaving()">
+    @if (isSaving()) { <mat-spinner diameter="20" style="display:inline-block;margin-right:8px"></mat-spinner> }
+    Add to Order
+  </button>
+</mat-dialog-actions>
+
+<style>
+  .row-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,.08);
+  }
+  .row-number { width: 24px; padding-top: 20px; color: rgba(0,0,0,.4); font-size: 13px; }
+  .beer-field { flex: 2; min-width: 160px; }
+  .qty-field { flex: 1; min-width: 80px; }
+  .unit-field { flex: 1; min-width: 70px; }
+  .price-field { flex: 1; min-width: 90px; }
+  .currency-field { flex: 0 0 80px; }
+  .add-row-btn { margin-top: 12px; }
+</style>

@@ -1,0 +1,55 @@
+<h2 mat-dialog-title>Add New Beer</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Beer Name</mat-label>
+      <input matInput formControlName="beerName" placeholder="e.g. Hoppy IPA" />
+      @if (form.get('beerName')?.hasError('required')) {
+        <mat-error>Beer name is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Style</mat-label>
+      <input matInput formControlName="beerStyle" placeholder="e.g. IPA, Lager, Stout" />
+      @if (form.get('beerStyle')?.hasError('required')) {
+        <mat-error>Style is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="half-width">
+      <mat-label>ABV %</mat-label>
+      <input matInput type="number" formControlName="alcoholByVolume" placeholder="5.0" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="half-width">
+      <mat-label>Packaging</mat-label>
+      <input matInput formControlName="packaging" placeholder="e.g. Bottle, Can" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="half-width">
+      <mat-label>Price</mat-label>
+      <input matInput type="number" formControlName="priceValue" min="0" step="0.01" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="half-width">
+      <mat-label>Currency</mat-label>
+      <input matInput formControlName="priceCurrency" placeholder="EUR" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="isSaving()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="isSaving()">
+    @if (isSaving()) { <mat-spinner diameter="20" style="display:inline-block;margin-right:8px"></mat-spinner> }
+    Save
+  </button>
+</mat-dialog-actions>
+
+<style>
+  .dialog-form { display: flex; flex-wrap: wrap; gap: 0 16px; padding-top: 8px; }
+  .full-width { width: 100%; }
+  .half-width { width: calc(50% - 8px); }
+</style>

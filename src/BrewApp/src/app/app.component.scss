@@ -12,7 +12,7 @@
 }
 
 .app-nav {
-  width: 200px;
+  width: 220px;
   background-color: #fafafa;
   border-right: 1px solid #e0e0e0;
 }
@@ -29,4 +29,13 @@
   mat-icon {
     color: #3f51b5;
   }
+}
+
+.nav-section-label {
+  padding: 8px 16px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.45);
 }
