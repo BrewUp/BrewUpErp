@@ -12,5 +12,6 @@ public sealed class McpServerOptions
 
     /// <summary>URL of the Warehouse MCP Server (e.g. http://localhost:5279/mcp).</summary>
     public string WarehouseUrl { get; init; } = string.Empty;
+    public string MasterDataUrl { get; init; } = string.Empty;
 }
 

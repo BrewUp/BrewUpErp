@@ -37,6 +37,9 @@ public sealed class BrewUpChatService(
                 
                    If the user asks about beer availability, stock, or reorder thresholds,
                    call the appropriate warehouse tool.
+                   
+                   If the user asks about active customers, suppliers, or masterdata info
+                   call the appropriate masterdata tool.
                 
                    If no tool is suitable, say that the ERP does not expose that information yet.
                 
@@ -45,44 +48,15 @@ public sealed class BrewUpChatService(
             new(ChatRole.User, request.Message)
         };
 
-        // Connect to the Sales MCP Server (Streamable HTTP / SSE, stateless)
-        await using var salesMcpClient = await McpClient.CreateAsync(
-            new HttpClientTransport(new HttpClientTransportOptions
-            {
-                Endpoint = new Uri(mcpServerOptions.SalesUrl),
-                Name = "Sales"
-            }, httpClientFactory.CreateClient(), loggerFactory),
-            loggerFactory: loggerFactory,
-            cancellationToken: cancellationToken);
-
-        // Connect to the Warehouse MCP Server (Streamable HTTP / SSE, stateless)
-        await using var warehouseMcpClient = await McpClient.CreateAsync(
-            new HttpClientTransport(new HttpClientTransportOptions
-            {
-                Endpoint = new Uri(mcpServerOptions.WarehouseUrl),
-                Name = "Warehouse"
-            }, httpClientFactory.CreateClient(), loggerFactory),
-            loggerFactory: loggerFactory,
-            cancellationToken: cancellationToken);
-
-        var salesTools      = await salesMcpClient.ListToolsAsync(cancellationToken: cancellationToken);
-        var warehouseTools  = await warehouseMcpClient.ListToolsAsync(cancellationToken: cancellationToken);
-
         var options = new ChatOptions
         {
             Tools =
             [
                 // Inferred function: beer catalog (no dedicated MCP server yet)
                 AIFunctionFactory.Create(brewUpChatTools.GetCatalogBeersAsync),
-                // AIFunctionFactory.Create(brewUpChatTools.GetOpenSalesOrdersAsync),
-                // AIFunctionFactory.Create(brewUpChatTools.GetOrdersByCustomerAsync),
-                // AIFunctionFactory.Create(brewUpChatTools.GetLateSalesOrdersAsync),
-
-                // Remote MCP tools: Sales server
-                ..salesTools,
-
-                // Remote MCP tools: Warehouse server
-                ..warehouseTools
+                AIFunctionFactory.Create(brewUpChatTools.GetOpenSalesOrdersAsync),
+                AIFunctionFactory.Create(brewUpChatTools.GetOrdersByCustomerAsync),
+                AIFunctionFactory.Create(brewUpChatTools.GetLateSalesOrdersAsync)
             ]
         };
 

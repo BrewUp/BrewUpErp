@@ -12,7 +12,7 @@ public static class ChatEndpoints
     {
         var beersGroup = app.MapGroup("/chat/beers")
             .WithTags("BrewUp-Chat");
-        var salesGroup = app.MapGroup("/chat/sales")
+        var salesGroup = app.MapGroup("/chat")
             .WithTags("BrewUp-Chat");
         
         beersGroup.MapGet("/", HandleGetBeersCatalog);
