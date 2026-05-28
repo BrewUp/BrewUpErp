@@ -7,6 +7,9 @@ public sealed class McpServerOptions
 {
     public const string SectionName = "BrewUp:McpServers";
 
+    /// <summary>URL of the MasterData MCP Server (e.g. http://localhost:5007/mcp).</summary>
+    public string MasterDataUrl { get; init; } = string.Empty;
+    
     /// <summary>URL of the Sales MCP Server (e.g. http://localhost:5229/mcp).</summary>
     public string SalesUrl { get; init; } = string.Empty;
 

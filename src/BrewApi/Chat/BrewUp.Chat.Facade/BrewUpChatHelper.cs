@@ -4,7 +4,6 @@ using BrewUp.Chat.Facade.Chat;
 using BrewUp.Chat.Facade.MasterData;
 using BrewUp.Chat.Facade.Mcp;
 using BrewUp.Chat.Facade.Sales;
-using BrewUp.Chat.Facade.Tools;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,8 +23,6 @@ public static class BrewUpChatHelper
                                ?? throw new InvalidOperationException(
                                    "Missing BrewUp:McpServers configuration section.");
         services.AddSingleton(mcpServerOptions);
-
-        services.AddScoped<BrewUpChatTools>();
         
         var options = configuration
                           .GetSection(AzureOpenAiOptions.SectionName)

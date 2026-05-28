@@ -35,4 +35,10 @@ public class MasterDataTools(IMcpMasterDataFacade mcpMasterDataFacade)
         string customerId,
         CancellationToken cancellationToken) =>
         await mcpMasterDataFacade.GetCustomerInfoAsync(customerId, cancellationToken);
+    
+    [McpServerTool(Name = "get_active_suppliers")]
+    [Description("Returns the currently active suppliers. Use this tool when someone asks for active suppliers.")]
+    public async Task<object> GetActiveSuppliers(
+        CancellationToken cancellationToken) =>
+        await mcpMasterDataFacade.GetActiveSuppliersAsync(cancellationToken);
 }
