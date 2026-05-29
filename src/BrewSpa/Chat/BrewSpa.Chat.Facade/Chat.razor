@@ -1,7 +1,5 @@
 @page "/brewchat"
 
-@using BrewSpa.Chat.Application.Models
-
 <PageTitle>BrewUp Chat</PageTitle>
 
 <div class="chat-container">
@@ -17,35 +15,6 @@
     else
     {
         <div class="chat-layout">
-            <!-- Beer Catalog Sidebar -->
-            <div class="beer-catalog-panel">
-                <h2 class="panel-title">Beer Catalog</h2>
-                @if (_beerCatalog.Any())
-                {
-                    <div class="beer-list">
-                        @foreach (var beer in _beerCatalog)
-                        {
-                            <div class="beer-item @(!beer.IsActive ? "inactive" : "")">
-                                <h3 class="beer-name">@beer.Name</h3>
-                                <p class="beer-style">@beer.Style</p>
-                                @if (beer.AlcoholByVolume.HasValue)
-                                {
-                                    <p class="beer-abv">ABV: @beer.AlcoholByVolume.Value%</p>
-                                }
-                                @if (!beer.IsActive)
-                                {
-                                    <span class="beer-status">Inactive</span>
-                                }
-                            </div>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <p class="empty-message">No beers available</p>
-                }
-            </div>
-
             <!-- Chat Panel -->
             <div class="chat-panel">
                 <div class="chat-messages">

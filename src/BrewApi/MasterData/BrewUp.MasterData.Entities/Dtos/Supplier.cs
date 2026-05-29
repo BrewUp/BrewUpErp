@@ -1,7 +1,6 @@
 ﻿using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.MasterData;
-using BrewUp.Shared.ExternalContracts.MasterData.Customers;
 using BrewUp.Shared.ExternalContracts.MasterData.Suppliers;
 using BrewUp.Shared.ReadModel;
 

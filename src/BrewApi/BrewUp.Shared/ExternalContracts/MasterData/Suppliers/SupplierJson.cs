@@ -1,6 +1,4 @@
-﻿using BrewUp.Shared.ExternalContracts.MasterData.Customers;
-
-namespace BrewUp.Shared.ExternalContracts.MasterData.Suppliers;
+﻿namespace BrewUp.Shared.ExternalContracts.MasterData.Suppliers;
 
 public class SupplierJson
 {

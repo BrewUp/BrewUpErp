@@ -9,7 +9,6 @@ public partial class Chat : ComponentBase
 {
     [Inject] private IChatService ChatService { get; set; } = null!;
 
-    private List<BeerCatalogItem> _beerCatalog = [];
     private List<ChatMessage> _chatHistory = [];
     private string _userMessage = string.Empty;
     private string? _conversationId;
@@ -19,7 +18,6 @@ public partial class Chat : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadBeerCatalogAsync();
         _isLoading = false;
     }
 
@@ -30,22 +28,6 @@ public partial class Chat : ComponentBase
             // Scroll to bottom after new message
             await Task.Delay(100);
         }
-    }
-
-    private async Task LoadBeerCatalogAsync()
-    {
-        var result = await ChatService.GetBeersCatalogAsync();
-        result.Match(
-            success =>
-            {
-                _beerCatalog = success;
-                return true;
-            },
-            error =>
-            {
-                Console.WriteLine($"[Chat] Error loading beer catalog: {error.Message}");
-                return false;
-            });
     }
 
     private async Task SendMessageAsync()

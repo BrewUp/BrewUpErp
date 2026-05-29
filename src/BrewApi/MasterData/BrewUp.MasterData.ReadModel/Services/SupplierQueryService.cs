@@ -14,8 +14,6 @@ internal sealed class SupplierQueryService(ILoggerFactory loggerFactory,
     {
         cancellationToken.ThrowIfCancellationRequested();
         
-        cancellationToken.ThrowIfCancellationRequested();
-        
         var queryResult = await supplierQueries.GetByFilterAsync(null, pageNumber, pageSize, cancellationToken);
         
         return queryResult.Match(
