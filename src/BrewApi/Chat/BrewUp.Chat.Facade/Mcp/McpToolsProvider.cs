@@ -1,0 +1,136 @@
+﻿using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Logging;
+using ModelContextProtocol.Client;
+
+namespace BrewUp.Chat.Facade.Mcp;
+
+/// <summary>
+/// Provides cached MCP tools shared across all chat requests.
+/// Keeps the underlying <see cref="McpClient"/> instances alive for the
+/// lifetime of the application and refreshes the tool catalog periodically
+/// to recover from transient MCP server failures.
+/// </summary>
+public interface IMcpToolsProvider
+{
+    Task<IReadOnlyList<AITool>> GetToolsAsync(CancellationToken cancellationToken);
+}
+
+public sealed class McpToolsProvider : IMcpToolsProvider, IAsyncDisposable
+{
+    private static readonly TimeSpan RefreshInterval = TimeSpan.FromMinutes(5);
+
+    private readonly McpServerOptions _options;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILoggerFactory _loggerFactory;
+    private readonly ILogger<McpToolsProvider> _logger;
+    private readonly SemaphoreSlim _gate = new(1, 1);
+
+    private List<McpClient> _clients = new();
+    private IReadOnlyList<AITool> _tools = Array.Empty<AITool>();
+    private DateTimeOffset _lastRefreshUtc = DateTimeOffset.MinValue;
+
+    public McpToolsProvider(
+        McpServerOptions options,
+        IHttpClientFactory httpClientFactory,
+        ILoggerFactory loggerFactory)
+    {
+        _options = options;
+        _httpClientFactory = httpClientFactory;
+        _loggerFactory = loggerFactory;
+        _logger = loggerFactory.CreateLogger<McpToolsProvider>();
+    }
+
+    public async Task<IReadOnlyList<AITool>> GetToolsAsync(CancellationToken cancellationToken)
+    {
+        if (IsFresh())
+            return _tools;
+
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            if (IsFresh())
+                return _tools;
+
+            await DisposeClientsAsync().ConfigureAwait(false);
+
+            var endpoints = new (string Name, string Url)[]
+            {
+                ("MasterData", _options.MasterDataUrl),
+                ("Sales",      _options.SalesUrl),
+                ("Warehouse",  _options.WarehouseUrl),
+            };
+
+            var newClients = new List<McpClient>(endpoints.Length);
+            var newTools = new List<AITool>();
+
+            foreach (var (name, url) in endpoints)
+            {
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    _logger.LogWarning("MCP endpoint {Name} has no URL configured; skipping.", name);
+                    continue;
+                }
+
+                try
+                {
+                    var client = await CreateClientAsync(name, url, cancellationToken).ConfigureAwait(false);
+                    var tools = await client.ListToolsAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+
+                    newClients.Add(client);
+                    newTools.AddRange(tools);
+
+                    _logger.LogInformation("MCP {Name} ready with {Count} tools.", name, tools.Count);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                        "Failed to initialize MCP client {Name} at {Url}. Tools from this server will be unavailable until the next refresh.",
+                        name, url);
+                }
+            }
+
+            _clients = newClients;
+            _tools = newTools;
+            _lastRefreshUtc = DateTimeOffset.UtcNow;
+
+            return _tools;
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    private bool IsFresh()
+        => _tools.Count > 0 && DateTimeOffset.UtcNow - _lastRefreshUtc < RefreshInterval;
+
+    private Task<McpClient> CreateClientAsync(string name, string url, CancellationToken cancellationToken)
+        => McpClient.CreateAsync(
+            new HttpClientTransport(
+                new HttpClientTransportOptions
+                {
+                    Endpoint = new Uri(url),
+                    Name = name
+                },
+                _httpClientFactory.CreateClient("mcp"),
+                _loggerFactory),
+            loggerFactory: _loggerFactory,
+            cancellationToken: cancellationToken);
+
+    private async Task DisposeClientsAsync()
+    {
+        foreach (var client in _clients)
+        {
+            try { await client.DisposeAsync().ConfigureAwait(false); }
+            catch (Exception ex) { _logger.LogDebug(ex, "Error disposing MCP client."); }
+        }
+        _clients.Clear();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeClientsAsync().ConfigureAwait(false);
+        _gate.Dispose();
+    }
+}
+
