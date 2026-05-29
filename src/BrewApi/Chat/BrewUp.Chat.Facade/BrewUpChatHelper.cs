@@ -13,12 +13,7 @@ public static class BrewUpChatHelper
     public static IServiceCollection AddBrewUpChat(this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Resilience handler and McpToolsProvider both depend on ILoggerFactory.
-        // Register logging defensively so this helper works even when called from
-        // an isolated IServiceCollection (e.g. integration tests).
         services.AddLogging();
-
-        // Default factory (for anything that asks for an unnamed client).
         services.AddHttpClient();
 
         // Dedicated resilient HttpClient for MCP transports:
@@ -69,7 +64,6 @@ public static class BrewUpChatHelper
                 .AsBuilder()
                 .UseFunctionInvocation()
                 .UseLogging()
-                // Pass the IServiceProvider so UseLogging() can resolve ILoggerFactory.
                 .Build(sp);
         });
 

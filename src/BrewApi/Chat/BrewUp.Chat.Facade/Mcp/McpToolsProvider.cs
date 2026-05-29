@@ -15,30 +15,20 @@ public interface IMcpToolsProvider
     Task<IReadOnlyList<AITool>> GetToolsAsync(CancellationToken cancellationToken);
 }
 
-public sealed class McpToolsProvider : IMcpToolsProvider, IAsyncDisposable
+public sealed class McpToolsProvider(
+    McpServerOptions options,
+    IHttpClientFactory httpClientFactory,
+    ILoggerFactory loggerFactory)
+    : IMcpToolsProvider, IAsyncDisposable
 {
     private static readonly TimeSpan RefreshInterval = TimeSpan.FromMinutes(5);
 
-    private readonly McpServerOptions _options;
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ILoggerFactory _loggerFactory;
-    private readonly ILogger<McpToolsProvider> _logger;
+    private readonly ILogger<McpToolsProvider> _logger = loggerFactory.CreateLogger<McpToolsProvider>();
     private readonly SemaphoreSlim _gate = new(1, 1);
 
-    private List<McpClient> _clients = new();
-    private IReadOnlyList<AITool> _tools = Array.Empty<AITool>();
+    private List<McpClient> _clients = [];
+    private IReadOnlyList<AITool> _tools = [];
     private DateTimeOffset _lastRefreshUtc = DateTimeOffset.MinValue;
-
-    public McpToolsProvider(
-        McpServerOptions options,
-        IHttpClientFactory httpClientFactory,
-        ILoggerFactory loggerFactory)
-    {
-        _options = options;
-        _httpClientFactory = httpClientFactory;
-        _loggerFactory = loggerFactory;
-        _logger = loggerFactory.CreateLogger<McpToolsProvider>();
-    }
 
     public async Task<IReadOnlyList<AITool>> GetToolsAsync(CancellationToken cancellationToken)
     {
@@ -55,9 +45,9 @@ public sealed class McpToolsProvider : IMcpToolsProvider, IAsyncDisposable
 
             var endpoints = new (string Name, string Url)[]
             {
-                ("MasterData", _options.MasterDataUrl),
-                ("Sales",      _options.SalesUrl),
-                ("Warehouse",  _options.WarehouseUrl),
+                ("MasterData", options.MasterDataUrl),
+                ("Sales", options.SalesUrl),
+                ("Warehouse", options.WarehouseUrl),
             };
 
             var newClients = new List<McpClient>(endpoints.Length);
@@ -112,9 +102,9 @@ public sealed class McpToolsProvider : IMcpToolsProvider, IAsyncDisposable
                     Endpoint = new Uri(url),
                     Name = name
                 },
-                _httpClientFactory.CreateClient("mcp"),
-                _loggerFactory),
-            loggerFactory: _loggerFactory,
+                httpClientFactory.CreateClient("mcp"),
+                loggerFactory),
+            loggerFactory: loggerFactory,
             cancellationToken: cancellationToken);
 
     private async Task DisposeClientsAsync()
