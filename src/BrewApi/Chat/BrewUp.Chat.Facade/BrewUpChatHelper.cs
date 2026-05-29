@@ -1,11 +1,12 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
+using Azure.Core;
+using Azure.Identity;
 using BrewUp.Chat.Facade.Chat;
 using BrewUp.Chat.Facade.Mcp;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
 namespace BrewUp.Chat.Facade;
 
 public static class BrewUpChatHelper
@@ -53,10 +54,38 @@ public static class BrewUpChatHelper
                 NetworkTimeout = TimeSpan.FromMinutes(3)
             };
 
-            var azureClient = new AzureOpenAIClient(
-                new Uri(options.Endpoint),
-                new AzureKeyCredential(options.ApiKey),
-                azureOptions);
+            AzureOpenAIClient azureClient;
+            if (options.UseManagedIdentity)
+            {
+                // Foundry / production path: no secret on disk.
+                // Caller must hold "Cognitive Services OpenAI User" on the resource.
+                // Enable diagnostic logging so we can see WHICH credential source wins.
+                var credentialOptions = new DefaultAzureCredentialOptions
+                {
+                    Diagnostics =
+                    {
+                        IsLoggingEnabled        = true,
+                        IsAccountIdentifierLoggingEnabled = true,
+                        IsTelemetryEnabled      = false,
+                    },
+                    // Pin the tenant when set, to avoid cross-tenant 401s in dev.
+                    TenantId = Environment.GetEnvironmentVariable(options.TenantId),
+                };
+
+                TokenCredential credential = new DefaultAzureCredential(credentialOptions);
+                azureClient = new AzureOpenAIClient(new Uri(options.Endpoint), credential, azureOptions);
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(options.ApiKey))
+                    throw new InvalidOperationException(
+                        "AzureOpenAI:ApiKey is required when UseManagedIdentity is false.");
+
+                azureClient = new AzureOpenAIClient(
+                    new Uri(options.Endpoint),
+                    new AzureKeyCredential(options.ApiKey),
+                    azureOptions);
+            }
 
             return azureClient
                 .GetChatClient(options.DeploymentName)
@@ -64,6 +93,7 @@ public static class BrewUpChatHelper
                 .AsBuilder()
                 .UseFunctionInvocation()
                 .UseLogging()
+                .UseOpenTelemetry(sourceName: "BrewUp.Chat")
                 .Build(sp);
         });
 

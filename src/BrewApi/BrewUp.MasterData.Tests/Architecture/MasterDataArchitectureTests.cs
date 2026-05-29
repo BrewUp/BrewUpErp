@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using BrewUp.MasterData.Facade;
+using BrewUp.Shared.Tests;
 using NetArchTest.Rules;
 
 namespace BrewUp.MasterData.Tests.Architecture;
@@ -13,14 +14,7 @@ public class MasterDataArchitectureTests
     {
         var types = Types.InAssembly(typeof(MasterDataHelper).Assembly);
 
-        var forbiddenAssemblies = new List<string>
-        {
-            "BrewUp.Sales.Domain",
-            "BrewUp.Sales.Facade",
-            "BrewUp.Sales.Infrastructure",
-            "BrewUp.Sales.ReadModel",
-            "BrewUp.Sales.SharedKernel"
-        };
+        var forbiddenAssemblies = ModulesProjectUtils.GetModuleProjects(true, ["MasterData"]);
         
         var result = types
             .ShouldNot()
