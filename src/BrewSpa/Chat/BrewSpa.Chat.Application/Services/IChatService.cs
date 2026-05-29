@@ -5,6 +5,5 @@ namespace BrewSpa.Chat.Application.Services;
 
 public interface IChatService
 {
-    Task<Result<List<BeerCatalogItem>>> GetBeersCatalogAsync();
-    Task<Result<ChatResponse>> AskBrewUpChatAsync(ChatRequest request);
+Task<Result<ChatResponse>> AskBrewUpChatAsync(ChatRequest request);
 }

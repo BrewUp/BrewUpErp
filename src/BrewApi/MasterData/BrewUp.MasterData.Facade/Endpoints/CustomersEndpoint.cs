@@ -13,7 +13,7 @@ internal static class CustomersEndpoint
         var group = app.MapGroup("/v1/masterdata/customers")
             .WithTags("MasterData");
         
-        group.MapPost("/", HandlePostCustomer)
+        group.MapPost("/", HandleRegisterCustomer)
             .AddEndpointFilter<ValidationFilter<RegisterCustomerJson>>()
             .Produces(StatusCodes.Status201Created)
             .Produces(StatusCodes.Status500InternalServerError)
@@ -64,7 +64,7 @@ internal static class CustomersEndpoint
             .WithName("GetCustomerById");
     }
     
-    private static async Task<IResult> HandlePostCustomer(
+    private static async Task<IResult> HandleRegisterCustomer(
         IMasterDataCustomerFacade masterDataFacade,
         RegisterCustomerJson body,
         CancellationToken cancellationToken)

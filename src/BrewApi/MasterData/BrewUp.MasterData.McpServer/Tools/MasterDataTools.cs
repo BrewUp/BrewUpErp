@@ -29,7 +29,7 @@ public class MasterDataTools(IMcpMasterDataFacade mcpMasterDataFacade)
         await mcpMasterDataFacade.GetActiveCustomersAsync(cancellationToken);
     
     [McpServerTool(Name = "get_customer_info")]
-    [Description("Returns the customer details of a customer. Use this tool when someone asks for customer details.")]
+    [Description("Returns the details of a customer. Use this tool when someone asks for customer details.")]
     public async Task<object> GetCustomerInfo(
         [Description("The customer id, or part of the customer id.")]
         string customerId,
@@ -41,4 +41,18 @@ public class MasterDataTools(IMcpMasterDataFacade mcpMasterDataFacade)
     public async Task<object> GetActiveSuppliers(
         CancellationToken cancellationToken) =>
         await mcpMasterDataFacade.GetActiveSuppliersAsync(cancellationToken);
+    
+    [McpServerTool(Name = "get_supplier_info")]
+    [Description("Returns the details of a csupplierustomer. Use this tool when someone asks for supplier details.")]
+    public async Task<object> GetSupplierInfo(
+        [Description("The supplier id, or part of the supplier id.")]
+        string supplierId,
+        CancellationToken cancellationToken) =>
+        await mcpMasterDataFacade.GetSupplierInfoAsync(supplierId, cancellationToken);
+    
+    [McpServerTool(Name = "get_active_warehouses")]
+    [Description("Returns the currently active warehouses. Use this tool when someone asks for active warehouses.")]
+    public async Task<object> GetActiveWarehouses(
+        CancellationToken cancellationToken) =>
+        await mcpMasterDataFacade.GetActiveWarehousesAsync(cancellationToken);
 }

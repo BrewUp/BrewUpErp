@@ -3,13 +3,15 @@ using BrewUp.Shared.ExternalContracts.MasterData;
 using BrewUp.Shared.ExternalContracts.MasterData.Beers;
 using BrewUp.Shared.ExternalContracts.MasterData.Customers;
 using BrewUp.Shared.ExternalContracts.MasterData.Suppliers;
+using BrewUp.Shared.ExternalContracts.Warehouse;
 
 namespace BrewUp.MasterData.McpServer;
 
 internal sealed class McpMasterDataFacade(
     IBeerQueryService beerQueryService,
     ICustomerQueryService customerQueryService,
-    ISupplierQueryService supplierQueryService) : IMcpMasterDataFacade
+    ISupplierQueryService supplierQueryService,
+    IWarehouseQueryService warehouseQueryService) : IMcpMasterDataFacade
 {
     public async Task<IReadOnlyCollection<BeerJson>> GetBeersCatalogAsync(CancellationToken cancellationToken)
     {
@@ -82,5 +84,45 @@ internal sealed class McpMasterDataFacade(
         return suppliersResult.TryGetValue(out var suppliers)
             ? suppliers.Results.ToList()    
             : Array.Empty<SupplierJson>();
+    }
+
+    public async Task<SupplierJson> GetSupplierInfoAsync(string supplierId, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        var supplierResult = await supplierQueryService.GetSupplierByIdAsync(supplierId, cancellationToken);
+        if (supplierResult.IsError)            
+            return new SupplierJson
+            {
+                SupplierId = supplierId,
+                RagioneSociale = string.Empty,
+                PartitaIva = string.Empty,
+                Indirizzo = new IndirizzoJson(),
+                IsEnabled = false
+            };
+        
+        return supplierResult.TryGetValue(out var supplier)
+            ? supplier  
+            : new SupplierJson
+            {
+                SupplierId = supplierId,
+                RagioneSociale = string.Empty,
+                PartitaIva = string.Empty,
+                Indirizzo = new IndirizzoJson(),
+                IsEnabled = false
+            };
+    }
+
+    public async Task<IReadOnlyCollection<WarehouseJson>> GetActiveWarehousesAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        var warehousesResult = await warehouseQueryService.GetWarehousesAsync(1, int.MaxValue,  cancellationToken);
+        if (warehousesResult.IsError)
+            return [];
+        
+        return warehousesResult.TryGetValue(out var suppliers)
+            ? suppliers.Results.ToList()    
+            : Array.Empty<WarehouseJson>();
     }
 }
