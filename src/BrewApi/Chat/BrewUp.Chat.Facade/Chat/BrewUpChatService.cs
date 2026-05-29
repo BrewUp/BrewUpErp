@@ -51,9 +51,10 @@ public sealed class BrewUpChatService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Failed to load MCP tools.");
-            tools = Array.Empty<AITool>();
+            tools = [];
         }
 
+        // function inferred
         var options = new ChatOptions
         {
             Tools = tools.Count > 0 ? tools.ToList() : null

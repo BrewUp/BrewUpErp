@@ -27,6 +27,14 @@ public sealed class SalesTools(
         string customerName,
         CancellationToken cancellationToken)
         => await mcpSalesFacade.GetOrdersByCustomerAsync(customerName, cancellationToken);
+    
+    [McpServerTool(Name = "get_orders_by_beer")]
+    [Description("Returns the sales orders for a beer, searching by beer name.")]
+    public async Task<object> GetOrdersByBeer(
+        [Description("The beer name, or part of the beer name.")]
+        string beerName,
+        CancellationToken cancellationToken)
+        => await mcpSalesFacade.GetOrdersByBeerAsync(beerName, cancellationToken);
 
     [McpServerTool(Name = "get_late_sales_orders")]
     [Description("Returns late sales orders at the supplied business date.")]

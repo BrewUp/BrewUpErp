@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Client;
+using ModelContextProtocol.Protocol;
 
 namespace BrewUp.Chat.Facade.Mcp;
 
@@ -104,6 +105,28 @@ public sealed class McpToolsProvider(
                 },
                 httpClientFactory.CreateClient("mcp"),
                 loggerFactory),
+            new McpClientOptions
+            {
+                // Tune MCP client options here if needed, e.g. to adjust retry policies or timeouts.
+                InitializationTimeout = TimeSpan.FromSeconds(60),
+                ClientInfo = new Implementation { Name = name, Version = "1.0.0" },
+                // Attach the handler
+                Handlers = new McpClientHandlers
+                {
+                    NotificationHandlers =
+                    [
+                        new KeyValuePair<string, Func<JsonRpcNotification, CancellationToken, ValueTask>>(
+                            "notifications/tools/list_changed",
+                            async (notification, ct) =>
+                            {
+                                ct.ThrowIfCancellationRequested();
+                                
+                                // Handle the notification here
+                                await Task.CompletedTask;
+                            })
+                    ]
+                }
+            },
             loggerFactory: loggerFactory,
             cancellationToken: cancellationToken);
 
