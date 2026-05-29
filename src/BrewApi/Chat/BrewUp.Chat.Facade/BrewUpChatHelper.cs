@@ -13,7 +13,27 @@ public static class BrewUpChatHelper
     public static IServiceCollection AddBrewUpChat(this IServiceCollection services,
         IConfiguration configuration)
     {
+        // Resilience handler and McpToolsProvider both depend on ILoggerFactory.
+        // Register logging defensively so this helper works even when called from
+        // an isolated IServiceCollection (e.g. integration tests).
+        services.AddLogging();
+
+        // Default factory (for anything that asks for an unnamed client).
         services.AddHttpClient();
+
+        // Dedicated resilient HttpClient for MCP transports:
+        //  - long enough timeout to cover multi-round tool calling
+        //  - standard resilience pipeline (retry + circuit breaker + timeout per attempt)
+        services.AddHttpClient("mcp", client =>
+            {
+                client.Timeout = TimeSpan.FromMinutes(3);
+            })
+            .AddStandardResilienceHandler(o =>
+            {
+                o.AttemptTimeout.Timeout       = TimeSpan.FromSeconds(60);
+                o.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(120);
+                o.TotalRequestTimeout.Timeout  = TimeSpan.FromMinutes(3);
+            });
 
         var mcpServerOptions = configuration
                                    .GetSection(McpServerOptions.SectionName)
@@ -21,7 +41,7 @@ public static class BrewUpChatHelper
                                ?? throw new InvalidOperationException(
                                    "Missing BrewUp:McpServers configuration section.");
         services.AddSingleton(mcpServerOptions);
-        
+
         var options = configuration
                           .GetSection(AzureOpenAiOptions.SectionName)
                           .Get<AzureOpenAiOptions>()
@@ -30,22 +50,34 @@ public static class BrewUpChatHelper
 
         services.AddSingleton(options);
 
-        services.AddSingleton<IChatClient>(_ =>
+        services.AddSingleton<IChatClient>(sp =>
         {
+            // Extend the per-request network timeout to survive multi-round tool calls.
+            var azureOptions = new AzureOpenAIClientOptions
+            {
+                NetworkTimeout = TimeSpan.FromMinutes(3)
+            };
+
             var azureClient = new AzureOpenAIClient(
                 new Uri(options.Endpoint),
-                new AzureKeyCredential(options.ApiKey));
+                new AzureKeyCredential(options.ApiKey),
+                azureOptions);
 
             return azureClient
                 .GetChatClient(options.DeploymentName)
                 .AsIChatClient()
                 .AsBuilder()
                 .UseFunctionInvocation()
-                .Build();
+                .UseLogging()
+                // Pass the IServiceProvider so UseLogging() can resolve ILoggerFactory.
+                .Build(sp);
         });
 
+        // MCP clients + tool catalog are kept alive for the whole app lifetime.
+        services.AddSingleton<IMcpToolsProvider, McpToolsProvider>();
+
         services.AddScoped<BrewUpChatService>();
-        
+
         return services;
     }
 }
