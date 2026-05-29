@@ -25,4 +25,7 @@ public interface IMcpSalesFacade
         CancellationToken cancellationToken);
 
     Task<SalesOrderJson> GetOrderDetailsAsync(string salesOrderId, CancellationToken cancellationToken);
+
+    Task<IReadOnlyCollection<SalesOrderSummary>> GetOrdersByBeerAsync(string beerName,
+        CancellationToken cancellationToken);
 }

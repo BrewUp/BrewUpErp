@@ -99,6 +99,18 @@ internal sealed class McpSalesFacade(
             : new SalesOrderJson();
     }
 
+    public async Task<IReadOnlyCollection<SalesOrderSummary>> GetOrdersByBeerAsync(string beerName, CancellationToken cancellationToken)
+    {
+        var orders = await GetAllOrdersAsync(cancellationToken);
+
+        return orders
+            .Where(order => order.Rows.Any(row => row.BeerName.Contains(
+                beerName,
+                StringComparison.OrdinalIgnoreCase)))
+            .Select(Map)
+            .ToArray();
+    }
+
     private async Task<IReadOnlyCollection<SalesOrderJson>> GetAllOrdersAsync(
         CancellationToken cancellationToken)
     {
