@@ -119,7 +119,8 @@ public sealed class McpToolsProvider(
 
     public async ValueTask DisposeAsync()
     {
-        await DisposeClientsAsync().ConfigureAwait(false);
+        await DisposeClientsAsync()
+            .ConfigureAwait(false);
         _gate.Dispose();
     }
 }
