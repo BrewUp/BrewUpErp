@@ -1,29 +1,25 @@
-﻿using BrewUp.Mother.Hubs;
-using BrewUp.Mother.McpClients;
-using BrewUp.Shared.ExternalContracts.Mother;
+﻿using BrewUp.Mother.McpClients;
+using BrewUp.Shared.Agents;
+using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
+using BrewUp.Shared.Messages.Events.Mother;
 using BrewUp.Shared.Messages.Events.Sales;
-using Muflone.Messages.Events;
 
-namespace BrewUp.Mother.Agents;
+namespace BrewUp.Sales.McpServer.Agents;
 
 public sealed class SalesAgent(IMcpToolClient mcpToolClient,
-    IMotherHubHelper hubHelper,
-    ILoggerFactory loggerFactory) : IntegrationEventHandlerAsync<SalesOrderCreatedIntegrationEvent>(loggerFactory)
+    ILoggerFactory loggerFactory) : AgentBase<SalesOrderCreatedIntegrationEvent, SalesOrderAssessment>
 {
     private readonly ILogger<SalesAgent> _logger = loggerFactory.CreateLogger<SalesAgent>();
-    
-    public override async Task HandleAsync(SalesOrderCreatedIntegrationEvent @event,
+
+    public override async Task<SalesOrderAssessment> HandleAsync(SalesOrderCreatedIntegrationEvent @event,
         CancellationToken cancellationToken = new ())
     {
         cancellationToken.ThrowIfCancellationRequested();
         
         _logger.LogInformation(
-            "BrewUp.Mother InventoryRiskAgent received SalesOrderConfirmed {SalesOrderId}",
+            "BrewUp.Sales.McpServer.Agents SalesAgent received SalesOrderCreatedIntegrationEvent {SalesOrderId}",
             @event.AggregateId.Value);
-        await hubHelper.TellChildrenThatMotherReceivedIntegrationEvent(
-            $"BrewUp.Mother InventoryRiskAgent received SalesOrderConfirmed {@event.AggregateId.Value}",
-            cancellationToken);
 
         var order = await mcpToolClient.CallToolAsync<SalesOrderJson>(
             serverName: "sales",
@@ -40,21 +36,28 @@ public sealed class SalesAgent(IMcpToolClient mcpToolClient,
                 "Sales order {SalesOrderId} not found by Sales MCP",
                 @event.AggregateId.Value);
 
-            await hubHelper.TellChildrenThatSalesOrderWasNotFound(
-                $"Sales order {@event.AggregateId.Value} not found by Sales MCP", cancellationToken);
-
-            return;
+            return new SalesOrderAssessment(
+                new IntegrationId(Guid.CreateVersion7().ToString()),
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                0,
+                [],
+                priority: "Normal",
+                reason: "No SalesOrder was found!");
         }
 
         var totalAmount = order.Rows.Sum(r => r.Quantity.Value * r.Price.Value);
-        var items = order.Rows.ToList().AsReadOnly();
-        SalesOrderAssessment salesOrderAssessment = new (
+        return new SalesOrderAssessment(
+            new IntegrationId(Guid.CreateVersion7().ToString()),
             order.Id,
             order.CustomerId,
             order.CustomerName,
             totalAmount,
             order.Rows.ToList().AsReadOnly(),
-            Priority: totalAmount > 5000 ? "High" : "Normal",
-            Reason: "Priority calculated from order amount.");
+            priority: totalAmount > 5000 ? "High" : "Normal",
+            reason: "Priority calculated from order amount.");
     }
+
+
 }

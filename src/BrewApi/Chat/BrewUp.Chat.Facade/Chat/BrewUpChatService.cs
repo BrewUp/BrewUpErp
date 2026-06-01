@@ -31,6 +31,22 @@ public sealed class BrewUpChatService(
 
            If the user asks about beer availability, stock, or reorder thresholds,
            call the appropriate warehouse tool.
+           
+           For what-if analysis, simulations, impact assessment, cross-context reasoning,
+           recommendations, or questions starting with "what happens if" or "what if",
+           use the Mother tool.
+           
+           The Mother tool is responsible for scenario analysis and cross-bounded-context reasoning.
+           Use it when the user asks hypothetical questions such as:
+           - What if I receive an order of 100 bottles of Muflone Weiss?
+           - What happens to the warehouse if a customer orders 100 bottles of IPA?
+           - Would this order create a stock risk?
+           - Would this scenario require a reorder?
+           
+           Use direct bounded-context tools for simple lookups.
+           Use Mother tools for simulations, what-if analysis, cross-context reasoning, and recommendations.
+           
+           Do not invent business data.
         """;
 
     public async Task<ChatResponse> AskAsync(

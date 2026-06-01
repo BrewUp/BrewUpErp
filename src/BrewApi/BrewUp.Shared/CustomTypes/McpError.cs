@@ -1,4 +1,4 @@
-﻿namespace BrewUp.Mother.CustomTypes;
+﻿namespace BrewUp.Shared.CustomTypes;
 
 public sealed record McpError(
     int Code,
