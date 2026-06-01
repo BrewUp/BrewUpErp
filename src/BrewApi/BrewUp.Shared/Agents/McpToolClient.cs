@@ -1,8 +1,11 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using BrewUp.Mother.CustomTypes;
+using BrewUp.Mother.McpClients;
+using BrewUp.Shared.CustomTypes;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
-namespace BrewUp.Mother.McpClients;
+namespace BrewUp.Shared.Agents;
 
 internal sealed class McpToolClient(
     IHttpClientFactory httpClientFactory,

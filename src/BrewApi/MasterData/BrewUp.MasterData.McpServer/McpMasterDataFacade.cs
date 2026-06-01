@@ -39,6 +39,20 @@ internal sealed class McpMasterDataFacade(
             : new BeerJson();
     }
 
+    public async Task<BeerJson> GetBeerDetailsByNameAsync(string beerName, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        
+        var beersResult = await beerQueryService.GetBeersAsync(1, int.MaxValue, cancellationToken);
+        if (beersResult.IsError)
+            return new BeerJson();
+        
+        beersResult.TryGetValue(out var beers);
+        
+        return beers.Results.FirstOrDefault(b => b.BeerName.Contains(beerName, StringComparison.OrdinalIgnoreCase)) 
+               ?? new BeerJson();
+    }
+
     public async Task<IReadOnlyCollection<CustomerJson>> GetActiveCustomersAsync(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();

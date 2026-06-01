@@ -9,6 +9,7 @@ public interface IMcpMasterDataFacade
 {
     Task<IReadOnlyCollection<BeerJson>> GetBeersCatalogAsync(CancellationToken cancellationToken);
     Task<BeerJson> GetBeerDetailsAsync(string beerId, CancellationToken cancellationToken);
+    Task<BeerJson> GetBeerDetailsByNameAsync(string beerName, CancellationToken cancellationToken);
     
     Task<IReadOnlyCollection<CustomerJson>> GetActiveCustomersAsync(CancellationToken cancellationToken);
     Task<CustomerJson> GetCustomerInfoAsync(string customerId, CancellationToken cancellationToken);

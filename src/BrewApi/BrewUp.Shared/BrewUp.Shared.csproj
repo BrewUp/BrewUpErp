@@ -15,6 +15,7 @@
     
     <ItemGroup>
       <Folder Include="Messages\Commands\Sagas\" />
+      <Folder Include="Messages\Responses\" />
     </ItemGroup>
 
 </Project>

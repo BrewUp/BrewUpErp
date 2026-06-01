@@ -1,4 +1,4 @@
-namespace BrewUp.Chat.Facade.Mcp;
+namespace BrewUp.Mother.Mcp;
 
 /// <summary>
 /// Configuration options for the remote MCP servers invoked by the Chat module.

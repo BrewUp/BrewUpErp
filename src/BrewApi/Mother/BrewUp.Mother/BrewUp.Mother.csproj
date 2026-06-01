@@ -1,18 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-BrewUp.Mother-dfd0f10a-f1d8-4212-a181-abc59df20a9a</UserSecretsId>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Muflone" Version="10.2.1" />
-    <PackageReference Include="Muflone.Transport.RabbitMQ" Version="10.2.2" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="ModelContextProtocol.AspNetCore" Version="1.3.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include=".vscode\mcp.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
+    </ItemGroup>
+
 </Project>

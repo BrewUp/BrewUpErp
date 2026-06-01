@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace BrewUp.Mother.CustomTypes;
+namespace BrewUp.Shared.CustomTypes;
 
 public sealed record McpResponseEnvelope(
     string Jsonrpc,

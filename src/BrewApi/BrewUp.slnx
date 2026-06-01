@@ -28,7 +28,6 @@
     <Project Path="MasterData/BrewUp.MasterData.SharedKernel/BrewUp.MasterData.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Mother/">
-    <Project Path="Mother/BrewUp.Mother.Tests/BrewUp.Mother.Tests.csproj" />
     <Project Path="Mother/BrewUp.Mother/BrewUp.Mother.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Purchases/">
