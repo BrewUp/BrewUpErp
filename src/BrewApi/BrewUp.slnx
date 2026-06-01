@@ -18,7 +18,6 @@
     <Project Path="Dashboards/BrewUp.Dashboards.Tests/BrewUp.Dashboards.Tests.csproj" />
   </Folder>
   <Folder Name="/50 Modules/MasterData/">
-    <Project Path="BrewUp.MasterData.Tests/BrewUp.MasterData.Tests.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Domain/BrewUp.MasterData.Domain.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Entities/BrewUp.MasterData.Entities.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Facade/BrewUp.MasterData.Facade.csproj" />
@@ -26,6 +25,7 @@
     <Project Path="MasterData/BrewUp.MasterData.McpServer/BrewUp.MasterData.McpServer.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.ReadModel/BrewUp.MasterData.ReadModel.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.SharedKernel/BrewUp.MasterData.SharedKernel.csproj" />
+    <Project Path="MasterData/BrewUp.MasterData.Tests/BrewUp.MasterData.Tests.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Mother/">
     <Project Path="Mother/BrewUp.Mother/BrewUp.Mother.csproj" />
