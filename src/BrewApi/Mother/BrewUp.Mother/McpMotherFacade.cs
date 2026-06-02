@@ -36,7 +36,7 @@ internal sealed class McpMotherFacade(
             beer = await mcpToolsProvider.CallToolAsync<BeerResolutionResult>(
                 MasterDataServer,
                 "masterdata_resolve_beer",
-                new { beerReference = request.BeerReference },
+                new { beerName = request.BeerReference },
                 cancellationToken);
         }
         catch (Exception ex)
@@ -49,7 +49,7 @@ internal sealed class McpMotherFacade(
                 "Retry later or check the MasterData MCP server.");
         }
 
-        if (beer is null || !beer.Found)
+        if (beer is null || string.IsNullOrEmpty(beer.BeerName))
         {
             return new WhatIfInventoryImpactResult(
                 MotherAnalysisStatus.NeedsClarification,
@@ -66,7 +66,7 @@ internal sealed class McpMotherFacade(
         {
             availability = await mcpToolsProvider.CallToolAsync<WarehouseAvailability>(
                 WarehouseServer,
-                "warehouse_get_item_availability",
+                "get_beer_availability",
                 new { beerId = beer.BeerId },
                 cancellationToken);
         }
