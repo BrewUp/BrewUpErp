@@ -1,3 +1,4 @@
+using BrewUp.Mother.Facade.Agents;
 using BrewUp.Mother.Facade.Mcp;
 using BrewUp.Mother.SharedKernel.Chat;
 using Microsoft.Extensions.AI;
@@ -9,6 +10,7 @@ namespace BrewUp.Mother.Facade.Chat;
 public sealed class BrewUpChatService(
     IChatClient chatClient,
     IMcpToolsProvider mcpToolsProvider,
+    MotherCoordinator motherCoordinator,
     ILogger<BrewUpChatService> logger)
 {
      private const string SystemPrompt = """
@@ -53,6 +55,9 @@ public sealed class BrewUpChatService(
         ChatRequest request,
         CancellationToken cancellationToken)
     {
+        if (motherCoordinator.CanCoordinate(request))
+            return await motherCoordinator.CoordinateAsync(request, cancellationToken);
+
         var messages = new List<ChatMessage>
         {
             new(ChatRole.System, SystemPrompt),
