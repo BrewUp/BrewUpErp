@@ -1,0 +1,117 @@
+@if (IsVisible)
+{
+    <div class="modal-backdrop">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>New Purchase Order</h2>
+                <button class="close-button" @onclick="OnCancel">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="orderNumber">Order Number *</label>
+                        <br />
+                        <input id="orderNumber"
+                               type="text"
+                               class="form-control @(ShowValidation && string.IsNullOrWhiteSpace(Order?.OrderNumber) ? "input-error" : "")"
+                               @bind="Order!.OrderNumber"
+                               placeholder="e.g. PO-20260528" />
+                        @if (ShowValidation && string.IsNullOrWhiteSpace(Order?.OrderNumber))
+                        {
+                            <span class="validation-message">Order number is required.</span>
+                        }
+                    </div>
+
+                    <div class="form-group">
+                        <label for="supplierId">Supplier ID *</label>
+                        <br />
+                        <input id="supplierId"
+                               type="text"
+                               class="form-control @(ShowValidation && string.IsNullOrWhiteSpace(Order?.SupplierId) ? "input-error" : "")"
+                               @bind="Order!.SupplierId"
+                               placeholder="Enter supplier ID" />
+                        @if (ShowValidation && string.IsNullOrWhiteSpace(Order?.SupplierId))
+                        {
+                            <span class="validation-message">Supplier ID is required.</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="orderDate">Order Date *</label>
+                        <br />
+                        <input id="orderDate"
+                               type="date"
+                               class="form-control"
+                               @bind="Order!.OrderDate" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deliveryDate">Delivery Date</label>
+                        <br />
+                        <input id="deliveryDate"
+                               type="date"
+                               class="form-control"
+                               @bind="Order!.DeliveryDate" />
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3>Order Items</h3>
+                        <button class="btn btn-sm btn-secondary" @onclick="AddRow">
+                            + Add Item
+                        </button>
+                    </div>
+
+                    @if (ShowValidation && !Order!.Rows.Any())
+                    {
+                        <span class="validation-message">At least one item is required.</span>
+                    }
+
+                    @if (Order!.Rows.Any())
+                    {
+                        <table class="items-table">
+                            <thead>
+                                <tr>
+                                    <th>Beer ID</th>
+                                    <th>Beer Name</th>
+                                    <th>Qty</th>
+                                    <th>Unit</th>
+                                    <th>Price</th>
+                                    <th>Currency</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var (row, index) in Order.Rows.Select((r, i) => (r, i)))
+                                {
+                                    <tr>
+                                        <td><input type="text" @bind="row.BeerId" class="form-control-sm" placeholder="beer id" /></td>
+                                        <td><input type="text" @bind="row.BeerName" class="form-control-sm" placeholder="beer name" /></td>
+                                        <td><input type="number" @bind="row.Quantity.Value" class="form-control-sm" min="0.01" step="0.01" /></td>
+                                        <td><input type="text" @bind="row.Quantity.UnitOfMeasure" class="form-control-sm" placeholder="pcs" /></td>
+                                        <td><input type="number" @bind="row.Price.Value" class="form-control-sm" min="0.01" step="0.01" /></td>
+                                        <td><input type="text" @bind="row.Price.Currency" class="form-control-sm" placeholder="EUR" /></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger" @onclick="() => RemoveRow(index)">×</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" @onclick="OnCancel">Cancel</button>
+                <button class="btn btn-primary" @onclick="HandleSubmit">
+                    Create Purchase Order
+                </button>
+            </div>
+        </div>
+    </div>
+}

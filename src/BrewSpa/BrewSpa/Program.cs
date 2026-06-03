@@ -2,6 +2,7 @@ using BrewSpa;
 using BrewSpa.Chat.Application.Extensions;
 using BrewSpa.Dashboards.ApplicationServices.Extensions;
 using BrewSpa.MasterData.Application.Extensions;
+using BrewSpa.Purchases.Application.Extensions;
 using BrewSpa.Sales.Application.Extensions;
 using BrewSpa.Shared.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -25,6 +26,7 @@ builder.Services.AddSharedComponents();
 builder.Services.AddMasterDataServices(builder.Configuration);
 builder.Services.AddDashboardsServices(builder.Configuration);
 builder.Services.AddSalesServices(builder.Configuration);
+builder.Services.AddPurchasesServices(builder.Configuration);
 builder.Services.AddChatServices(builder.Configuration);
 
 await builder.Build().RunAsync();

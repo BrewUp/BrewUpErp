@@ -1,0 +1,76 @@
+<div class="page-container">
+  <h2 class="page-title">Create Purchase Order</h2>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <form [formGroup]="form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Supplier ID</mat-label>
+          <input matInput formControlName="supplierId" placeholder="e.g. supplier-123" />
+          @if (form.get('supplierId')?.hasError('required') && form.get('supplierId')?.touched) {
+            <mat-error>Supplier ID is required</mat-error>
+          }
+        </mat-form-field>
+
+        <h3 class="section-title">Order Lines</h3>
+
+        <div formArrayName="rows">
+          @for (row of rows.controls; track row; let i = $index) {
+            <div [formGroupName]="i" class="row-container">
+              <span class="row-number">#{{ i + 1 }}</span>
+
+              <mat-form-field appearance="outline" class="beer-field">
+                <mat-label>Beer</mat-label>
+                <mat-select formControlName="beerId" (selectionChange)="onBeerSelected(i, $event.value)">
+                  @for (b of beers(); track b.beerId) {
+                    <mat-option [value]="b.beerId">{{ b.beerName }}</mat-option>
+                  }
+                </mat-select>
+                @if (row.get('beerId')?.hasError('required') && row.get('beerId')?.touched) {
+                  <mat-error>Select a beer</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="qty-field">
+                <mat-label>Qty</mat-label>
+                <input matInput type="number" formControlName="quantityValue" min="1" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="unit-field">
+                <mat-label>Unit</mat-label>
+                <input matInput formControlName="quantityUnit" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="price-field">
+                <mat-label>Price</mat-label>
+                <input matInput type="number" formControlName="priceValue" min="0" step="0.01" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="currency-field">
+                <mat-label>Currency</mat-label>
+                <input matInput formControlName="priceCurrency" />
+              </mat-form-field>
+
+              <button mat-icon-button color="warn" type="button" (click)="removeRow(i)" [disabled]="rows.length === 1">
+                <mat-icon>remove_circle_outline</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="row-actions">
+          <button mat-stroked-button color="primary" type="button" (click)="addRow()">
+            <mat-icon>add</mat-icon> Add Beer
+          </button>
+        </div>
+
+        <div class="submit-row">
+          <button mat-raised-button color="primary" type="button" (click)="submit()" [disabled]="isSaving()">
+            @if (isSaving()) { <mat-spinner diameter="20" style="display:inline-block;margin-right:8px"></mat-spinner> }
+            Submit Purchase Order
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

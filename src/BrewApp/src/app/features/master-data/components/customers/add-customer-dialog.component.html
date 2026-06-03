@@ -1,0 +1,70 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit Customer' : 'Add Customer' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="dialog-form">
+    <mat-form-field appearance="outline" class="half-width">
+      <mat-label>Company Name</mat-label>
+      <input matInput formControlName="ragioneSociale" />
+      @if (form.get('ragioneSociale')?.hasError('required')) {
+        <mat-error>Required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="half-width">
+      <mat-label>VAT Number</mat-label>
+      <input matInput formControlName="partitaIva" />
+      @if (form.get('partitaIva')?.hasError('required')) {
+        <mat-error>Required</mat-error>
+      }
+    </mat-form-field>
+
+    <p class="section-label">Address (optional)</p>
+
+    <mat-form-field appearance="outline" class="two-third-width">
+      <mat-label>Street</mat-label>
+      <input matInput formControlName="via" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="one-third-width">
+      <mat-label>Civic Number</mat-label>
+      <input matInput formControlName="numeroCivico" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="half-width">
+      <mat-label>City</mat-label>
+      <input matInput formControlName="citta" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="quarter-width">
+      <mat-label>Province</mat-label>
+      <input matInput formControlName="provincia" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="quarter-width">
+      <mat-label>ZIP Code</mat-label>
+      <input matInput formControlName="cap" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="half-width">
+      <mat-label>Country</mat-label>
+      <input matInput formControlName="nazione" placeholder="IT" />
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()" [disabled]="isSaving()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="submit()" [disabled]="isSaving()">
+    @if (isSaving()) { <mat-spinner diameter="20" style="display:inline-block;margin-right:8px"></mat-spinner> }
+    {{ isEdit ? 'Update' : 'Save' }}
+  </button>
+</mat-dialog-actions>
+
+<style>
+  .dialog-form { display: flex; flex-wrap: wrap; gap: 0 16px; padding-top: 8px; }
+  .half-width { width: calc(50% - 8px); }
+  .two-third-width { width: calc(66.66% - 8px); }
+  .one-third-width { width: calc(33.33% - 8px); }
+  .quarter-width { width: calc(25% - 8px); }
+  .section-label { width: 100%; margin: 8px 0 0; font-weight: 500; color: rgba(0,0,0,.6); font-size: 14px; }
+</style>

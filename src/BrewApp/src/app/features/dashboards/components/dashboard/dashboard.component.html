@@ -1,0 +1,117 @@
+<div class="page-container">
+  <h2 class="page-title">Dashboards</h2>
+
+  <mat-tab-group animationDuration="200ms">
+    <!-- Sales by Customer -->
+    <mat-tab label="Sales by Customer">
+      <div class="tab-content">
+        @if (isLoadingCustomers()) {
+          <div class="loading-container"><mat-spinner diameter="48"></mat-spinner></div>
+        } @else {
+          <mat-card>
+            <mat-card-content>
+              <table mat-table [dataSource]="customerRows()" class="full-width-table">
+                <ng-container matColumnDef="customerName">
+                  <th mat-header-cell *matHeaderCellDef>Customer</th>
+                  <td mat-cell *matCellDef="let r">{{ r.customerName ?? '—' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="year">
+                  <th mat-header-cell *matHeaderCellDef>Year</th>
+                  <td mat-cell *matCellDef="let r">{{ r.year ?? '—' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="totalSales">
+                  <th mat-header-cell *matHeaderCellDef>Total Sales</th>
+                  <td mat-cell *matCellDef="let r">{{ r.totalSales | number:'1.2-2' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="currency">
+                  <th mat-header-cell *matHeaderCellDef>Currency</th>
+                  <td mat-cell *matCellDef="let r">{{ r.currency ?? '—' }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="customerColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: customerColumns;"></tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell no-data" [attr.colspan]="customerColumns.length">No data available.</td>
+                </tr>
+              </table>
+
+              <mat-paginator
+                [length]="customerTotal()"
+                [pageIndex]="customerPageIndex"
+                [pageSize]="customerPageSize"
+                [pageSizeOptions]="[5, 10, 25]"
+                (page)="onCustomerPageChange($event)"
+                showFirstLastButtons>
+              </mat-paginator>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-tab>
+
+    <!-- Sales by Products -->
+    <mat-tab label="Sales by Products">
+      <div class="tab-content">
+        @if (isLoadingProducts()) {
+          <div class="loading-container"><mat-spinner diameter="48"></mat-spinner></div>
+        } @else {
+          <mat-card>
+            <mat-card-content>
+              <table mat-table [dataSource]="productRows()" class="full-width-table">
+                <ng-container matColumnDef="productName">
+                  <th mat-header-cell *matHeaderCellDef>Product</th>
+                  <td mat-cell *matCellDef="let r">{{ r.productName ?? '—' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="year">
+                  <th mat-header-cell *matHeaderCellDef>Year</th>
+                  <td mat-cell *matCellDef="let r">{{ r.year ?? '—' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="totalSales">
+                  <th mat-header-cell *matHeaderCellDef>Total Sales</th>
+                  <td mat-cell *matCellDef="let r">{{ r.totalSales | number:'1.2-2' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="currency">
+                  <th mat-header-cell *matHeaderCellDef>Currency</th>
+                  <td mat-cell *matCellDef="let r">{{ r.currency ?? '—' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="quantity">
+                  <th mat-header-cell *matHeaderCellDef>Quantity</th>
+                  <td mat-cell *matCellDef="let r">{{ r.quantity | number:'1.0-2' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="unitOfMeasure">
+                  <th mat-header-cell *matHeaderCellDef>UoM</th>
+                  <td mat-cell *matCellDef="let r">{{ r.unitOfMeasure ?? '—' }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="productColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: productColumns;"></tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell no-data" [attr.colspan]="productColumns.length">No data available.</td>
+                </tr>
+              </table>
+
+              <mat-paginator
+                [length]="productTotal()"
+                [pageIndex]="productPageIndex"
+                [pageSize]="productPageSize"
+                [pageSizeOptions]="[5, 10, 25]"
+                (page)="onProductPageChange($event)"
+                showFirstLastButtons>
+              </mat-paginator>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

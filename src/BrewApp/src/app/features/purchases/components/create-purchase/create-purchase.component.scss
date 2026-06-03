@@ -1,0 +1,21 @@
+.page-container { padding: 24px; }
+.page-title { margin: 0 0 24px; font-size: 1.5rem; }
+.form-card { max-width: 900px; }
+.full-width { width: 100%; margin-bottom: 8px; }
+.section-title { font-size: 1rem; font-weight: 500; margin: 16px 0 8px; color: rgba(0,0,0,.7); }
+.row-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+.row-number { width: 24px; padding-top: 20px; color: rgba(0,0,0,.4); font-size: 13px; }
+.beer-field { flex: 2; min-width: 160px; }
+.qty-field { flex: 1; min-width: 80px; }
+.unit-field { flex: 1; min-width: 70px; }
+.price-field { flex: 1; min-width: 90px; }
+.currency-field { flex: 0 0 90px; }
+.row-actions { margin-top: 12px; }
+.submit-row { margin-top: 24px; }

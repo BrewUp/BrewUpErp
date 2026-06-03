@@ -1,0 +1,105 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <a mat-icon-button routerLink="/sales" title="Back to orders">
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      <h2 class="page-title">Order Details</h2>
+    </div>
+    <div class="header-actions">
+      @if (isOpen) {
+        <button mat-stroked-button color="primary" (click)="openAddBeersDialog()" [disabled]="isClosing()">
+          <mat-icon>add</mat-icon> Add Beers
+        </button>
+        <button mat-raised-button color="warn" (click)="closeOrder()" [disabled]="isClosing()">
+          @if (isClosing()) { <mat-spinner diameter="20" style="display:inline-block;margin-right:8px"></mat-spinner> }
+          Close Order
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container"><mat-spinner diameter="48"></mat-spinner></div>
+  } @else if (order()) {
+    <div class="detail-grid">
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>Order Info</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-row">
+            <span class="label">Order Number</span>
+            <span class="value">{{ order()!.orderNumber }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="info-row">
+            <span class="label">Status</span>
+            <mat-chip-set>
+              <mat-chip [color]="order()!.status === 'Open' ? 'primary' : 'accent'" highlighted>{{ order()!.status }}</mat-chip>
+            </mat-chip-set>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="info-row">
+            <span class="label">Order Date</span>
+            <span class="value">{{ order()!.orderDate | date:'mediumDate' }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="info-row">
+            <span class="label">Delivery Date</span>
+            <span class="value">{{ order()!.deliveryDate ? (order()!.deliveryDate | date:'mediumDate') : '—' }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="info-row">
+            <span class="label">Customer</span>
+            <span class="value">{{ order()!.customerName }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="rows-card">
+        <mat-card-header>
+          <mat-card-title>Order Lines</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <table mat-table [dataSource]="order()!.rows ?? []" class="full-width-table">
+            <ng-container matColumnDef="beerName">
+              <th mat-header-cell *matHeaderCellDef>Beer</th>
+              <td mat-cell *matCellDef="let r">{{ r.beerName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantity">
+              <th mat-header-cell *matHeaderCellDef>Quantity</th>
+              <td mat-cell *matCellDef="let r">{{ r.quantity?.value }} {{ r.quantity?.unitOfMeasure }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>Unit Price</th>
+              <td mat-cell *matCellDef="let r">{{ r.price?.value | number:'1.2-2' }} {{ r.price?.currency }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+              <th mat-header-cell *matHeaderCellDef>Line Total</th>
+              <td mat-cell *matCellDef="let r">{{ rowTotal(r) | number:'1.2-2' }} {{ r.price?.currency }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">No items in this order.</td>
+            </tr>
+          </table>
+
+          @if ((order()!.rows?.length ?? 0) > 0) {
+            <div class="order-total">
+              <strong>Total: {{ orderTotal | number:'1.2-2' }} {{ order()!.rows[0]?.price?.currency }}</strong>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  } @else {
+    <p>Order not found.</p>
+  }
+</div>

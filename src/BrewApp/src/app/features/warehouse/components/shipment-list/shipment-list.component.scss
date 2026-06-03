@@ -1,0 +1,7 @@
+.page-container { padding: 24px; }
+.page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.page-title { margin: 0; font-size: 1.5rem; }
+.loading-container { display: flex; justify-content: center; padding: 48px; }
+.full-width-table { width: 100%; }
+.id-cell { font-family: monospace; font-size: 12px; max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+.no-data { padding: 24px; text-align: center; color: rgba(0, 0, 0, 0.54); }

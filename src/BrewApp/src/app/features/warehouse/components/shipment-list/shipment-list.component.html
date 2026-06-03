@@ -1,0 +1,72 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2 class="page-title">Shipments</h2>
+    <button mat-icon-button (click)="load()" title="Refresh" [disabled]="isLoading()">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-container"><mat-spinner diameter="48"></mat-spinner></div>
+  } @else {
+    <mat-card>
+      <mat-card-content>
+        <table mat-table [dataSource]="shipments()" class="full-width-table">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let s" class="id-cell">{{ s.id }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="salesOrderId">
+            <th mat-header-cell *matHeaderCellDef>Sales Order</th>
+            <td mat-cell *matCellDef="let s">{{ s.salesOrderId ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="customerId">
+            <th mat-header-cell *matHeaderCellDef>Customer ID</th>
+            <td mat-cell *matCellDef="let s">{{ s.customerId ?? '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="deliveryDate">
+            <th mat-header-cell *matHeaderCellDef>Delivery Date</th>
+            <td mat-cell *matCellDef="let s">{{ s.deliveryDate ? (s.deliveryDate | date:'mediumDate') : '—' }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="rows">
+            <th mat-header-cell *matHeaderCellDef>Items</th>
+            <td mat-cell *matCellDef="let s">{{ s.rows?.length ?? 0 }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="shipmentState">
+            <th mat-header-cell *matHeaderCellDef>State</th>
+            <td mat-cell *matCellDef="let s">
+              @if (s.shipmentState) {
+                <mat-chip-set>
+                  <mat-chip color="primary" highlighted>{{ s.shipmentState }}</mat-chip>
+                </mat-chip-set>
+              } @else {
+                —
+              }
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">No shipments found.</td>
+          </tr>
+        </table>
+
+        <mat-paginator
+          [length]="totalRecords()"
+          [pageIndex]="pageIndex"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 25]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

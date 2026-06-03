@@ -1,0 +1,44 @@
+
+services:
+
+  mongodb:
+    image: mongo:7.0
+    container_name: brewup-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: BrewUpDb
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: brewup-rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Management UI → http://localhost:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  eventstore:
+    image: eventstore/eventstore:23.10.0-bookworm-slim
+    container_name: brewup-eventstore
+    ports:
+      - "2113:2113"    # HTTP / gRPC UI → http://localhost:2113
+      - "1113:1113"    # TCP (legacy)
+    environment:
+      EVENTSTORE_CLUSTER_SIZE: 1
+      EVENTSTORE_RUN_PROJECTIONS: All
+      EVENTSTORE_START_STANDARD_PROJECTIONS: true
+      EVENTSTORE_INSECURE: true          # matches esdb://localhost:2113?tls=false
+      EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP: true
+    volumes:
+      - eventstore_data:/var/lib/eventstore
+
+volumes:
+  mongo_data:
+  rabbitmq_data:
+  eventstore_data:

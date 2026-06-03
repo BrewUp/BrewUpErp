@@ -1,0 +1,120 @@
+<div class="chat-page">
+  <mat-sidenav-container class="sidenav-container">
+
+    <!-- Beer Catalog Sidebar -->
+    <mat-sidenav [mode]="sidenavMode()" [opened]="sidenavOpen()" class="beer-sidebar"
+                 (closedStart)="sidenavOpen.set(false)">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">
+          <mat-icon>local_bar</mat-icon>
+          Beer Catalog
+        </h2>
+      </div>
+
+      @if (isLoadingCatalog()) {
+        <div class="catalog-loading">
+          <mat-spinner diameter="32" />
+          <p>Loading catalog...</p>
+        </div>
+      } @else if (beerCatalog().length === 0) {
+        <div class="catalog-empty">
+          <mat-icon>search_off</mat-icon>
+          <p>No beers available</p>
+        </div>
+      } @else {
+        <div class="beer-list">
+          @for (beer of beerCatalog(); track beer.beerId) {
+            <mat-card class="beer-card" [class.inactive]="!beer.isActive">
+              <mat-card-content>
+                <p class="beer-name">{{ beer.name }}</p>
+                <p class="beer-style">{{ beer.style }}</p>
+                @if (beer.alcoholByVolume != null) {
+                  <p class="beer-abv">ABV {{ beer.alcoholByVolume }}%</p>
+                }
+                @if (!beer.isActive) {
+                  <mat-chip class="inactive-chip">Inactive</mat-chip>
+                }
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+      }
+    </mat-sidenav>
+
+    <!-- Chat Panel -->
+    <mat-sidenav-content class="chat-content">
+      <div class="chat-header">
+        <div class="chat-header-row">
+          @if (isMobile()) {
+            <button mat-icon-button (click)="sidenavOpen.set(true)" matTooltip="Show beer catalog">
+              <mat-icon>menu</mat-icon>
+            </button>
+          }
+          <div>
+            <h1>BrewUp AI Assistant</h1>
+            <p class="chat-subtitle">Ask me anything about beers, sales orders, or inventory.</p>
+          </div>
+        </div>
+        <mat-divider />
+      </div>
+
+      <!-- Message History -->
+      <div class="message-list" #messageList>
+        @if (chatHistory().length === 0) {
+          <div class="empty-chat">
+            <mat-icon>chat_bubble_outline</mat-icon>
+            <p>Start a conversation! Ask about our beer catalog or sales orders.</p>
+          </div>
+        }
+
+        @for (msg of chatHistory(); track $index) {
+          <div class="message-row" [class.user-row]="msg.role === 'user'" [class.assistant-row]="msg.role === 'assistant'">
+            <div class="message-bubble" [class.user-bubble]="msg.role === 'user'" [class.assistant-bubble]="msg.role === 'assistant'">
+              <p>{{ msg.content }}</p>
+            </div>
+          </div>
+        }
+
+        @if (isProcessing()) {
+          <div class="message-row assistant-row">
+            <div class="message-bubble assistant-bubble thinking">
+              <mat-spinner diameter="18" />
+              <span>Thinking...</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Input Row -->
+      <div class="input-row">
+        <mat-form-field appearance="outline" class="message-field">
+          <mat-label>Type your message</mat-label>
+          <textarea
+            matInput
+            rows="2"
+            [ngModel]="userInput()"
+            (ngModelChange)="userInput.set($event)"
+            (keydown)="onKeydown($event)"
+            placeholder="Ask about beers, orders, inventory..."
+            [disabled]="isProcessing()"
+          ></textarea>
+          @if (userInput().trim().length === 0) {
+            <mat-hint>Press Enter to send · Shift+Enter for new line</mat-hint>
+          }
+        </mat-form-field>
+
+        <button
+          mat-fab
+          color="primary"
+          class="send-button"
+          (click)="sendMessage()"
+          [disabled]="!canSend()"
+          aria-label="Send message"
+        >
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </mat-sidenav-content>
+
+  </mat-sidenav-container>
+</div>
