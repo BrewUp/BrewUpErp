@@ -13,11 +13,7 @@ internal sealed class McpToolClient(
     ILogger<McpToolClient> logger) 
     : IMcpToolClient
 {
-    private readonly Dictionary<string, string> _servers =
-        configuration
-            .GetSection("McpServers")
-            .Get<Dictionary<string, string>>()
-        ?? [];
+    private readonly Dictionary<string, string> _servers = LoadServers(configuration);
 
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     
@@ -123,5 +119,33 @@ internal sealed class McpToolClient(
         return dataLine is null 
             ? raw 
             : dataLine["data:".Length..].Trim();
+    }
+
+    private static Dictionary<string, string> LoadServers(IConfiguration configuration)
+    {
+        var servers = configuration
+            .GetSection("McpServers")
+            .Get<Dictionary<string, string>>()
+            ?? [];
+
+        var brewUpServers = configuration
+            .GetSection("BrewUp:McpServers")
+            .Get<Dictionary<string, string>>()
+            ?? [];
+
+        var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (key, value) in servers)
+            result[key] = value;
+
+        foreach (var (key, value) in brewUpServers)
+        {
+            if (key.EndsWith("Url", StringComparison.OrdinalIgnoreCase))
+                result[key[..^3]] = value;
+            else
+                result[key] = value;
+        }
+
+        return result;
     }
 }

@@ -2,8 +2,10 @@
 using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure.Identity;
+using BrewUp.Mother.Facade.Agents;
 using BrewUp.Mother.Facade.Chat;
 using BrewUp.Mother.Facade.Mcp;
+using BrewUp.Shared;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,7 @@ public static class BrewUpChatHelper
     {
         services.AddLogging();
         services.AddHttpClient();
+        services.AddShared();
 
         // Dedicated resilient HttpClient for MCP transports:
         //  - long enough timeout to cover multi-round tool calling
@@ -49,6 +52,13 @@ public static class BrewUpChatHelper
         
         // MCP clients + tool catalog are kept alive for the whole app lifetime.
         services.AddSingleton<IMcpToolsProvider, McpToolsProvider>();
+        services.AddScoped<MasterDataAgent>();
+        services.AddScoped<SalesAgent>();
+        services.AddScoped<WarehouseAgent>();
+        services.AddScoped<IAgent>(sp => sp.GetRequiredService<MasterDataAgent>());
+        services.AddScoped<IAgent>(sp => sp.GetRequiredService<SalesAgent>());
+        services.AddScoped<IAgent>(sp => sp.GetRequiredService<WarehouseAgent>());
+        services.AddScoped<MotherCoordinator>();
         
         services.AddSingleton<IChatClient>(sp =>
         {
