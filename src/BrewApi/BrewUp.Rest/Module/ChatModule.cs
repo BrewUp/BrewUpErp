@@ -1,5 +1,5 @@
-﻿using BrewUp.Chat.Facade;
-using BrewUp.Chat.Facade.Endpoints;
+﻿using BrewUp.Mother.Facade;
+using BrewUp.Mother.Facade.Endpoints;
 
 namespace BrewUp.Rest.Module;
 
