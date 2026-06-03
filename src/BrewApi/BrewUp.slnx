@@ -5,8 +5,8 @@
   </Folder>
   <Folder Name="/50 Modules/" />
   <Folder Name="/50 Modules/Chat/">
-    <Project Path="Chat/BrewUp.Chat.Facade/BrewUp.Chat.Facade.csproj" />
-    <Project Path="Chat/BrewUp.Chat.SharedKernel/BrewUp.Chat.SharedKernel.csproj" />
+    <Project Path="Chat/BrewUp.Mother.Facade/BrewUp.Mother.Facade.csproj" />
+    <Project Path="Chat/BrewUp.Mother.SharedKernel/BrewUp.Mother.SharedKernel.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Dashboards/">
     <Project Path="Dashboards/BrewUp.Dashboards.Domain/BrewUp.Dashboards.Domain.csproj" />
@@ -26,9 +26,6 @@
     <Project Path="MasterData/BrewUp.MasterData.ReadModel/BrewUp.MasterData.ReadModel.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.SharedKernel/BrewUp.MasterData.SharedKernel.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Tests/BrewUp.MasterData.Tests.csproj" />
-  </Folder>
-  <Folder Name="/50 Modules/Mother/">
-    <Project Path="Mother/BrewUp.Mother/BrewUp.Mother.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Purchases/">
     <Project Path="Purchases/BrewUp.Purchases.Domain/BrewUp.Purchases.Domain.csproj" />
