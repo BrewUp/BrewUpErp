@@ -35,7 +35,6 @@
       <ProjectReference Include="..\BrewUp.Rest\BrewUp.Rest.csproj" />
       <ProjectReference Include="..\BrewUp.Shared.Tests\BrewUp.Shared.Tests.csproj" />
       <ProjectReference Include="..\BrewUp.Shared\BrewUp.Shared.csproj" />
-      <ProjectReference Include="..\Chat\BrewUp.Mother.Facade\BrewUp.Mother.Facade.csproj" />
     </ItemGroup>
 
     <ItemGroup>

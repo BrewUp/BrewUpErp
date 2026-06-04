@@ -4,10 +4,6 @@
     <Project Path="BrewUp.Shared/BrewUp.Shared.csproj" />
   </Folder>
   <Folder Name="/50 Modules/" />
-  <Folder Name="/50 Modules/Chat/">
-    <Project Path="Chat/BrewUp.Mother.Facade/BrewUp.Mother.Facade.csproj" />
-    <Project Path="Chat/BrewUp.Mother.SharedKernel/BrewUp.Mother.SharedKernel.csproj" />
-  </Folder>
   <Folder Name="/50 Modules/Dashboards/">
     <Project Path="Dashboards/BrewUp.Dashboards.Domain/BrewUp.Dashboards.Domain.csproj" />
     <Project Path="Dashboards/BrewUp.Dashboards.Entities/BrewUp.Dashboards.Entities.csproj" />
@@ -22,7 +18,6 @@
     <Project Path="MasterData/BrewUp.MasterData.Entities/BrewUp.MasterData.Entities.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Facade/BrewUp.MasterData.Facade.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Infrastructure/BrewUp.MasterData.Infrastructure.csproj" />
-    <Project Path="MasterData/BrewUp.MasterData.McpServer/BrewUp.MasterData.McpServer.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.ReadModel/BrewUp.MasterData.ReadModel.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.SharedKernel/BrewUp.MasterData.SharedKernel.csproj" />
     <Project Path="MasterData/BrewUp.MasterData.Tests/BrewUp.MasterData.Tests.csproj" />
@@ -47,7 +42,6 @@
     <Project Path="Sales/BrewUp.Sales.Domain/BrewUp.Sales.Domain.csproj" />
     <Project Path="Sales/BrewUp.Sales.Facade/BrewUp.Sales.Facade.csproj" />
     <Project Path="Sales/BrewUp.Sales.Infrastructure/BrewUp.Sales.Infrastructure.csproj" />
-    <Project Path="Sales/BrewUp.Sales.McpServer/BrewUp.Sales.McpServer.csproj" />
     <Project Path="Sales/BrewUp.Sales.ReadModel/BrewUp.Sales.ReadModel.csproj" />
     <Project Path="Sales/BrewUp.Sales.SharedKernel/BrewUp.Sales.SharedKernel.csproj" />
     <Project Path="Sales/BrewUp.Sales.Tests/BrewUp.Sales.Tests.csproj" />
@@ -57,7 +51,6 @@
     <Project Path="Warehouse/BrewUp.Warehouse.Domain/BrewUp.Warehouse.Domain.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.Facade/BrewUp.Warehouse.Facade.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.Infrastructure/BrewUp.Warehouse.Infrastructure.csproj" />
-    <Project Path="Warehouse/BrewUp.Warehouse.McpServer/BrewUp.Warehouse.McpServer.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.ReadModel/BrewUp.Warehouse.ReadModel.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.SharedKernel/BrewUp.Warehouse.SharedKernel.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.Tests/BrewUp.Warehouse.Tests.csproj" />

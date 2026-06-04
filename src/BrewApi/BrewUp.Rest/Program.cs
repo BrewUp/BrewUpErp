@@ -14,8 +14,7 @@ builder.RegisterModules([
     new SalesModule(),
     new WarehouseModule(),
     new DashboardsModule(),
-    new SagasModule(),
-    new ChatModule()
+    new SagasModule()
 ]);
 
 var app = builder.Build();
