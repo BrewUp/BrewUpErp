@@ -10,7 +10,7 @@ internal sealed class McpSalesFacade(
     ISalesOrderService salesOrderService) : IMcpSalesFacade
 {
     private const int DefaultPageNumber = 1;
-    private const int DefaultPageSize = 250;
+    private const int DefaultPageSize = 20;
 
     private static readonly HashSet<string> ClosedStatuses =
     [
