@@ -1,0 +1,6 @@
+@BrewUp.Knowledge.McpServer_HostAddress = http://localhost:5236
+
+GET {{BrewUp.Knowledge.McpServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

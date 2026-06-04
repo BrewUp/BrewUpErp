@@ -1,0 +1,8 @@
+﻿{
+  "servers": {
+    "brewup": {
+      "type": "http",
+      "url": "http://localhost:5236/mcp"
+    }
+  }
+}
