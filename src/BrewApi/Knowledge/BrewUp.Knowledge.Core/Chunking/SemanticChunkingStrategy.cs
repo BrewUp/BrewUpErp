@@ -74,6 +74,7 @@ public sealed class SemanticChunkingStrategy : IChunkingStrategy
                 {
                     Scope = document.Scope,
                     Title = document.Title,
+                    Tags = document.Tags,
                     TokenCount = EstimateTokenCount(content)
                 }
             })

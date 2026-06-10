@@ -6,5 +6,6 @@ public sealed class ChunkMetadata
 {
     public DocumentScope Scope { get; init; } = DocumentScope.General;
     public string Title { get; init; } = string.Empty;
+    public IReadOnlyCollection<string> Tags { get; init; } = [];
     public int TokenCount { get; init; }
 }

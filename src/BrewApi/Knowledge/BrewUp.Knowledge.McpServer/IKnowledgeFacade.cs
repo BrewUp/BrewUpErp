@@ -1,4 +1,7 @@
-﻿namespace BrewUp.Knowledge.McpServer;
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace BrewUp.Knowledge.McpServer;
 
 public interface IKnowledgeFacade
 {
