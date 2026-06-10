@@ -20,7 +20,7 @@ public sealed class BrewUpChatService(
             Never answer from memory or assumptions.
 
             If no specific tool is suitable, try to coordinate more tools to response.
-            If you don't have success say that the ERP does not expose that information yet.
+            If you don't have success say that the BrewUp ERP does not expose that information yet.
 
             Keep the answer concise and business-oriented.
 

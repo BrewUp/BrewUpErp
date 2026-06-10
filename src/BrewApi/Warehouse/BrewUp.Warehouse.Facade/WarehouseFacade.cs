@@ -5,7 +5,6 @@ using BrewUp.Shared.ReadModel;
 using BrewUp.Warehouse.ReadModel.Services;
 using BrewUp.Warehouse.SharedKernel.Messages.Commands;
 using Lena.Core;
-using Muflone.Messages.Commands;
 using Muflone.Persistence;
 
 namespace BrewUp.Warehouse.Facade;
@@ -32,7 +31,7 @@ internal sealed class WarehouseFacade(IShipmentService shipmentService,
 
         if (chkAvailability.IsError)
         {
-            CreateAvailability createCommand = new(new AvailabilityId(json.Id), new WarehouseId(json.WarehouseId), new BeerId(json.BeerId), 
+            CreateAvailability createCommand = new(new AvailabilityId(Guid.CreateVersion7().ToString()), new WarehouseId(json.WarehouseId), new BeerId(json.BeerId), 
                 new Quantity(json.Quantity, json.UnitOfMeasure));
             await serviceBus.SendAsync(createCommand, cancellationToken);
             

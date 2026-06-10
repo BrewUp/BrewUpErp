@@ -56,12 +56,11 @@ public static class WarehouseEndpoints
         cancellationToken.ThrowIfCancellationRequested();
 
         var result = await warehouseFacade.AddItemStockAsync(body, cancellationToken);
+        
+        result.TryGetValue(out var availabilityId);
 
         return result.Match<IResult>(
-            success =>
-            {
-                return Results.Created($"/v1/warehouse", success);
-            },
+            success => Results.Created($"/v1/warehouse/availability/{availabilityId}", (object?) success),
             Results.BadRequest);
     }
 }
