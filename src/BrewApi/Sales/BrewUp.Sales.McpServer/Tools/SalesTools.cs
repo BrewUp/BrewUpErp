@@ -1,4 +1,8 @@
+using System;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using ModelContextProtocol.Server;
 
 namespace BrewUp.Sales.McpServer.Tools;
@@ -7,6 +11,7 @@ namespace BrewUp.Sales.McpServer.Tools;
 public sealed class SalesTools(
     IMcpSalesFacade mcpSalesFacade)
 {
+    [Authorize]
     [McpServerTool(Name = "get_open_sales_orders")]
     [Description("Returns the currently open sales orders.")]
     public async Task<object> GetOpenSalesOrders(CancellationToken cancellationToken)
