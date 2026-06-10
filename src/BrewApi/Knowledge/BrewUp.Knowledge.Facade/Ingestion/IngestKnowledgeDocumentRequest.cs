@@ -1,11 +1,13 @@
-﻿namespace BrewUp.Knowledge.Core.Documents;
+using BrewUp.Knowledge.Core.Documents;
 
-public class KnowledgeDocument
+namespace BrewUp.Knowledge.Facade.Ingestion;
+
+public sealed class IngestKnowledgeDocumentRequest
 {
-    public Guid Id { get; init; }
     public string Title { get; init; } = string.Empty;
     public string Content { get; init; } = string.Empty;
     public DocumentSource Source { get; init; } = DocumentSource.PlainText;
     public DocumentScope Scope { get; init; } = DocumentScope.General;
-    public DateTime ImportedAt { get; init; }
 }
+
+public sealed record IngestKnowledgeDocumentResult(Guid DocumentId, int ChunkCount);

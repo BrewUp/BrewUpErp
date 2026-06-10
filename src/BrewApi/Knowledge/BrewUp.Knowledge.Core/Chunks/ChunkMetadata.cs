@@ -4,7 +4,7 @@ namespace BrewUp.Knowledge.Core.Chunks;
 
 public sealed class ChunkMetadata
 {
-    public DocumentScope Scope { get; init; }
+    public DocumentScope Scope { get; init; } = DocumentScope.General;
     public string Title { get; init; } = string.Empty;
     public int TokenCount { get; init; }
 }

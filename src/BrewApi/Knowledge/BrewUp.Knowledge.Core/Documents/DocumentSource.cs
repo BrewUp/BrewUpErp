@@ -8,8 +8,9 @@ public sealed class DocumentSource(int id, string name) : Enumeration(id, name)
     public static DocumentSource Markdown = new (1, nameof(Markdown).ToLowerInvariant());
     public static DocumentSource Word = new (2, nameof(Word).ToLowerInvariant());
     public static DocumentSource WebPage = new (3, nameof(WebPage).ToLowerInvariant());
+    public static DocumentSource PlainText = new (4, nameof(PlainText).ToLowerInvariant());
     
-    public static IEnumerable<DocumentSource> List() => [Pdf, Markdown, Word, WebPage];
+    public static IEnumerable<DocumentSource> List() => [Pdf, Markdown, Word, WebPage, PlainText];
     
     public static DocumentSource FromName(string name)
     {

@@ -23,6 +23,7 @@
     <Project Path="Knowledge/BrewUp.Knowledge.Infrastructure/BrewUp.Knowledge.Infrastructure.csproj" />
     <Project Path="Knowledge/BrewUp.Knowledge.McpServer/BrewUp.Knowledge.McpServer.csproj" />
     <Project Path="Knowledge/BrewUp.Knowledge.SharedKernel/BrewUp.Knowledge.SharedKernel.csproj" />
+    <Project Path="Knowledge/BrewUp.Knowledge.Tests/BrewUp.Knowledge.Tests.csproj" />
   </Folder>
   <Folder Name="/50 Modules/MasterData/">
     <Project Path="MasterData/BrewUp.MasterData.Domain/BrewUp.MasterData.Domain.csproj" />
