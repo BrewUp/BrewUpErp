@@ -1,4 +1,9 @@
-﻿using BrewUp.Sales.ReadModel.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using BrewUp.Sales.ReadModel.Services;
 using BrewUp.Sales.SharedKernel.CustomTypes;
 using BrewUp.Shared.DomainIds;
 using BrewUp.Shared.ExternalContracts.Sales;
