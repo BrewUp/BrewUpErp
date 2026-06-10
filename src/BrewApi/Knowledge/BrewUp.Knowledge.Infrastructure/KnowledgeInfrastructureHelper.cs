@@ -1,5 +1,6 @@
 using BrewUp.Knowledge.Core.Embeddings;
-using BrewUp.Knowledge.Core.Search;
+using BrewUp.Knowledge.Facade;
+using BrewUp.Knowledge.Facade.Ingestion;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,16 +10,36 @@ public static class KnowledgeInfrastructureHelper
 {
     public static IServiceCollection AddKnowledgeInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration? configuration = null)
     {
-        var options = configuration
-            .GetSection(AzureOpenAiEmbeddingOptions.SectionName)
-            .Get<AzureOpenAiEmbeddingOptions>()
-            ?? new AzureOpenAiEmbeddingOptions();
+        services.AddKnowledgeFacade();
 
-        services.AddSingleton(options);
-        services.AddSingleton<IEmbeddingGenerator, AzureOpenAiEmbeddingGenerator>();
-        services.AddSingleton<IKnowledgeIndex, InMemoryKnowledgeIndex>();
+        services.AddSingleton<IKnowledgeTextExtractor, PlainTextExtractor>();
+        services.AddSingleton<IKnowledgeTextExtractor, MarkdownTextExtractor>();
+
+        services.AddSingleton<InMemoryKnowledgeDocumentRepository>();
+        services.AddSingleton<IKnowledgeDocumentRepository>(
+            provider => provider.GetRequiredService<InMemoryKnowledgeDocumentRepository>());
+
+        services.AddSingleton<InMemoryKnowledgeVectorStore>();
+        services.AddSingleton<IKnowledgeVectorStore>(
+            provider => provider.GetRequiredService<InMemoryKnowledgeVectorStore>());
+
+        var azureOptions = configuration?
+            .GetSection(AzureOpenAiEmbeddingOptions.SectionName)
+            .Get<AzureOpenAiEmbeddingOptions>();
+
+        if (azureOptions is not null &&
+            !string.IsNullOrWhiteSpace(azureOptions.Endpoint) &&
+            !string.IsNullOrWhiteSpace(azureOptions.DeploymentName))
+        {
+            services.AddSingleton(azureOptions);
+            services.AddSingleton<IEmbeddingGenerator, AzureOpenAiEmbeddingGenerator>();
+        }
+        else
+        {
+            services.AddSingleton<IEmbeddingGenerator, FakeEmbeddingGenerator>();
+        }
 
         return services;
     }
