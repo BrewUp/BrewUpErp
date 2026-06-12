@@ -1,5 +1,6 @@
 using BrewUp.Knowledge.Infrastructure;
 using BrewUp.Knowledge.Infrastructure.Ingestion;
+using BrewUp.Knowledge.Infrastructure.Repositories;
 using BrewUp.Knowledge.ReadModel.Queries;
 using BrewUp.Knowledge.ReadModel.QueryHandlers;
 using BrewUp.Knowledge.SharedKernel.Chunks;

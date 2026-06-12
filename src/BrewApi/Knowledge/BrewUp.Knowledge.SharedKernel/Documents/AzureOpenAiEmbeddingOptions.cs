@@ -1,4 +1,4 @@
-namespace BrewUp.Knowledge.Infrastructure;
+namespace BrewUp.Knowledge.SharedKernel.Documents;
 
 public sealed class AzureOpenAiEmbeddingOptions
 {

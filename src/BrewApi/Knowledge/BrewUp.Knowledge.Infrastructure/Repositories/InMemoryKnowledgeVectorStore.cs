@@ -3,7 +3,7 @@ using BrewUp.Knowledge.SharedKernel.Chunks;
 using BrewUp.Knowledge.SharedKernel.Embeddings;
 using BrewUp.Knowledge.SharedKernel.Enums;
 
-namespace BrewUp.Knowledge.Infrastructure;
+namespace BrewUp.Knowledge.Infrastructure.Repositories;
 
 public sealed class InMemoryKnowledgeVectorStore : IKnowledgeVectorStore
 {

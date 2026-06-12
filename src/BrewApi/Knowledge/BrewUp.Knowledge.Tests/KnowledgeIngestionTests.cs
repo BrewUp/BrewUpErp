@@ -4,6 +4,7 @@ using BrewUp.Knowledge.Core.CommandHandlers;
 using BrewUp.Knowledge.Core.Documents;
 using BrewUp.Knowledge.Facade.Ingestion;
 using BrewUp.Knowledge.Infrastructure;
+using BrewUp.Knowledge.Infrastructure.Repositories;
 using BrewUp.Knowledge.SharedKernel.Enums;
 using BrewUp.Knowledge.SharedKernel.Exceptions;
 using BrewUp.Knowledge.SharedKernel.Messages.Commands;
