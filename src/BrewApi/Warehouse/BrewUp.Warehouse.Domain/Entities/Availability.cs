@@ -1,6 +1,5 @@
 ﻿using CustomTypes = BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.DomainIds;
-using BrewUp.Warehouse.Entities.Dtos;
 using BrewUp.Warehouse.SharedKernel.Messages.Events;
 using Muflone.Core;
 
