@@ -1,4 +1,5 @@
 using System.Text;
+using BrewUp.Knowledge.Core;
 using BrewUp.Knowledge.Core.CommandHandlers;
 using BrewUp.Knowledge.Core.Documents;
 using BrewUp.Knowledge.Facade.Ingestion;
@@ -19,6 +20,7 @@ public sealed class KnowledgeIngestionTests
         using var scope = provider.CreateScope();
         var handler = scope.ServiceProvider.GetRequiredService<IngestKnowledgeDocumentHandler>();
         var documents = scope.ServiceProvider.GetRequiredService<InMemoryKnowledgeDocumentRepository>();
+        var chunks = scope.ServiceProvider.GetRequiredService<InMemoryKnowledgeChunkRepository>();
         var vectors = scope.ServiceProvider.GetRequiredService<InMemoryKnowledgeVectorStore>();
         await using var content = StreamOf("Malt and hops are ingredients used to brew beer.");
 
@@ -32,6 +34,7 @@ public sealed class KnowledgeIngestionTests
 
         Assert.Equal(1, result.ChunkCount);
         Assert.Equal(1, vectors.Count);
+        Assert.Single(await chunks.GetByDocumentIdAsync(result.DocumentId, CancellationToken.None));
         Assert.True(documents.TryGet(result.DocumentId, out var document));
         Assert.Equal("brewing", document!.Title);
         Assert.Equal(DocumentSource.PlainText, document.Source);
@@ -89,6 +92,7 @@ public sealed class KnowledgeIngestionTests
         using var scope = provider.CreateScope();
         var handler = scope.ServiceProvider.GetRequiredService<IngestKnowledgeDocumentHandler>();
         var vectors = scope.ServiceProvider.GetRequiredService<InMemoryKnowledgeVectorStore>();
+        var chunks = scope.ServiceProvider.GetRequiredService<InMemoryKnowledgeChunkRepository>();
         var paragraphs = Enumerable.Repeat(
             "This paragraph documents brewing, fermentation, packaging, and warehouse procedures.",
             30);
@@ -103,11 +107,15 @@ public sealed class KnowledgeIngestionTests
 
         Assert.True(result.ChunkCount > 1);
         Assert.Equal(result.ChunkCount, vectors.Count);
+        Assert.Equal(
+            result.ChunkCount,
+            (await chunks.GetByDocumentIdAsync(result.DocumentId, CancellationToken.None)).Count);
     }
 
     private static ServiceProvider CreateProvider()
     {
         var services = new ServiceCollection();
+        services.AddCore();
         services.AddInfrastructure();
 
         return services.BuildServiceProvider(new ServiceProviderOptions

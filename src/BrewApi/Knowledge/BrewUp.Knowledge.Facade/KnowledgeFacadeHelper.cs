@@ -3,6 +3,8 @@ using BrewUp.Knowledge.Core;
 using BrewUp.Knowledge.Core.Chunking;
 using BrewUp.Knowledge.Core.CommandHandlers;
 using BrewUp.Knowledge.Infrastructure;
+using BrewUp.Knowledge.ReadModel;
+using BrewUp.Knowledge.ReadModel.QueryHandlers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -28,11 +30,11 @@ public static class KnowledgeFacadeHelper
             };
         });
         
-        services.AddScoped<IngestKnowledgeDocumentHandler>();
         services.AddScoped<IKnowledgeFacade, KnowledgeFacade>();
         
         services.AddCore();
         services.AddInfrastructure();
+        services.AddKnowledgeReadModel();
 
         return services;
     }

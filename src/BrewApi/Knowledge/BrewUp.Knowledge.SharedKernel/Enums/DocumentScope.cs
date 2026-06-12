@@ -8,8 +8,10 @@ public sealed class DocumentScope(int id, string name) : Enumeration(id, name)
     public static readonly DocumentScope Sales = new (1, nameof(Sales).ToLowerInvariant());
     public static readonly DocumentScope Warehouse = new (2, nameof(Warehouse).ToLowerInvariant());
     public static readonly DocumentScope MasterData = new (3, nameof(MasterData).ToLowerInvariant());
+    public static readonly DocumentScope Production = new (4, nameof(Production).ToLowerInvariant());
 
-    private static IEnumerable<DocumentScope> List() => [General, Sales, Warehouse, MasterData];
+    private static IEnumerable<DocumentScope> List() =>
+        [General, Sales, Warehouse, MasterData, Production];
     
     public static DocumentScope FromName(string name)
     {

@@ -18,6 +18,12 @@ public static class KnowledgeInfrastructureHelper
         services.AddSingleton<IKnowledgeDocumentRepository>(
             provider => provider.GetRequiredService<InMemoryKnowledgeDocumentRepository>());
 
+        services.AddSingleton<InMemoryKnowledgeChunkRepository>();
+        services.AddSingleton<IKnowledgeChunkRepository>(
+            provider => provider.GetRequiredService<InMemoryKnowledgeChunkRepository>());
+        services.AddSingleton<IKnowledgeChunkWriter>(
+            provider => provider.GetRequiredService<InMemoryKnowledgeChunkRepository>());
+
         services.AddSingleton<InMemoryKnowledgeVectorStore>();
         services.AddSingleton<IKnowledgeVectorStore>(
             provider => provider.GetRequiredService<InMemoryKnowledgeVectorStore>());
