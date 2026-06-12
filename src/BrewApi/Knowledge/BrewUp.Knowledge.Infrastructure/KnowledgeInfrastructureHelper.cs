@@ -19,19 +19,19 @@ public static class KnowledgeInfrastructureHelper
 
         if (configuration is null)
         {
-            services.AddSingleton<InMemoryKnowledgeDocumentRepository>();
+            services.AddSingleton<SqlServerKnowledgeDocumentRepository>();
             services.AddSingleton<IKnowledgeDocumentRepository>(
-                provider => provider.GetRequiredService<InMemoryKnowledgeDocumentRepository>());
+                provider => provider.GetRequiredService<SqlServerKnowledgeDocumentRepository>());
 
             services.AddSingleton<SqlServerKnowledgeChunkRepository>();
-            services.AddSingleton<SqlServerKnowledgeChunkRepository>(
+            services.AddSingleton<IKnowledgeChunkRepository>(
                 provider => provider.GetRequiredService<SqlServerKnowledgeChunkRepository>());
             services.AddSingleton<IKnowledgeChunkWriter>(
                 provider => provider.GetRequiredService<SqlServerKnowledgeChunkRepository>());
 
-            services.AddSingleton<InMemoryKnowledgeVectorStore>();
+            services.AddSingleton<SqlServerKnowledgeVectorStore>();
             services.AddSingleton<IKnowledgeVectorStore>(
-                provider => provider.GetRequiredService<InMemoryKnowledgeVectorStore>());
+                provider => provider.GetRequiredService<SqlServerKnowledgeVectorStore>());
         }
         else
         {

@@ -17,12 +17,15 @@ public sealed class SqlServerKnowledgeDocumentRepository(
         ArgumentNullException.ThrowIfNull(document);
 
         await using var connection = await OpenConnectionAsync(cancellationToken);
-        await SqlServerKnowledgeSchema.EnsureCreatedAsync(connection, cancellationToken);
+        await SqlServerKnowledgeSchema.EnsureCreatedAsync(
+            connection,
+            options.Dimensions,
+            cancellationToken);
 
         const string commandText = """
             UPDATE [dbo].[KnowledgeDocuments]
             SET Title = @title,
-                Content = @content,
+                DocumentsContent = @content,
                 Source = @source,
                 Scope = @scope,
                 Tags = @tags,
@@ -35,7 +38,7 @@ public sealed class SqlServerKnowledgeDocumentRepository(
                 (
                     Id,
                     Title,
-                    Content,
+                    DocumentsContent,
                     Source,
                     Scope,
                     Tags,

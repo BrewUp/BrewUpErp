@@ -13,8 +13,6 @@ public sealed class SqlServerKnowledgeVectorStore(
     SqlServerKnowledgeVectorStoreOptions options) : IKnowledgeVectorStore
 {
     private const string TableName = "[dbo].[KnowledgeVectors]";
-    private readonly SemaphoreSlim _schemaLock = new(1, 1);
-    private bool _schemaInitialized;
 
     public async Task StoreAsync(
         KnowledgeChunk chunk,
@@ -26,7 +24,10 @@ public sealed class SqlServerKnowledgeVectorStore(
         ValidateDimensions(embedding);
 
         await using var connection = await OpenConnectionAsync(cancellationToken);
-        await EnsureSchemaAsync(connection, cancellationToken);
+        await SqlServerKnowledgeSchema.EnsureCreatedAsync(
+            connection,
+            options.Dimensions,
+            cancellationToken);
 
         var commandText = $"""
             UPDATE {TableName}
@@ -35,7 +36,7 @@ public sealed class SqlServerKnowledgeVectorStore(
                 Title = @title,
                 Scope = @scope,
                 Tags = @tags,
-                Content = @content,
+                VectorsContent = @content,
                 TokenCount = @tokenCount,
                 MaxCharacters = @maxCharacters,
                 OverlapCharacters = @overlapCharacters,
@@ -52,7 +53,7 @@ public sealed class SqlServerKnowledgeVectorStore(
                     Title,
                     Scope,
                     Tags,
-                    Content,
+                    VectorsContent,
                     TokenCount,
                     MaxCharacters,
                     OverlapCharacters,
@@ -94,7 +95,10 @@ public sealed class SqlServerKnowledgeVectorStore(
         ValidateDimensions(queryEmbedding);
 
         await using var connection = await OpenConnectionAsync(cancellationToken);
-        await EnsureSchemaAsync(connection, cancellationToken);
+        await SqlServerKnowledgeSchema.EnsureCreatedAsync(
+            connection,
+            options.Dimensions,
+            cancellationToken);
 
         var commandText = $"""
             SELECT TOP (@topK)
@@ -104,7 +108,7 @@ public sealed class SqlServerKnowledgeVectorStore(
                 Title,
                 Scope,
                 Tags,
-                Content,
+                VectorsContent,
                 TokenCount,
                 MaxCharacters,
                 OverlapCharacters,
@@ -161,56 +165,6 @@ public sealed class SqlServerKnowledgeVectorStore(
         var connection = new SqlConnection(options.ConnectionString);
         await connection.OpenAsync(cancellationToken);
         return connection;
-    }
-
-    private async Task EnsureSchemaAsync(
-        SqlConnection connection,
-        CancellationToken cancellationToken)
-    {
-        if (_schemaInitialized)
-            return;
-
-        await _schemaLock.WaitAsync(cancellationToken);
-        try
-        {
-            if (_schemaInitialized)
-                return;
-
-            var commandText = $"""
-                IF OBJECT_ID(N'dbo.KnowledgeVectors', N'U') IS NULL
-                BEGIN
-                    CREATE TABLE {TableName}
-                    (
-                        ChunkId UNIQUEIDENTIFIER NOT NULL
-                            CONSTRAINT PK_KnowledgeVectors PRIMARY KEY,
-                        DocumentId UNIQUEIDENTIFIER NOT NULL,
-                        Sequence INT NOT NULL,
-                        Title NVARCHAR(500) NOT NULL,
-                        Scope NVARCHAR(50) NOT NULL,
-                        Tags NVARCHAR(MAX) NOT NULL,
-                        Content NVARCHAR(MAX) NOT NULL,
-                        TokenCount INT NOT NULL,
-                        MaxCharacters INT NOT NULL,
-                        OverlapCharacters INT NOT NULL,
-                        Embedding VECTOR({options.Dimensions}) NOT NULL
-                    );
-
-                    CREATE INDEX IX_KnowledgeVectors_DocumentId
-                        ON {TableName} (DocumentId, Sequence);
-
-                    CREATE INDEX IX_KnowledgeVectors_Scope
-                        ON {TableName} (Scope);
-                END;
-                """;
-
-            await using var command = new SqlCommand(commandText, connection);
-            await command.ExecuteNonQueryAsync(cancellationToken);
-            _schemaInitialized = true;
-        }
-        finally
-        {
-            _schemaLock.Release();
-        }
     }
 
     private void ValidateDimensions(EmbeddingVector embedding)
