@@ -1,7 +1,7 @@
-using BrewUp.Knowledge.Core.Chunks;
-using BrewUp.Knowledge.Core.Embeddings;
+using BrewUp.Knowledge.SharedKernel.Chunks;
+using BrewUp.Knowledge.SharedKernel.Embeddings;
 
-namespace BrewUp.Knowledge.Facade.Ingestion;
+namespace BrewUp.Knowledge.Infrastructure.Ingestion;
 
 public interface IKnowledgeVectorStore
 {

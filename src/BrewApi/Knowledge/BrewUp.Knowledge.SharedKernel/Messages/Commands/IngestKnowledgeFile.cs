@@ -1,10 +1,10 @@
 using BrewUp.Knowledge.Core.Documents;
+using BrewUp.Knowledge.SharedKernel.Enums;
 
 namespace BrewUp.Knowledge.Facade.Ingestion;
 
-public sealed record IngestKnowledgeDocumentCommand(
-    string Title,
-    string Content,
+public sealed record IngestKnowledgeFile(
+    string FileName,
+    Stream Content,
     DocumentScope Scope,
-    DocumentSource Source,
     IReadOnlyCollection<string>? Tags = null);

@@ -1,4 +1,4 @@
-﻿namespace BrewUp.Knowledge.Core.Embeddings;
+﻿namespace BrewUp.Knowledge.SharedKernel.Embeddings;
 
 public interface IEmbeddingGenerator
 {

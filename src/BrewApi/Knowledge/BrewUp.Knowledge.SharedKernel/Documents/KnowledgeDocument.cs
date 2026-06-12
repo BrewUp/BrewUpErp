@@ -1,4 +1,7 @@
-﻿namespace BrewUp.Knowledge.Core.Documents;
+﻿using BrewUp.Knowledge.Core.Documents;
+using BrewUp.Knowledge.SharedKernel.Enums;
+
+namespace BrewUp.Knowledge.SharedKernel.Documents;
 
 public class KnowledgeDocument
 {

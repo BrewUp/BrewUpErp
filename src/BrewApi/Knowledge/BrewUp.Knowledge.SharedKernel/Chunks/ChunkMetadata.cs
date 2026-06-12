@@ -1,6 +1,6 @@
-﻿using BrewUp.Knowledge.Core.Documents;
+﻿using BrewUp.Knowledge.SharedKernel.Enums;
 
-namespace BrewUp.Knowledge.Core.Chunks;
+namespace BrewUp.Knowledge.SharedKernel.Chunks;
 
 public sealed class ChunkMetadata
 {
@@ -8,4 +8,6 @@ public sealed class ChunkMetadata
     public string Title { get; init; } = string.Empty;
     public IReadOnlyCollection<string> Tags { get; init; } = [];
     public int TokenCount { get; init; }
+    public int MaxCharacters { get; init; }
+    public int OverlapCharacters { get; init; }
 }

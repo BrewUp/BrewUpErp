@@ -1,6 +1,5 @@
-using BrewUp.Knowledge.Core.Embeddings;
-using BrewUp.Knowledge.Facade;
-using BrewUp.Knowledge.Facade.Ingestion;
+using BrewUp.Knowledge.Infrastructure.Ingestion;
+using BrewUp.Knowledge.SharedKernel.Embeddings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,12 +7,10 @@ namespace BrewUp.Knowledge.Infrastructure;
 
 public static class KnowledgeInfrastructureHelper
 {
-    public static IServiceCollection AddKnowledgeInfrastructure(
+    public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration? configuration = null)
     {
-        services.AddKnowledgeFacade();
-
         services.AddSingleton<IKnowledgeTextExtractor, PlainTextExtractor>();
         services.AddSingleton<IKnowledgeTextExtractor, MarkdownTextExtractor>();
 

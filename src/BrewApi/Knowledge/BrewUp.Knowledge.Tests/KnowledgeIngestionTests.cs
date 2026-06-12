@@ -1,7 +1,11 @@
 using System.Text;
+using BrewUp.Knowledge.Core.CommandHandlers;
 using BrewUp.Knowledge.Core.Documents;
 using BrewUp.Knowledge.Facade.Ingestion;
 using BrewUp.Knowledge.Infrastructure;
+using BrewUp.Knowledge.SharedKernel.Enums;
+using BrewUp.Knowledge.SharedKernel.Exceptions;
+using BrewUp.Knowledge.SharedKernel.Messages.Commands;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BrewUp.Knowledge.Tests;
@@ -19,7 +23,7 @@ public sealed class KnowledgeIngestionTests
         await using var content = StreamOf("Malt and hops are ingredients used to brew beer.");
 
         var result = await handler.HandleAsync(
-            new IngestKnowledgeFileCommand(
+            new IngestKnowledgeFile(
                 "brewing.txt",
                 content,
                 DocumentScope.General,
@@ -45,7 +49,7 @@ public sealed class KnowledgeIngestionTests
         await using var content = StreamOf("# Brewing\n\nUse **hops** to add bitterness.");
 
         var result = await handler.HandleAsync(
-            new IngestKnowledgeFileCommand(
+            new IngestKnowledgeFile(
                 "brewing.md",
                 content,
                 DocumentScope.General),
@@ -68,7 +72,7 @@ public sealed class KnowledgeIngestionTests
 
         var exception = await Assert.ThrowsAsync<UnsupportedKnowledgeFileTypeException>(
             () => handler.HandleAsync(
-                new IngestKnowledgeFileCommand(
+                new IngestKnowledgeFile(
                     "brewing.pdf",
                     content,
                     DocumentScope.General),
@@ -90,7 +94,7 @@ public sealed class KnowledgeIngestionTests
             30);
 
         var result = await handler.HandleAsync(
-            new IngestKnowledgeDocumentCommand(
+            new IngestKnowledgeDocument(
                 "Operations handbook",
                 string.Join("\n\n", paragraphs),
                 DocumentScope.General,
@@ -104,7 +108,7 @@ public sealed class KnowledgeIngestionTests
     private static ServiceProvider CreateProvider()
     {
         var services = new ServiceCollection();
-        services.AddKnowledgeInfrastructure();
+        services.AddInfrastructure();
 
         return services.BuildServiceProvider(new ServiceProviderOptions
         {

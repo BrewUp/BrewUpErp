@@ -2,12 +2,12 @@
 
 public sealed class OrderState(int id, string name) : Enumeration(id, name)
 {
-    public static OrderState Created = new (1, nameof(Created).ToLowerInvariant());
-    public static OrderState Sent = new (1, nameof(Sent).ToLowerInvariant());
-    public static OrderState Completed = new (2, nameof(Completed).ToLowerInvariant());
-    public static OrderState Cancelled = new (3, nameof(Cancelled).ToLowerInvariant());
+    public static readonly OrderState Created = new (1, nameof(Created).ToLowerInvariant());
+    public static readonly OrderState Sent = new (1, nameof(Sent).ToLowerInvariant());
+    public static readonly OrderState Completed = new (2, nameof(Completed).ToLowerInvariant());
+    public static readonly OrderState Cancelled = new (3, nameof(Cancelled).ToLowerInvariant());
 
-    public static IEnumerable<OrderState> List() => new[] { Sent, Completed, Cancelled };
+    private static IEnumerable<OrderState> List() => [Sent, Completed, Cancelled];
 
     public static OrderState FromName(string name)
     {

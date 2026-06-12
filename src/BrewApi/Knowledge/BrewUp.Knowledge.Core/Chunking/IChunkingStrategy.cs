@@ -1,5 +1,6 @@
-﻿using BrewUp.Knowledge.Core.Chunks;
-using BrewUp.Knowledge.Core.Documents;
+﻿using BrewUp.Knowledge.Core.Documents;
+using BrewUp.Knowledge.SharedKernel.Chunks;
+using BrewUp.Knowledge.SharedKernel.Documents;
 
 namespace BrewUp.Knowledge.Core.Chunking;
 

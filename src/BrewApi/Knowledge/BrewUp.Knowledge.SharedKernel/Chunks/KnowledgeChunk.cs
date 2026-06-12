@@ -1,4 +1,4 @@
-﻿namespace BrewUp.Knowledge.Core.Chunks;
+﻿namespace BrewUp.Knowledge.SharedKernel.Chunks;
 
 public class KnowledgeChunk
 {
