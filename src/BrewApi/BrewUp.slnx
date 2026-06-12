@@ -22,6 +22,7 @@
     <Project Path="Knowledge/BrewUp.Knowledge.Facade/BrewUp.Knowledge.Facade.csproj" />
     <Project Path="Knowledge/BrewUp.Knowledge.Infrastructure/BrewUp.Knowledge.Infrastructure.csproj" />
     <Project Path="Knowledge/BrewUp.Knowledge.McpServer/BrewUp.Knowledge.McpServer.csproj" />
+    <Project Path="Knowledge/BrewUp.Knowledge.ReadModel/BrewUp.Knowledge.ReadModel.csproj" />
     <Project Path="Knowledge/BrewUp.Knowledge.SharedKernel/BrewUp.Knowledge.SharedKernel.csproj" />
     <Project Path="Knowledge/BrewUp.Knowledge.Tests/BrewUp.Knowledge.Tests.csproj" />
   </Folder>
@@ -61,8 +62,8 @@
     <Project Path="Sales/BrewUp.Sales.Tests/BrewUp.Sales.Tests.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Warehouse/">
-    <Project Path="BrewUp.Warehouse.Entities/BrewUp.Warehouse.Entities.csproj" Id="f9d677f2-b4b5-4aa5-814a-9286eb3e1699" />
     <Project Path="Warehouse/BrewUp.Warehouse.Domain/BrewUp.Warehouse.Domain.csproj" />
+    <Project Path="Warehouse/BrewUp.Warehouse.Entities/BrewUp.Warehouse.Entities.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.Facade/BrewUp.Warehouse.Facade.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.Infrastructure/BrewUp.Warehouse.Infrastructure.csproj" />
     <Project Path="Warehouse/BrewUp.Warehouse.McpServer/BrewUp.Warehouse.McpServer.csproj" />
