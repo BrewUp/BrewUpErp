@@ -79,4 +79,41 @@ public static class KnowledgeInfrastructureHelper
 
         return services;
     }
+    
+    public static IServiceCollection AddInfrastructureForMcp(
+        this IServiceCollection services,
+        IConfiguration? configuration = null)
+    {
+        var vectorStoreOptions = configuration!
+                                     .GetSection(SqlServerKnowledgeVectorStoreOptions.SectionName)
+                                     .Get<SqlServerKnowledgeVectorStoreOptions>()
+                                 ?? new SqlServerKnowledgeVectorStoreOptions();
+        services.AddSingleton(vectorStoreOptions);
+        
+        services.AddSingleton<SqlServerKnowledgeVectorStore>();
+        services.AddSingleton<IKnowledgeVectorStore>(
+            provider => provider.GetRequiredService<SqlServerKnowledgeVectorStore>());
+        
+        var azureOptions = configuration
+            .GetSection(AzureOpenAiEmbeddingOptions.SectionName)
+            .Get<AzureOpenAiEmbeddingOptions>();
+        
+        services.AddSingleton<SqlServerKnowledgeChunkRepository>();
+        services.AddSingleton<IKnowledgeChunkRepository>(
+            provider => provider.GetRequiredService<SqlServerKnowledgeChunkRepository>());
+
+        if (azureOptions is not null &&
+            !string.IsNullOrWhiteSpace(azureOptions.Endpoint) &&
+            !string.IsNullOrWhiteSpace(azureOptions.DeploymentName))
+        {
+            services.AddSingleton(azureOptions);
+            services.AddSingleton<IEmbeddingGenerator, AzureOpenAiEmbeddingGenerator>();
+        }
+        else
+        {
+            services.AddSingleton<IEmbeddingGenerator, FakeEmbeddingGenerator>();
+        }
+
+        return services;
+    }
 }

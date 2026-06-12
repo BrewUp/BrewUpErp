@@ -1,9 +1,18 @@
-﻿namespace BrewUp.Knowledge.McpServer;
+﻿using BrewUp.Knowledge.ReadModel.Queries;
+using BrewUp.Knowledge.ReadModel.QueryHandlers;
+using BrewUp.Knowledge.SharedKernel.Documents;
 
-internal sealed class KnowledgeFacade : IKnowledgeFacade
+namespace BrewUp.Knowledge.McpServer;
+
+internal sealed class KnowledgeFacade(SearchKnowledgeHandler searchKnowledgeHandler) : IKnowledgeFacade
 {
-    public Task<object> SearchKnowledgeBaseAsync(CancellationToken cancellationToken)
+    public async Task<object> SearchKnowledgeBaseAsync(SearchKnowledgeBaseRequest request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await searchKnowledgeHandler.HandleAsync(
+            new SearchKnowledgeQuery(
+                Query: request.Query,
+                Scope: request.Scope,
+                TopK: request.TopK),
+            cancellationToken);
     }
 }

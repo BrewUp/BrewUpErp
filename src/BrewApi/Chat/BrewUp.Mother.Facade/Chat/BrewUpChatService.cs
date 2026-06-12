@@ -34,6 +34,44 @@ public sealed class BrewUpChatService(
             If the user asks about beer availability, stock, or reorder thresholds,
             call the appropriate warehouse tool.
             
+            If the user asks about:
+            - company policies
+            - business procedures
+            - operational guidelines
+            - product documentation
+            - business rules
+            - brewery processes
+            - quality standards
+            - organizational information
+            - how BrewUp works
+            - general company knowledge
+            
+            use the knowledge tool.
+            
+            Use operational tools when the user asks about current business data.
+         
+            Examples:
+            - open orders
+            - customer orders
+            - stock availability
+            - reorder thresholds
+            - product catalog
+            
+            Use the knowledge tool when the user asks about documentation, procedures, policies, business rules, or general company knowledge.
+            
+            Examples:
+            - What is BrewUp?
+            - How does inventory management work?
+            - What are the quality standards?
+            - How does the sales order lifecycle work?
+            - How is beer produced?
+            
+            Knowledge information and operational data are different concepts.
+         
+            Use knowledge tools for documented business knowledge.
+            Use ERP tools for current operational information.
+            Combine both when required.
+            
             For what-if analysis, simulations, impact assessment, cross-context reasoning,
             recommendations, or questions starting with "what happens if" or "what if",
             use all the tools to generate the answer.

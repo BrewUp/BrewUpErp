@@ -18,4 +18,8 @@
       <Content Include=".vscode\mcp.json" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BrewUp.Knowledge.ReadModel\BrewUp.Knowledge.ReadModel.csproj" />
+    </ItemGroup>
+
 </Project>

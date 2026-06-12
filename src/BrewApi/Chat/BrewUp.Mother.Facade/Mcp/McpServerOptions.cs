@@ -18,5 +18,8 @@ public sealed class McpServerOptions
     
     /// <summary>URL of the Mother MCP Server (e.g. http://localhost:5015/mcp).</summary>
     public string MotherUrl { get; init; } = string.Empty;
+    
+    /// <summary>URL of the Knowledge MCP Server (e.g. http://localhost:5236/mcp).</summary>
+    public string KnowledgeUrl { get; init; } = string.Empty;
 }
 
