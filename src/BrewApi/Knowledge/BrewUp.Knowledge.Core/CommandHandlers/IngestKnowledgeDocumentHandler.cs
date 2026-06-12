@@ -14,6 +14,7 @@ public sealed class IngestKnowledgeDocumentHandler(
     IChunkingStrategy chunkingStrategy,
     IEmbeddingGenerator embeddingGenerator,
     IKnowledgeDocumentRepository documentRepository,
+    IKnowledgeChunkWriter chunkWriter,
     IKnowledgeVectorStore vectorStore,
     IEnumerable<IKnowledgeTextExtractor> textExtractors)
 {
@@ -42,6 +43,7 @@ public sealed class IngestKnowledgeDocumentHandler(
 
         var chunks = chunkingStrategy.Split(document);
         await documentRepository.StoreAsync(document, cancellationToken);
+        await chunkWriter.StoreAsync(chunks, cancellationToken);
 
         foreach (var chunk in chunks)
         {

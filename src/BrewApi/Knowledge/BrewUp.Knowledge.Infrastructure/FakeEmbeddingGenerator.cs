@@ -6,7 +6,7 @@ namespace BrewUp.Knowledge.Infrastructure;
 
 public sealed class FakeEmbeddingGenerator : IEmbeddingGenerator
 {
-    private const int Dimensions = 32;
+    private const int Dimensions = 256;
 
     public Task<EmbeddingVector> GenerateAsync(string text, CancellationToken cancellationToken)
     {
@@ -24,7 +24,7 @@ public sealed class FakeEmbeddingGenerator : IEmbeddingGenerator
         {
             var hash = SHA256.HashData(Encoding.UTF8.GetBytes(word.ToLowerInvariant()));
             var index = BitConverter.ToUInt16(hash, 0) % Dimensions;
-            values[index] += (hash[2] & 1) == 0 ? 1f : -1f;
+            values[index] += 1f;
         }
 
         var magnitude = MathF.Sqrt(values.Sum(value => value * value));
