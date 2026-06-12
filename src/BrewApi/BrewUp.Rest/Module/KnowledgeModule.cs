@@ -26,7 +26,7 @@ public class KnowledgeModule : IModule
     /// <returns></returns>
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
-        builder.Services.AddKnowledgeFacade();
+        builder.Services.AddKnowledgeFacade(builder.Configuration);
         
         return builder.Services;
     }
