@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using BrewUp.Knowledge.Infrastructure.Ingestion;
 using BrewUp.Knowledge.SharedKernel.Documents;
 
-namespace BrewUp.Knowledge.Infrastructure;
+namespace BrewUp.Knowledge.Infrastructure.Repositories;
 
 public sealed class InMemoryKnowledgeDocumentRepository : IKnowledgeDocumentRepository
 {

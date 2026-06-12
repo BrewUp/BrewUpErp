@@ -1,7 +1,7 @@
 using BrewUp.Knowledge.Infrastructure.Ingestion;
 using BrewUp.Knowledge.SharedKernel.Chunks;
 
-namespace BrewUp.Knowledge.Infrastructure;
+namespace BrewUp.Knowledge.Infrastructure.Repositories;
 
 public sealed class InMemoryKnowledgeChunkRepository :
     IKnowledgeChunkRepository,

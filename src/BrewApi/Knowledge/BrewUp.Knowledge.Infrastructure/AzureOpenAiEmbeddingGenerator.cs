@@ -2,6 +2,7 @@ using System.ClientModel;
 using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure.Identity;
+using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Knowledge.SharedKernel.Embeddings;
 using OpenAI.Embeddings;
 

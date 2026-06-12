@@ -1,4 +1,6 @@
 using BrewUp.Knowledge.Infrastructure.Ingestion;
+using BrewUp.Knowledge.Infrastructure.Repositories;
+using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Knowledge.SharedKernel.Embeddings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
