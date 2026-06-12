@@ -1,5 +1,7 @@
 using BrewUp.Knowledge.Core.Chunking;
 using BrewUp.Knowledge.Core.Documents;
+using BrewUp.Knowledge.SharedKernel.Documents;
+using BrewUp.Knowledge.SharedKernel.Enums;
 
 namespace BrewUp.Knowledge.Tests;
 
@@ -21,7 +23,8 @@ public sealed class SemanticChunkingStrategyTests
             ImportedAt = DateTime.UtcNow
         };
 
-        var chunks = new SemanticChunkingStrategy(maxCharacters: 180, overlapCharacters: 30)
+        DefaultChunkingPolicy policy = new();
+        var chunks = new SemanticChunkingStrategy(policy)
             .Split(document)
             .ToArray();
 

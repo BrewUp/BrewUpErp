@@ -1,4 +1,4 @@
-namespace BrewUp.Knowledge.Facade.Ingestion;
+namespace BrewUp.Knowledge.SharedKernel.Exceptions;
 
 public sealed class UnsupportedKnowledgeFileTypeException(string extension)
     : NotSupportedException(

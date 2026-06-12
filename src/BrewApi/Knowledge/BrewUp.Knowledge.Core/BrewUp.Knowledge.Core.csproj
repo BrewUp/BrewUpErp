@@ -8,6 +8,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
+      <ProjectReference Include="..\BrewUp.Knowledge.Infrastructure\BrewUp.Knowledge.Infrastructure.csproj" />
+      <ProjectReference Include="..\BrewUp.Knowledge.SharedKernel\BrewUp.Knowledge.SharedKernel.csproj" />
     </ItemGroup>
-
+    
 </Project>

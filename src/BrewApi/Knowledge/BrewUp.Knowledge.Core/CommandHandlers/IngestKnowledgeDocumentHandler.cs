@@ -1,8 +1,14 @@
 using BrewUp.Knowledge.Core.Chunking;
 using BrewUp.Knowledge.Core.Documents;
-using BrewUp.Knowledge.Core.Embeddings;
+using BrewUp.Knowledge.Facade.Ingestion;
+using BrewUp.Knowledge.Infrastructure.Ingestion;
+using BrewUp.Knowledge.SharedKernel.CustomTypes;
+using BrewUp.Knowledge.SharedKernel.Documents;
+using BrewUp.Knowledge.SharedKernel.Embeddings;
+using BrewUp.Knowledge.SharedKernel.Exceptions;
+using BrewUp.Knowledge.SharedKernel.Messages.Commands;
 
-namespace BrewUp.Knowledge.Facade.Ingestion;
+namespace BrewUp.Knowledge.Core.CommandHandlers;
 
 public sealed class IngestKnowledgeDocumentHandler(
     IChunkingStrategy chunkingStrategy,
@@ -12,7 +18,7 @@ public sealed class IngestKnowledgeDocumentHandler(
     IEnumerable<IKnowledgeTextExtractor> textExtractors)
 {
     public async Task<IngestKnowledgeDocumentResult> HandleAsync(
-        IngestKnowledgeDocumentCommand command,
+        IngestKnowledgeDocument command,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
@@ -47,7 +53,7 @@ public sealed class IngestKnowledgeDocumentHandler(
     }
 
     public async Task<IngestKnowledgeDocumentResult> HandleAsync(
-        IngestKnowledgeFileCommand command,
+        IngestKnowledgeFile command,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
@@ -66,11 +72,12 @@ public sealed class IngestKnowledgeDocumentHandler(
         {
             ".txt" => DocumentSource.PlainText,
             ".md" => DocumentSource.Markdown,
+            ".pdf" => DocumentSource.Pdf,
             _ => throw new UnsupportedKnowledgeFileTypeException(extension)
         };
 
         return await HandleAsync(
-            new IngestKnowledgeDocumentCommand(
+            new IngestKnowledgeDocument(
                 Path.GetFileNameWithoutExtension(command.FileName),
                 content,
                 command.Scope,

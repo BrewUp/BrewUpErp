@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
-using BrewUp.Knowledge.Core.Documents;
-using BrewUp.Knowledge.Facade.Ingestion;
+using BrewUp.Knowledge.Infrastructure.Ingestion;
+using BrewUp.Knowledge.SharedKernel.Documents;
 
 namespace BrewUp.Knowledge.Infrastructure;
 

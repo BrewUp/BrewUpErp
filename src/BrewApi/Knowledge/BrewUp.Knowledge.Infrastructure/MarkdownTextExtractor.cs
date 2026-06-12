@@ -1,5 +1,5 @@
 using System.Text;
-using BrewUp.Knowledge.Facade.Ingestion;
+using BrewUp.Knowledge.Infrastructure.Ingestion;
 
 namespace BrewUp.Knowledge.Infrastructure;
 

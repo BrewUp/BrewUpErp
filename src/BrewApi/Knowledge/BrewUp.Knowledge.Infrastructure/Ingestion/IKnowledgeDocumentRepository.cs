@@ -1,6 +1,6 @@
-using BrewUp.Knowledge.Core.Documents;
+using BrewUp.Knowledge.SharedKernel.Documents;
 
-namespace BrewUp.Knowledge.Facade.Ingestion;
+namespace BrewUp.Knowledge.Infrastructure.Ingestion;
 
 public interface IKnowledgeDocumentRepository
 {

@@ -1,11 +1,12 @@
-﻿using BrewUp.Infrastructure;
+﻿using BrewUp.Knowledge.Facade;
+using BrewUp.Knowledge.Facade.Endpoints;
 
 namespace BrewUp.Rest.Module;
 
 /// <summary>
-/// Infrastructure Module for configuring the infrastructure services and dependencies in the application.
+/// KnowledgeModule is responsible for registering services and configuring endpoints related to knowledge in the application.
 /// </summary>
-public class InfrastructureModule : IModule
+public class KnowledgeModule : IModule
 {
     /// <summary>
     /// Indicates whether the module is enabled and should be registered in the application.
@@ -25,9 +26,7 @@ public class InfrastructureModule : IModule
     /// <returns></returns>
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
-        using var serviceProvider = builder.Services.BuildServiceProvider();
-        var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
-        builder.Services.AddInfrastructure(loggerFactory, builder.Configuration);
+        builder.Services.AddKnowledgeFacade();
         
         return builder.Services;
     }
@@ -40,7 +39,8 @@ public class InfrastructureModule : IModule
     /// <returns></returns>
     public WebApplication Configure(WebApplication app)
     {
-        app.UseAntiforgery();
+        app.MapKnowledgeEndpoints();
+        
         return app;
     }
 }

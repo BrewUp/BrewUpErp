@@ -16,8 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BrewUp.Knowledge.Core\BrewUp.Knowledge.Core.csproj" />
-      <ProjectReference Include="..\BrewUp.Knowledge.Facade\BrewUp.Knowledge.Facade.csproj" />
+      <ProjectReference Include="..\BrewUp.Knowledge.SharedKernel\BrewUp.Knowledge.SharedKernel.csproj" />
     </ItemGroup>
 
 </Project>

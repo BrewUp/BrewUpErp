@@ -1,6 +1,6 @@
-using BrewUp.Knowledge.Core.Chunks;
-using BrewUp.Knowledge.Core.Embeddings;
-using BrewUp.Knowledge.Facade.Ingestion;
+using BrewUp.Knowledge.Infrastructure.Ingestion;
+using BrewUp.Knowledge.SharedKernel.Chunks;
+using BrewUp.Knowledge.SharedKernel.Embeddings;
 
 namespace BrewUp.Knowledge.Infrastructure;
 

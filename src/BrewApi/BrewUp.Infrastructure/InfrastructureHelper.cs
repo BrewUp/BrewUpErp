@@ -35,6 +35,7 @@ public static class InfrastructureHelper
         configurationManager.GetSection("BrewUp:EventStore").Bind(eventStoreSettings);
         services.AddMufloneEventStore(eventStoreSettings.ConnectionString);
 
+        services.AddAntiforgery();
 
         return services;
     }

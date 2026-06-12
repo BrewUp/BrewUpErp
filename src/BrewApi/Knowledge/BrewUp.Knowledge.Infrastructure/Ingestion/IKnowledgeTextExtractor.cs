@@ -1,4 +1,4 @@
-namespace BrewUp.Knowledge.Facade.Ingestion;
+namespace BrewUp.Knowledge.Infrastructure.Ingestion;
 
 public interface IKnowledgeTextExtractor
 {

@@ -1,31 +1,23 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using BrewUp.Knowledge.Core.Chunks;
-using BrewUp.Knowledge.Core.Documents;
+using BrewUp.Knowledge.SharedKernel.Chunks;
+using BrewUp.Knowledge.SharedKernel.Documents;
 
 namespace BrewUp.Knowledge.Core.Chunking;
 
-public sealed class SemanticChunkingStrategy : IChunkingStrategy
+public sealed class SemanticChunkingStrategy(IChunkingPolicy policy) : IChunkingStrategy
 {
     private static readonly Regex ParagraphSeparator = new(@"\r?\n\s*\r?\n", RegexOptions.Compiled);
-    private readonly int _maxCharacters;
-    private readonly int _overlapCharacters;
-
-    public SemanticChunkingStrategy(int maxCharacters = 1_200, int overlapCharacters = 200)
-    {
-        if (maxCharacters < 100)
-            throw new ArgumentOutOfRangeException(nameof(maxCharacters), "Chunk size must be at least 100 characters.");
-
-        if (overlapCharacters < 0 || overlapCharacters >= maxCharacters)
-            throw new ArgumentOutOfRangeException(nameof(overlapCharacters), "Overlap must be smaller than chunk size.");
-
-        _maxCharacters = maxCharacters;
-        _overlapCharacters = overlapCharacters;
-    }
+    private int _maxCharacters;
+    private int _overlapCharacters;
 
     public IReadOnlyCollection<KnowledgeChunk> Split(KnowledgeDocument document)
     {
         ArgumentNullException.ThrowIfNull(document);
+        
+        var options = policy.GetOptionsFor(document);
+        _maxCharacters = options.MaxCharacters;
+        _overlapCharacters = options.OverlapCharacters;
 
         if (string.IsNullOrWhiteSpace(document.Content))
             return [];
@@ -75,7 +67,9 @@ public sealed class SemanticChunkingStrategy : IChunkingStrategy
                     Scope = document.Scope,
                     Title = document.Title,
                     Tags = document.Tags,
-                    TokenCount = EstimateTokenCount(content)
+                    TokenCount = EstimateTokenCount(content),
+                    MaxCharacters = _maxCharacters,
+                    OverlapCharacters = _overlapCharacters
                 }
             })
             .ToArray();

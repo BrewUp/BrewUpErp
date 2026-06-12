@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
-using BrewUp.Knowledge.Core.Embeddings;
+using BrewUp.Knowledge.SharedKernel.Embeddings;
 
 namespace BrewUp.Knowledge.Infrastructure;
 

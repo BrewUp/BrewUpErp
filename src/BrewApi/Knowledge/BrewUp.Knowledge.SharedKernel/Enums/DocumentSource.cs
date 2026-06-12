@@ -4,13 +4,13 @@ namespace BrewUp.Knowledge.Core.Documents;
 
 public sealed class DocumentSource(int id, string name) : Enumeration(id, name)
 {
-    public static DocumentSource Pdf = new (0, nameof(Pdf).ToLowerInvariant());
-    public static DocumentSource Markdown = new (1, nameof(Markdown).ToLowerInvariant());
-    public static DocumentSource Word = new (2, nameof(Word).ToLowerInvariant());
-    public static DocumentSource WebPage = new (3, nameof(WebPage).ToLowerInvariant());
-    public static DocumentSource PlainText = new (4, nameof(PlainText).ToLowerInvariant());
-    
-    public static IEnumerable<DocumentSource> List() => [Pdf, Markdown, Word, WebPage, PlainText];
+    public static readonly DocumentSource Pdf = new (0, nameof(Pdf).ToLowerInvariant());
+    public static readonly DocumentSource Markdown = new (1, nameof(Markdown).ToLowerInvariant());
+    public static readonly DocumentSource Word = new (2, nameof(Word).ToLowerInvariant());
+    public static readonly DocumentSource WebPage = new (3, nameof(WebPage).ToLowerInvariant());
+    public static readonly DocumentSource PlainText = new (4, nameof(PlainText).ToLowerInvariant());
+
+    private static IEnumerable<DocumentSource> List() => [Pdf, Markdown, Word, WebPage, PlainText];
     
     public static DocumentSource FromName(string name)
     {
