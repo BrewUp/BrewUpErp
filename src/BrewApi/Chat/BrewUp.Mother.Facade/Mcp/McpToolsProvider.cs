@@ -43,7 +43,8 @@ public sealed class McpToolsProvider(
             {
                 ("MasterData", options.MasterDataUrl),
                 ("Sales", options.SalesUrl),
-                ("Warehouse", options.WarehouseUrl)
+                ("Warehouse", options.WarehouseUrl),
+                ("Knowledge", options.KnowledgeUrl)
             };
 
             var newClients = new List<McpClient>(endpoints.Length);

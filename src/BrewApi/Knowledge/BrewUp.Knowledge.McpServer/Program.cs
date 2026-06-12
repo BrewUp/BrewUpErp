@@ -1,7 +1,7 @@
+using BrewUp.Knowledge.Infrastructure;
 using BrewUp.Knowledge.McpServer;
 using BrewUp.Knowledge.McpServer.Tools;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using BrewUp.Knowledge.ReadModel;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +14,8 @@ builder.Services
     .WithTools<KnowledgeTools>();
 
 builder.Services.AddScoped<IKnowledgeFacade, KnowledgeFacade>();
+builder.Services.AddInfrastructureForMcp(builder.Configuration);
+builder.Services.AddKnowledgeReadModel();
     
 var app = builder.Build();
 
