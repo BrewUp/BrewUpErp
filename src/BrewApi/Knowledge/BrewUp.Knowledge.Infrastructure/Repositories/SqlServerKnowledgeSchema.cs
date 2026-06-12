@@ -8,12 +8,17 @@ internal static class SqlServerKnowledgeSchema
 
     public static async Task EnsureCreatedAsync(
         SqlConnection connection,
+        int vectorDimensions,
         CancellationToken cancellationToken)
     {
+        if (vectorDimensions is < 1 or > 1998)
+            throw new InvalidOperationException(
+                "SQL Server vector dimensions must be between 1 and 1998.");
+
         await SchemaLock.WaitAsync(cancellationToken);
         try
         {
-            const string commandText = """
+            var commandText = $"""
                 IF OBJECT_ID(N'dbo.KnowledgeDocuments', N'U') IS NULL
                 BEGIN
                     CREATE TABLE [dbo].[KnowledgeDocuments]
@@ -50,6 +55,35 @@ internal static class SqlServerKnowledgeSchema
 
                     CREATE INDEX IX_KnowledgeChunks_DocumentId_Sequence
                         ON [dbo].[KnowledgeChunks] (DocumentId, Sequence);
+                END;
+
+                IF OBJECT_ID(N'dbo.KnowledgeVectors', N'U') IS NULL
+                BEGIN
+                    CREATE TABLE [dbo].[KnowledgeVectors]
+                    (
+                        ChunkId UNIQUEIDENTIFIER NOT NULL
+                            CONSTRAINT PK_KnowledgeVectors PRIMARY KEY,
+                        DocumentId UNIQUEIDENTIFIER NOT NULL,
+                        Sequence INT NOT NULL,
+                        Title NVARCHAR(500) NOT NULL,
+                        Scope NVARCHAR(50) NOT NULL,
+                        Tags NVARCHAR(MAX) NOT NULL,
+                        Content NVARCHAR(MAX) NOT NULL,
+                        TokenCount INT NOT NULL,
+                        MaxCharacters INT NOT NULL,
+                        OverlapCharacters INT NOT NULL,
+                        Embedding VECTOR({vectorDimensions}) NOT NULL,
+                        CONSTRAINT FK_KnowledgeVectors_KnowledgeChunks
+                            FOREIGN KEY (ChunkId)
+                            REFERENCES [dbo].[KnowledgeChunks] (Id)
+                            ON DELETE CASCADE
+                    );
+
+                    CREATE INDEX IX_KnowledgeVectors_DocumentId
+                        ON [dbo].[KnowledgeVectors] (DocumentId, Sequence);
+
+                    CREATE INDEX IX_KnowledgeVectors_Scope
+                        ON [dbo].[KnowledgeVectors] (Scope);
                 END;
                 """;
 

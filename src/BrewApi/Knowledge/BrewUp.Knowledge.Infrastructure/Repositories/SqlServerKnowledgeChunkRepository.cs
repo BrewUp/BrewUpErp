@@ -23,7 +23,10 @@ public sealed class SqlServerKnowledgeChunkRepository(
             return;
 
         await using var connection = await OpenConnectionAsync(cancellationToken);
-        await SqlServerKnowledgeSchema.EnsureCreatedAsync(connection, cancellationToken);
+        await SqlServerKnowledgeSchema.EnsureCreatedAsync(
+            connection,
+            options.Dimensions,
+            cancellationToken);
         await using var transaction =
             (SqlTransaction)await connection.BeginTransactionAsync(cancellationToken);
 
@@ -46,7 +49,10 @@ public sealed class SqlServerKnowledgeChunkRepository(
         CancellationToken cancellationToken)
     {
         await using var connection = await OpenConnectionAsync(cancellationToken);
-        await SqlServerKnowledgeSchema.EnsureCreatedAsync(connection, cancellationToken);
+        await SqlServerKnowledgeSchema.EnsureCreatedAsync(
+            connection,
+            options.Dimensions,
+            cancellationToken);
 
         const string commandText = """
             SELECT
@@ -99,7 +105,7 @@ public sealed class SqlServerKnowledgeChunkRepository(
             UPDATE [dbo].[KnowledgeChunks]
             SET DocumentId = @documentId,
                 Sequence = @sequence,
-                Content = @content,
+                KnowledgeContent = @content,
                 TokenCount = @tokenCount,
                 Scope = @scope,
                 Title = @title,
@@ -113,7 +119,7 @@ public sealed class SqlServerKnowledgeChunkRepository(
                     Id,
                     DocumentId,
                     Sequence,
-                    Content,
+                    KnowledgeContent,
                     TokenCount,
                     Scope,
                     Title,
