@@ -7,7 +7,7 @@ public class DefaultChunkingPolicy : IChunkingPolicy
 {
     public ChunkingOptions GetOptionsFor(KnowledgeDocument document)
     {
-        var length = document.Content.Length;
+        var length = document.DocumentsContent.Length;
 
         return length switch
         {

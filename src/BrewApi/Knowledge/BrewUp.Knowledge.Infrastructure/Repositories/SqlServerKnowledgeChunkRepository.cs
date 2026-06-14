@@ -59,7 +59,7 @@ public sealed class SqlServerKnowledgeChunkRepository(
                 Id,
                 DocumentId,
                 Sequence,
-                Content,
+                KnowledgeContent,
                 TokenCount,
                 Scope,
                 Title,
@@ -81,7 +81,7 @@ public sealed class SqlServerKnowledgeChunkRepository(
                 Id = reader.GetGuid(0),
                 DocumentId = reader.GetGuid(1),
                 Sequence = reader.GetInt32(2),
-                Content = reader.GetString(3),
+                KnowledgeContent = reader.GetString(3),
                 Metadata = new ChunkMetadata
                 {
                     TokenCount = reader.GetInt32(4),
@@ -105,7 +105,7 @@ public sealed class SqlServerKnowledgeChunkRepository(
             UPDATE [dbo].[KnowledgeChunks]
             SET DocumentId = @documentId,
                 Sequence = @sequence,
-                KnowledgeContent = @content,
+                KnowledgeContent = @knowledgeContent,
                 TokenCount = @tokenCount,
                 Scope = @scope,
                 Title = @title,
@@ -130,7 +130,7 @@ public sealed class SqlServerKnowledgeChunkRepository(
                     @id,
                     @documentId,
                     @sequence,
-                    @content,
+                    @knowledgeContent,
                     @tokenCount,
                     @scope,
                     @title,
@@ -144,7 +144,7 @@ public sealed class SqlServerKnowledgeChunkRepository(
         command.Parameters.Add("@documentId", SqlDbType.UniqueIdentifier).Value =
             chunk.DocumentId;
         command.Parameters.Add("@sequence", SqlDbType.Int).Value = chunk.Sequence;
-        command.Parameters.Add("@content", SqlDbType.NVarChar, -1).Value = chunk.Content;
+        command.Parameters.Add("@knowledgeContent", SqlDbType.NVarChar, -1).Value = chunk.KnowledgeContent;
         command.Parameters.Add("@tokenCount", SqlDbType.Int).Value =
             chunk.Metadata.TokenCount;
         command.Parameters.Add("@scope", SqlDbType.NVarChar, 50).Value =
@@ -154,6 +154,47 @@ public sealed class SqlServerKnowledgeChunkRepository(
         command.Parameters.Add("@tags", SqlDbType.NVarChar, -1).Value =
             JsonSerializer.Serialize(chunk.Metadata.Tags);
 
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task<int> CountByDocumentIdAsync(
+        Guid documentId,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await OpenConnectionAsync(cancellationToken);
+        await SqlServerKnowledgeSchema.EnsureCreatedAsync(
+            connection,
+            options.Dimensions,
+            cancellationToken);
+
+        const string commandText = """
+            SELECT COUNT(*)
+            FROM [dbo].[KnowledgeChunks]
+            WHERE DocumentId = @documentId;
+            """;
+
+        await using var command = new SqlCommand(commandText, connection);
+        command.Parameters.Add("@documentId", SqlDbType.UniqueIdentifier).Value = documentId;
+        return Convert.ToInt32(await command.ExecuteScalarAsync(cancellationToken));
+    }
+
+    public async Task DeleteByDocumentIdAsync(
+        Guid documentId,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await OpenConnectionAsync(cancellationToken);
+        await SqlServerKnowledgeSchema.EnsureCreatedAsync(
+            connection,
+            options.Dimensions,
+            cancellationToken);
+
+        const string commandText = """
+            DELETE FROM [dbo].[KnowledgeChunks]
+            WHERE DocumentId = @documentId;
+            """;
+
+        await using var command = new SqlCommand(commandText, connection);
+        command.Parameters.Add("@documentId", SqlDbType.UniqueIdentifier).Value = documentId;
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 

@@ -15,7 +15,7 @@ public sealed class SemanticChunkingStrategyTests
         {
             Id = documentId,
             Title = "Brewing guide",
-            Content = string.Join("\n\n", Enumerable.Repeat(
+            DocumentsContent = string.Join("\n\n", Enumerable.Repeat(
                 "A paragraph about malt, hops, yeast, temperature, and fermentation.",
                 8)),
             Source = DocumentSource.Markdown,
@@ -24,6 +24,7 @@ public sealed class SemanticChunkingStrategyTests
         };
 
         DefaultChunkingPolicy policy = new();
+        var options = policy.GetOptionsFor(document);
         var chunks = new SemanticChunkingStrategy(policy)
             .Split(document)
             .ToArray();
@@ -36,7 +37,7 @@ public sealed class SemanticChunkingStrategyTests
             Assert.Equal("Brewing guide", chunk.Metadata.Title);
             Assert.Equal(DocumentScope.General, chunk.Metadata.Scope);
             Assert.True(chunk.Metadata.TokenCount > 0);
-            Assert.True(chunk.Content.Length <= 180);
+            Assert.True(chunk.KnowledgeContent.Length <= options.MaxCharacters);
         });
     }
 }
