@@ -1,4 +1,5 @@
 using BrewUp.Knowledge.Core.CommandHandlers;
+using BrewUp.Knowledge.Facade.Governance;
 using BrewUp.Knowledge.Facade.Ingestion;
 using BrewUp.Knowledge.ReadModel.Queries;
 using BrewUp.Knowledge.ReadModel.QueryHandlers;
@@ -53,6 +54,38 @@ public static class KnowledgeEndpoints
             .WithDescription(
                 "Returns the most relevant Knowledge chunks without generating an answer.")
             .WithName("SearchKnowledge");
+
+        group.MapGet("/documents", HandleGetKnowledgeDocuments)
+            .Produces<GetKnowledgeDocumentsResult>()
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("List Knowledge Documents")
+            .WithDescription("Returns all ingested Knowledge Documents.")
+            .WithName("GetKnowledgeDocuments");
+
+        group.MapGet("/documents/{documentId:guid}", HandleGetKnowledgeDocument)
+            .Produces<GetKnowledgeDocumentResult>()
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Get a Knowledge Document")
+            .WithDescription("Returns an ingested Knowledge Document and its chunk count.")
+            .WithName("GetKnowledgeDocument");
+
+        group.MapDelete("/documents/{documentId:guid}", HandleDeleteKnowledgeDocument)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Delete a Knowledge Document")
+            .WithDescription("Deletes the document and its associated chunks and vectors.")
+            .WithName("DeleteKnowledgeDocument");
+
+        group.MapPost("/documents/{documentId:guid}/reindex", HandleReindexKnowledgeDocument)
+            .Produces<ReindexKnowledgeDocumentResult>()
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status500InternalServerError)
+            .WithSummary("Reindex a Knowledge Document")
+            .WithDescription(
+                "Regenerates chunks and embeddings from the persisted document content.")
+            .WithName("ReindexKnowledgeDocument");
 
         return app;
     }
@@ -123,5 +156,40 @@ public static class KnowledgeEndpoints
                 [key] = [exception.Message]
             });
         }
+    }
+
+    private static async Task<IResult> HandleGetKnowledgeDocuments(
+        GetKnowledgeDocumentsHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(cancellationToken);
+        return Results.Ok(result);
+    }
+
+    private static async Task<IResult> HandleGetKnowledgeDocument(
+        Guid documentId,
+        GetKnowledgeDocumentHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(documentId, cancellationToken);
+        return result is null ? Results.NotFound() : Results.Ok(result);
+    }
+
+    private static async Task<IResult> HandleDeleteKnowledgeDocument(
+        Guid documentId,
+        DeleteKnowledgeDocumentHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var deleted = await handler.HandleAsync(documentId, cancellationToken);
+        return deleted ? Results.NoContent() : Results.NotFound();
+    }
+
+    private static async Task<IResult> HandleReindexKnowledgeDocument(
+        Guid documentId,
+        ReindexKnowledgeDocumentHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(documentId, cancellationToken);
+        return result is null ? Results.NotFound() : Results.Ok(result);
     }
 }

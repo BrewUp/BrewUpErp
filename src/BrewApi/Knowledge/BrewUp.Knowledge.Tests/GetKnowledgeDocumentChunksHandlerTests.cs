@@ -58,7 +58,7 @@ public sealed class GetKnowledgeDocumentChunksHandlerTests
             Id = Guid.NewGuid(),
             DocumentId = documentId,
             Sequence = sequence,
-            Content = $"Chunk {sequence}",
+            KnowledgeContent = $"Chunk {sequence}",
             Metadata = new ChunkMetadata
             {
                 TokenCount = tokenCount

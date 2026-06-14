@@ -19,10 +19,10 @@ public sealed class SemanticChunkingStrategy(IChunkingPolicy policy) : IChunking
         _maxCharacters = options.MaxCharacters;
         _overlapCharacters = options.OverlapCharacters;
 
-        if (string.IsNullOrWhiteSpace(document.Content))
+        if (string.IsNullOrWhiteSpace(document.DocumentsContent))
             return [];
 
-        var normalizedContent = document.Content.Replace("\r\n", "\n").Trim();
+        var normalizedContent = document.DocumentsContent.Replace("\r\n", "\n").Trim();
         var sections = ParagraphSeparator
             .Split(normalizedContent)
             .Select(section => section.Trim())
@@ -60,7 +60,7 @@ public sealed class SemanticChunkingStrategy(IChunkingPolicy policy) : IChunking
             {
                 Id = Guid.NewGuid(),
                 DocumentId = document.Id,
-                Content = content,
+                KnowledgeContent = content,
                 Sequence = sequence,
                 Metadata = new ChunkMetadata
                 {

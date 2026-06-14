@@ -44,4 +44,26 @@ public sealed class InMemoryKnowledgeChunkRepository :
             return Task.FromResult(chunks);
         }
     }
+
+    public Task<int> CountByDocumentIdAsync(
+        Guid documentId,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        lock (_lock)
+            return Task.FromResult(_chunks.Count(chunk => chunk.DocumentId == documentId));
+    }
+
+    public Task DeleteByDocumentIdAsync(
+        Guid documentId,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        lock (_lock)
+            _chunks = _chunks.Where(chunk => chunk.DocumentId != documentId).ToArray();
+
+        return Task.CompletedTask;
+    }
 }

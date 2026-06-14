@@ -63,7 +63,7 @@ public sealed class KnowledgeIngestionTests
         Assert.Equal(1, vectors.Count);
         Assert.True(documents.TryGet(result.DocumentId, out var document));
         Assert.Equal(DocumentSource.Markdown, document!.Source);
-        Assert.Contains("**hops**", document.Content);
+        Assert.Contains("**hops**", document.DocumentsContent);
     }
 
     [Fact]
