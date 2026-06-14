@@ -16,4 +16,8 @@ public interface IKnowledgeVectorStore
         DocumentScope? scope,
         int topK,
         CancellationToken cancellationToken);
+
+    Task DeleteByDocumentIdAsync(
+        Guid documentId,
+        CancellationToken cancellationToken);
 }

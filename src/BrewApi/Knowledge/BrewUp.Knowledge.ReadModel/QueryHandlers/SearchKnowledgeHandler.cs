@@ -41,7 +41,7 @@ public sealed class SearchKnowledgeHandler(
                 match.Chunk.Metadata.Title,
                 match.Chunk.Metadata.Scope.Name,
                 match.Chunk.Metadata.Tags,
-                match.Chunk.Content,
+                match.Chunk.KnowledgeContent,
                 match.Score,
                 match.Chunk.Metadata.TokenCount))
             .ToArray();

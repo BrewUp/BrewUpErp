@@ -1,3 +1,7 @@
+using Azure;
+using Azure.Identity;
+using Azure.Search.Documents;
+using Azure.Search.Documents.Indexes;
 using BrewUp.Knowledge.Infrastructure.Ingestion;
 using BrewUp.Knowledge.Infrastructure.Repositories;
 using BrewUp.Knowledge.SharedKernel.Configuration;
@@ -19,19 +23,19 @@ public static class KnowledgeInfrastructureHelper
 
         if (configuration is null)
         {
-            services.AddSingleton<SqlServerKnowledgeDocumentRepository>();
+            services.AddSingleton<InMemoryKnowledgeDocumentRepository>();
             services.AddSingleton<IKnowledgeDocumentRepository>(
-                provider => provider.GetRequiredService<SqlServerKnowledgeDocumentRepository>());
+                provider => provider.GetRequiredService<InMemoryKnowledgeDocumentRepository>());
 
-            services.AddSingleton<SqlServerKnowledgeChunkRepository>();
+            services.AddSingleton<InMemoryKnowledgeChunkRepository>();
             services.AddSingleton<IKnowledgeChunkRepository>(
-                provider => provider.GetRequiredService<SqlServerKnowledgeChunkRepository>());
+                provider => provider.GetRequiredService<InMemoryKnowledgeChunkRepository>());
             services.AddSingleton<IKnowledgeChunkWriter>(
-                provider => provider.GetRequiredService<SqlServerKnowledgeChunkRepository>());
+                provider => provider.GetRequiredService<InMemoryKnowledgeChunkRepository>());
 
-            services.AddSingleton<SqlServerKnowledgeVectorStore>();
+            services.AddSingleton<InMemoryKnowledgeVectorStore>();
             services.AddSingleton<IKnowledgeVectorStore>(
-                provider => provider.GetRequiredService<SqlServerKnowledgeVectorStore>());
+                provider => provider.GetRequiredService<InMemoryKnowledgeVectorStore>());
         }
         else
         {
@@ -58,7 +62,7 @@ public static class KnowledgeInfrastructureHelper
                 provider => provider.GetRequiredService<SqlServerKnowledgeChunkRepository>());
             services.AddSingleton<IKnowledgeChunkWriter>(
                 provider => provider.GetRequiredService<SqlServerKnowledgeChunkRepository>());
-            services.AddSingleton<IKnowledgeVectorStore, SqlServerKnowledgeVectorStore>();
+            RegisterConfiguredVectorStore(services, configuration);
         }
 
         var azureOptions = configuration?
@@ -90,9 +94,7 @@ public static class KnowledgeInfrastructureHelper
                                  ?? new SqlServerKnowledgeVectorStoreOptions();
         services.AddSingleton(vectorStoreOptions);
         
-        services.AddSingleton<SqlServerKnowledgeVectorStore>();
-        services.AddSingleton<IKnowledgeVectorStore>(
-            provider => provider.GetRequiredService<SqlServerKnowledgeVectorStore>());
+        RegisterConfiguredVectorStore(services, configuration);
         
         var azureOptions = configuration
             .GetSection(AzureOpenAiEmbeddingOptions.SectionName)
@@ -115,5 +117,92 @@ public static class KnowledgeInfrastructureHelper
         }
 
         return services;
+    }
+
+    private static void RegisterConfiguredVectorStore(
+        IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddSingleton<SqlServerKnowledgeVectorStore>();
+
+        var vectorStore = configuration["Knowledge:VectorStore"];
+        if (!string.Equals(
+                vectorStore,
+                "AzureAiSearch",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddSingleton<IKnowledgeVectorStore>(
+                provider => provider.GetRequiredService<SqlServerKnowledgeVectorStore>());
+            return;
+        }
+
+        var options = configuration
+            .GetSection(AzureAiSearchOptions.SectionName)
+            .Get<AzureAiSearchOptions>()
+            ?? new AzureAiSearchOptions();
+
+        services.AddSingleton(options);
+        services.AddSingleton(CreateSearchClient);
+        services.AddSingleton(CreateSearchIndexClient);
+        services.AddSingleton<AzureAiSearchIndexInitializer>();
+        services.AddSingleton<AzureAiSearchKnowledgeVectorStore>();
+        services.AddSingleton<IKnowledgeVectorStore>(
+            provider => provider.GetRequiredService<AzureAiSearchKnowledgeVectorStore>());
+    }
+
+    private static SearchClient CreateSearchClient(IServiceProvider provider)
+    {
+        var options = provider.GetRequiredService<AzureAiSearchOptions>();
+        var endpoint = GetSearchEndpoint(options);
+        var indexName = GetIndexName(options);
+
+        if (options.UseManagedIdentity)
+            return new SearchClient(endpoint, indexName, new DefaultAzureCredential());
+
+        return new SearchClient(
+            endpoint,
+            indexName,
+            new AzureKeyCredential(GetApiKey(options)));
+    }
+
+    private static SearchIndexClient CreateSearchIndexClient(IServiceProvider provider)
+    {
+        var options = provider.GetRequiredService<AzureAiSearchOptions>();
+        var endpoint = GetSearchEndpoint(options);
+
+        if (options.UseManagedIdentity)
+            return new SearchIndexClient(endpoint, new DefaultAzureCredential());
+
+        return new SearchIndexClient(
+            endpoint,
+            new AzureKeyCredential(GetApiKey(options)));
+    }
+
+    private static Uri GetSearchEndpoint(AzureAiSearchOptions options)
+    {
+        if (string.IsNullOrWhiteSpace(options.Endpoint))
+            throw new InvalidOperationException(
+                $"{AzureAiSearchOptions.SectionName}:Endpoint is required.");
+
+        return new Uri(options.Endpoint);
+    }
+
+    private static string GetIndexName(AzureAiSearchOptions options)
+    {
+        if (string.IsNullOrWhiteSpace(options.IndexName))
+            throw new InvalidOperationException(
+                $"{AzureAiSearchOptions.SectionName}:IndexName is required.");
+
+        return options.IndexName;
+    }
+
+    private static string GetApiKey(AzureAiSearchOptions options)
+    {
+        if (string.IsNullOrWhiteSpace(options.ApiKey))
+            throw new InvalidOperationException(
+                $"{AzureAiSearchOptions.SectionName}:ApiKey is required " +
+                "when managed identity is disabled.");
+
+        return options.ApiKey;
     }
 }

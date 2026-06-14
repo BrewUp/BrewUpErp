@@ -34,7 +34,7 @@ public sealed class IngestKnowledgeDocumentHandler(
         {
             Id = Guid.NewGuid(),
             Title = command.Title.Trim(),
-            Content = command.Content,
+            DocumentsContent = command.Content,
             Scope = command.Scope,
             Source = command.Source,
             Tags = NormalizeTags(command.Tags),
@@ -47,7 +47,7 @@ public sealed class IngestKnowledgeDocumentHandler(
 
         foreach (var chunk in chunks)
         {
-            var embedding = await embeddingGenerator.GenerateAsync(chunk.Content, cancellationToken);
+            var embedding = await embeddingGenerator.GenerateAsync(chunk.KnowledgeContent, cancellationToken);
             await vectorStore.StoreAsync(chunk, embedding, cancellationToken);
         }
 

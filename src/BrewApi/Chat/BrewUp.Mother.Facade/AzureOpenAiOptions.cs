@@ -2,7 +2,7 @@ namespace BrewUp.Mother.Facade;
 
 public sealed class AzureOpenAiOptions
 {
-    public const string SectionName = "AzureOpenAI";
+    public const string SectionName = "BrewUp:AzureOpenAI";
 
     public required string Endpoint { get; init; }
 
