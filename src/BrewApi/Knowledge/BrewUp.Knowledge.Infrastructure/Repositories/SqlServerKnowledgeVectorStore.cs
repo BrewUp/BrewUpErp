@@ -36,7 +36,7 @@ public sealed class SqlServerKnowledgeVectorStore(
                 Title = @title,
                 Scope = @scope,
                 Tags = @tags,
-                VectorsContent = @content,
+                VectorsContent = @vectorsContent,
                 TokenCount = @tokenCount,
                 MaxCharacters = @maxCharacters,
                 OverlapCharacters = @overlapCharacters,
@@ -67,7 +67,7 @@ public sealed class SqlServerKnowledgeVectorStore(
                     @title,
                     @scope,
                     @tags,
-                    @content,
+                    @vectorsContent,
                     @tokenCount,
                     @maxCharacters,
                     @overlapCharacters,
@@ -108,7 +108,7 @@ public sealed class SqlServerKnowledgeVectorStore(
                 Title,
                 Scope,
                 Tags,
-                VectorsContent,
+                Content,
                 TokenCount,
                 MaxCharacters,
                 OverlapCharacters,
@@ -137,7 +137,7 @@ public sealed class SqlServerKnowledgeVectorStore(
                 Id = reader.GetGuid(0),
                 DocumentId = reader.GetGuid(1),
                 Sequence = reader.GetInt32(2),
-                Content = reader.GetString(6),
+                KnowledgeContent = reader.GetString(6),
                 Metadata = new ChunkMetadata
                 {
                     Title = reader.GetString(3),
@@ -153,6 +153,26 @@ public sealed class SqlServerKnowledgeVectorStore(
         }
 
         return results;
+    }
+
+    public async Task DeleteByDocumentIdAsync(
+        Guid documentId,
+        CancellationToken cancellationToken)
+    {
+        await using var connection = await OpenConnectionAsync(cancellationToken);
+        await SqlServerKnowledgeSchema.EnsureCreatedAsync(
+            connection,
+            options.Dimensions,
+            cancellationToken);
+
+        var commandText = $"""
+            DELETE FROM {TableName}
+            WHERE DocumentId = @documentId;
+            """;
+
+        await using var command = new SqlCommand(commandText, connection);
+        command.Parameters.Add("@documentId", SqlDbType.UniqueIdentifier).Value = documentId;
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     private async Task<SqlConnection> OpenConnectionAsync(
@@ -190,7 +210,7 @@ public sealed class SqlServerKnowledgeVectorStore(
         command.Parameters.Add("@scope", SqlDbType.NVarChar, 50).Value = chunk.Metadata.Scope.Name;
         command.Parameters.Add("@tags", SqlDbType.NVarChar, -1).Value =
             JsonSerializer.Serialize(chunk.Metadata.Tags);
-        command.Parameters.Add("@content", SqlDbType.NVarChar, -1).Value = chunk.Content;
+        command.Parameters.Add("@vectorsContent", SqlDbType.NVarChar, -1).Value = chunk.KnowledgeContent;
         command.Parameters.Add("@tokenCount", SqlDbType.Int).Value = chunk.Metadata.TokenCount;
         command.Parameters.Add("@maxCharacters", SqlDbType.Int).Value =
             chunk.Metadata.MaxCharacters;

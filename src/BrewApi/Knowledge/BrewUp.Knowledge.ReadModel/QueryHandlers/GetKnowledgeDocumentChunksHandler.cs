@@ -22,7 +22,7 @@ public sealed class GetKnowledgeDocumentChunksHandler(
                 chunk.Id,
                 chunk.Sequence,
                 chunk.Metadata.TokenCount,
-                chunk.Content))
+                chunk.KnowledgeContent))
             .ToArray();
 
         return new GetKnowledgeDocumentChunksResult(

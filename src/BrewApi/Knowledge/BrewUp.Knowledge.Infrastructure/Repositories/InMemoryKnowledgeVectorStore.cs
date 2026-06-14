@@ -57,6 +57,20 @@ public sealed class InMemoryKnowledgeVectorStore : IKnowledgeVectorStore
         }
     }
 
+    public Task DeleteByDocumentIdAsync(
+        Guid documentId,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        lock (_lock)
+            _vectors = _vectors
+                .Where(item => item.Chunk.DocumentId != documentId)
+                .ToArray();
+
+        return Task.CompletedTask;
+    }
+
     internal int Count
     {
         get
