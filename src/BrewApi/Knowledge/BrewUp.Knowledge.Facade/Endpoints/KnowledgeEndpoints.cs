@@ -103,20 +103,27 @@ public static class KnowledgeEndpoints
     }
     
     private static async Task<IResult> HandleIngestKnowledgeFile(
-        IFormFile file,
-        string scope,
+        IFormCollection form,
         IngestKnowledgeDocumentHandler handler,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
+
+        var file = form.Files.GetFile("file")
+                   ?? throw new ArgumentException("A file is required.", nameof(form));
+        var scope = form["scope"].ToString();
+        var tags = form["tags"]
+            .Where(tag => !string.IsNullOrWhiteSpace(tag))
+            .Select(tag => tag!)
+            .ToArray();
+
         await using var stream = file.OpenReadStream();
 
         var command = new IngestKnowledgeFile(
             file.FileName,
             stream,
             DocumentScope.FromName(scope),
-            []);
+            tags);
 
         var result = await handler.HandleAsync(command, cancellationToken);
 
