@@ -20,6 +20,7 @@ public static class KnowledgeInfrastructureHelper
     {
         services.AddSingleton<IKnowledgeTextExtractor, PlainTextExtractor>();
         services.AddSingleton<IKnowledgeTextExtractor, MarkdownTextExtractor>();
+        services.AddSingleton<IKnowledgeTextExtractor, PdfTextExtractor>();
 
         if (configuration is null)
         {

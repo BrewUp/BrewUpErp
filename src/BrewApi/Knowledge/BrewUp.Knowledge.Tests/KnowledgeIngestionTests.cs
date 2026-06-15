@@ -67,23 +67,54 @@ public sealed class KnowledgeIngestionTests
     }
 
     [Fact]
+    public async Task IngestPdf_UsesExistingPipelineForDocumentChunksAndEmbeddings()
+    {
+        await using var provider = CreateProvider();
+        using var scope = provider.CreateScope();
+        var handler = scope.ServiceProvider.GetRequiredService<IngestKnowledgeDocumentHandler>();
+        var documents = scope.ServiceProvider.GetRequiredService<InMemoryKnowledgeDocumentRepository>();
+        var chunks = scope.ServiceProvider.GetRequiredService<InMemoryKnowledgeChunkRepository>();
+        var vectors = scope.ServiceProvider.GetRequiredService<InMemoryKnowledgeVectorStore>();
+        await using var content = PdfTestDocument.Create(
+            "Malt and hops are ingredients used to brew beer.");
+
+        var result = await handler.HandleAsync(
+            new IngestKnowledgeFile(
+                "brewing-guide.pdf",
+                content,
+                DocumentScope.Production,
+                ["brewing", "guide"]),
+            CancellationToken.None);
+
+        Assert.Equal(1, result.ChunkCount);
+        Assert.Equal(1, vectors.Count);
+        Assert.Single(await chunks.GetByDocumentIdAsync(result.DocumentId, CancellationToken.None));
+        Assert.True(documents.TryGet(result.DocumentId, out var document));
+        Assert.Equal("brewing-guide", document!.Title);
+        Assert.Equal(DocumentSource.Pdf, document.Source);
+        Assert.Equal(DocumentScope.Production, document.Scope);
+        Assert.Equal(new[] { "brewing", "guide" }, document.Tags);
+        Assert.Contains("Malt and hops", document.DocumentsContent);
+    }
+
+    [Fact]
     public async Task IngestFile_WithUnsupportedExtension_FailsExplicitly()
     {
         await using var provider = CreateProvider();
         using var scope = provider.CreateScope();
         var handler = scope.ServiceProvider.GetRequiredService<IngestKnowledgeDocumentHandler>();
-        await using var content = StreamOf("PDF content is not supported yet.");
+        await using var content = StreamOf("Unsupported document content.");
 
         var exception = await Assert.ThrowsAsync<UnsupportedKnowledgeFileTypeException>(
             () => handler.HandleAsync(
                 new IngestKnowledgeFile(
-                    "brewing.pdf",
+                    "brewing.docx",
                     content,
                     DocumentScope.General),
                 CancellationToken.None));
 
-        Assert.Contains(".pdf", exception.Message);
-        Assert.Contains(".txt and .md", exception.Message);
+        Assert.Contains(".docx", exception.Message);
+        Assert.Contains(".txt, .md, and .pdf", exception.Message);
     }
 
     [Fact]
@@ -128,4 +159,5 @@ public sealed class KnowledgeIngestionTests
 
     private static MemoryStream StreamOf(string content)
         => new(Encoding.UTF8.GetBytes(content));
+
 }
