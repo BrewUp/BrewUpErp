@@ -108,7 +108,7 @@ public sealed class SqlServerKnowledgeVectorStore(
                 Title,
                 Scope,
                 Tags,
-                Content,
+                VectorsContent,
                 TokenCount,
                 MaxCharacters,
                 OverlapCharacters,

@@ -2,17 +2,30 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using BrewUp.Mother.SharedKernel.Chat;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using ChatResponse = BrewUp.Mother.SharedKernel.Chat.ChatResponse;
 
 namespace BrewUp.Mother.Facade.Agents;
 
-public sealed class MotherCoordinator(IEnumerable<IAgent> agents)
+public sealed class MotherCoordinator(
+    IEnumerable<IAgent> agents,
+    IEnumerable<IAgentCardProvider>? agentCardProviders = null,
+    ILogger<MotherCoordinator>? logger = null)
 {
     private static readonly Regex DemandPattern = new(
         @"(?<quantity>\d+(?:[.,]\d+)?)\s*(?:bottles?|bottle|pz|pieces?)\s+(?:of\s+)?(?<beer>[a-zA-Z][a-zA-Z0-9\s'-]*?)(?=\s+(?:and|,)|\?|$)",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private readonly IReadOnlyDictionary<string, IAgent> _agents = agents.ToDictionary(a => a.Name);
+    private readonly IReadOnlyCollection<IAgentCardProvider> _agentCardProviders =
+        agentCardProviders?.ToArray() ?? [];
+    private readonly ILogger<MotherCoordinator> _logger = logger ?? NullLogger<MotherCoordinator>.Instance;
+
+    public IReadOnlyCollection<AgentCard> InspectAgentCards()
+        => _agentCardProviders
+            .Select(provider => provider.GetAgentCard())
+            .ToArray();
 
     public bool CanCoordinate(ChatRequest request)
         => IsWhatIf(request.Message) && ParseDemand(request.Message).Count > 0;
@@ -24,6 +37,12 @@ public sealed class MotherCoordinator(IEnumerable<IAgent> agents)
             return new ChatResponse("I could not identify the requested beer quantities in the scenario.", request.ConversationId);
 
         var correlationId = Guid.CreateVersion7();
+        var invokedAgents = new List<string>();
+        var context = new AgentContext(
+            request.ConversationId ?? string.Empty,
+            "Mother",
+            invokedAgents.AsReadOnly(),
+            new Dictionary<string, object?>());
 
         var masterDataResponse = await AskAsync(
             nameof(MasterDataAgent),
@@ -31,9 +50,16 @@ public sealed class MotherCoordinator(IEnumerable<IAgent> agents)
             request.Message,
             new Dictionary<string, object?> { ["demandItems"] = demandItems },
             correlationId,
+            context,
+            invokedAgents,
             cancellationToken);
 
         var resolved = masterDataResponse.GetRequired<IReadOnlyCollection<ResolvedBeerDemand>>("resolvedBeerDemand");
+
+        if (resolved.Count == 0)
+            return new ChatResponse(
+                "BrewUp ERP does not expose the requested product or beer information yet.",
+                request.ConversationId);
 
         var salesResponse = await AskAsync(
             nameof(SalesAgent),
@@ -41,6 +67,8 @@ public sealed class MotherCoordinator(IEnumerable<IAgent> agents)
             request.Message,
             new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved },
             correlationId,
+            context,
+            invokedAgents,
             cancellationToken);
 
         var salesSignal = salesResponse.GetRequired<SalesDemandSignal>("salesDemandSignal");
@@ -51,12 +79,25 @@ public sealed class MotherCoordinator(IEnumerable<IAgent> agents)
             request.Message,
             new Dictionary<string, object?> { ["salesDemandSignal"] = salesSignal },
             correlationId,
+            context,
+            invokedAgents,
+            cancellationToken);
+
+        var knowledgeResponse = await AskAsync(
+            nameof(KnowledgeAgent),
+            "retrieve-business-knowledge",
+            request.Message,
+            new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved },
+            correlationId,
+            context,
+            invokedAgents,
             cancellationToken);
 
         var warehouseImpact = warehouseResponse.GetRequired<WarehouseImpact>("warehouseImpact");
+        var knowledgeResult = knowledgeResponse.GetRequired<KnowledgeResult>("knowledgeResult");
 
         return new ChatResponse(
-            BuildBusinessAnswer(resolved, salesSignal, warehouseImpact),
+            BuildBusinessAnswer(resolved, salesSignal, warehouseImpact, knowledgeResult),
             request.ConversationId);
     }
 
@@ -66,6 +107,8 @@ public sealed class MotherCoordinator(IEnumerable<IAgent> agents)
         string originalQuestion,
         IReadOnlyDictionary<string, object?> inputs,
         Guid correlationId,
+        AgentContext context,
+        ICollection<string> invokedAgents,
         CancellationToken cancellationToken)
     {
         if (!_agents.TryGetValue(agentName, out var agent))
@@ -74,9 +117,25 @@ public sealed class MotherCoordinator(IEnumerable<IAgent> agents)
         if (!agent.CanHandle(capability))
             throw new InvalidOperationException($"{agentName} cannot handle capability '{capability}'.");
 
-        return await agent.HandleAsync(
-            new AgentRequest(capability, originalQuestion, inputs, correlationId),
+        _logger.LogInformation(
+            "Mother delegating to {AgentName} for {Capability} with correlation {CorrelationId}",
+            agentName,
+            capability,
+            correlationId);
+
+        invokedAgents.Add(agentName);
+
+        var response = await agent.HandleAsync(
+            new AgentRequest(capability, originalQuestion, inputs, correlationId, context),
             cancellationToken);
+
+        _logger.LogInformation(
+            "Mother received {AgentName} result for {Capability}: {Summary}",
+            response.AgentName,
+            capability,
+            response.Summary);
+
+        return response;
     }
 
     private static bool IsWhatIf(string message)
@@ -97,7 +156,8 @@ public sealed class MotherCoordinator(IEnumerable<IAgent> agents)
     private static string BuildBusinessAnswer(
         IReadOnlyCollection<ResolvedBeerDemand> resolved,
         SalesDemandSignal salesSignal,
-        WarehouseImpact warehouseImpact)
+        WarehouseImpact warehouseImpact,
+        KnowledgeResult knowledgeResult)
     {
         var answer = new StringBuilder();
         answer.AppendLine($"Scenario interpreted as demand for {salesSignal.TotalQuantity} bottle(s), estimated value {salesSignal.EstimatedAmount:0.00}.");
@@ -116,6 +176,16 @@ public sealed class MotherCoordinator(IEnumerable<IAgent> agents)
                 answer.Append(". No immediate stock or reorder risk");
 
             answer.AppendLine(".");
+        }
+
+        if (knowledgeResult.Findings.Count > 0)
+        {
+            var policy = knowledgeResult.Findings.First();
+            answer.AppendLine($"Documented rule: {policy.Title}: {policy.Content}");
+        }
+        else
+        {
+            answer.AppendLine("Documented rule: BrewUp ERP does not expose that information yet.");
         }
 
         var unresolvedCount = salesSignal.Lines.Count == 0

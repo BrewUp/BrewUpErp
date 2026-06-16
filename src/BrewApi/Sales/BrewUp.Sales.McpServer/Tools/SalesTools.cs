@@ -11,7 +11,6 @@ namespace BrewUp.Sales.McpServer.Tools;
 public sealed class SalesTools(
     IMcpSalesFacade mcpSalesFacade)
 {
-    [Authorize]
     [McpServerTool(Name = "get_open_sales_orders")]
     [Description("Returns the currently open sales orders.")]
     public async Task<object> GetOpenSalesOrders(CancellationToken cancellationToken)

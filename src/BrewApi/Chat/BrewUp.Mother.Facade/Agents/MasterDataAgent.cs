@@ -8,6 +8,7 @@ public sealed class MasterDataAgent(IMcpToolClient mcpToolClient) : IAgent
     private const string ResolveBeerCatalog = "resolve-beer-catalog";
 
     public string Name => nameof(MasterDataAgent);
+    public string SystemPrompt => "Resolve BrewUp products, beers, beer styles, customers, and suppliers using only MasterData MCP tools.";
 
     public IReadOnlyCollection<AgentCapability> Capabilities =>
     [
@@ -29,7 +30,7 @@ public sealed class MasterDataAgent(IMcpToolClient mcpToolClient) : IAgent
         {
             var beer = await mcpToolClient.CallToolAsync<BeerJson>(
                 serverName: "masterData",
-                toolName: "masterdata_resolve_beer",
+                toolName: "resolve-beer-catalog",
                 arguments: new { beerName = demandItem.BeerName },
                 cancellationToken);
 

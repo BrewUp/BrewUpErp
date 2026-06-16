@@ -9,6 +9,7 @@ public sealed class WarehouseAgent(IMcpToolClient mcpToolClient) : IAgent
     private const string EvaluateStockImpact = "evaluate-stock-impact";
 
     public string Name => nameof(WarehouseAgent);
+    public string SystemPrompt => "Evaluate stock availability, reorder risk, and fulfillment impact using only Warehouse MCP tools.";
 
     public IReadOnlyCollection<AgentCapability> Capabilities =>
     [

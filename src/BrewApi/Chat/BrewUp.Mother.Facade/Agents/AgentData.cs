@@ -39,3 +39,12 @@ public sealed record WarehouseImpact(
     IReadOnlyCollection<WarehouseImpactLine> Lines,
     bool HasStockRisk,
     bool HasReorderRisk);
+
+public sealed record KnowledgeFinding(
+    string Title,
+    string Scope,
+    string Content,
+    double Score);
+
+public sealed record KnowledgeResult(
+    IReadOnlyCollection<KnowledgeFinding> Findings);

@@ -6,7 +6,7 @@ namespace BrewUp.Knowledge.Infrastructure;
 
 public sealed class FakeEmbeddingGenerator : IEmbeddingGenerator
 {
-    private const int Dimensions = 256;
+    private const int Dimensions = 1536;
 
     public Task<EmbeddingVector> GenerateAsync(string text, CancellationToken cancellationToken)
     {

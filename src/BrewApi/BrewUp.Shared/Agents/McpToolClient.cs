@@ -80,28 +80,48 @@ internal sealed class McpToolClient(
             envelope.Error.Message);
 
         return default;
-
     }
     
-    private static TResponse? ExtractToolResult<TResponse>(JsonElement result)
+    private static TResponse ExtractToolResult<TResponse>(JsonElement result)
     {
-        if (!result.TryGetProperty("content", out var content))
-            return result.Deserialize<TResponse>(JsonOptions);
+        if (result.TryGetProperty("structuredContent", out var structuredContent))
+        {
+            return structuredContent.Deserialize<TResponse>(JsonOptions)!;
+        }
 
-        var first = content.EnumerateArray().FirstOrDefault();
+        if (result.TryGetProperty("content", out var content) &&
+            content.ValueKind == JsonValueKind.Array &&
+            content.GetArrayLength() > 0)
+        {
+            var first = content[0];
 
-        if (first.ValueKind == JsonValueKind.Undefined)
-            return default;
+            if (first.TryGetProperty("text", out var textElement))
+            {
+                var text = textElement.GetString();
 
-        if (!first.TryGetProperty("text", out var text)) 
-            return first.Deserialize<TResponse>(JsonOptions);
-        
-        var json = text.GetString();
+                if (typeof(TResponse) == typeof(string))
+                    return (TResponse)(object)(text ?? string.Empty);
 
-        return string.IsNullOrWhiteSpace(json) 
-            ? default 
-            : JsonSerializer.Deserialize<TResponse>(json, JsonOptions);
+                if (!string.IsNullOrWhiteSpace(text) &&
+                    LooksLikeJson(text))
+                {
+                    return JsonSerializer.Deserialize<TResponse>(
+                        text,
+                        JsonOptions)!;
+                }
 
+                throw new InvalidOperationException(
+                    $"MCP tool returned plain text, but {typeof(TResponse).Name} was expected. Text starts with: {text?[..Math.Min(text.Length, 80)]}");
+            }
+        }
+
+        return result.Deserialize<TResponse>(JsonOptions)!;
+    }
+    
+    private static bool LooksLikeJson(string value)
+    {
+        var trimmed = value.TrimStart();
+        return trimmed.StartsWith("{") || trimmed.StartsWith("[") || trimmed.StartsWith("\"");
     }
 
     private static string ExtractJsonPayload(string raw)
