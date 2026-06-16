@@ -1,4 +1,5 @@
-﻿using Azure;
+﻿using System.Net.Http.Headers;
+using Azure;
 using Azure.AI.OpenAI;
 using Azure.Core;
 using Azure.Identity;
@@ -23,10 +24,19 @@ public static class BrewUpChatHelper
 
         // Dedicated resilient HttpClient for MCP transports:
         //  - long enough timeout to cover multi-round tool calling
+        //  - accepts both JSON and SSE responses
         //  - standard resilience pipeline (retry + circuit breaker + timeout per attempt)
         services.AddHttpClient("mcp", client =>
             {
                 client.Timeout = TimeSpan.FromMinutes(3);
+                
+                client.DefaultRequestHeaders.Accept.Clear();
+
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("text/event-stream"));
             })
             .AddStandardResilienceHandler(o =>
             {
@@ -55,9 +65,15 @@ public static class BrewUpChatHelper
         services.AddScoped<MasterDataAgent>();
         services.AddScoped<SalesAgent>();
         services.AddScoped<WarehouseAgent>();
+        services.AddScoped<KnowledgeAgent>();
         services.AddScoped<IAgent>(sp => sp.GetRequiredService<MasterDataAgent>());
         services.AddScoped<IAgent>(sp => sp.GetRequiredService<SalesAgent>());
         services.AddScoped<IAgent>(sp => sp.GetRequiredService<WarehouseAgent>());
+        services.AddScoped<IAgent>(sp => sp.GetRequiredService<KnowledgeAgent>());
+        services.AddScoped<IAgentCardProvider, MasterDataAgentCardProvider>();
+        services.AddScoped<IAgentCardProvider, SalesAgentCardProvider>();
+        services.AddScoped<IAgentCardProvider, WarehouseAgentCardProvider>();
+        services.AddScoped<IAgentCardProvider, KnowledgeAgentCardProvider>();
         services.AddScoped<MotherCoordinator>();
         
         services.AddSingleton<IChatClient>(sp =>

@@ -2,6 +2,7 @@ using System.Text.Json;
 using BrewUp.Mother.Facade.Agents;
 using BrewUp.Mother.McpClients;
 using BrewUp.Mother.SharedKernel.Chat;
+using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.ExternalContracts.MasterData.Beers;
 using BrewUp.Shared.ExternalContracts.Warehouse;
@@ -17,25 +18,106 @@ public sealed class MotherCoordinatorTests
         var coordinator = new MotherCoordinator(
         [
             new MasterDataAgent(mcp),
-            new SalesAgent(),
-            new WarehouseAgent(mcp)
+            new SalesAgent(mcp),
+            new WarehouseAgent(mcp),
+            new KnowledgeAgent(mcp)
         ]);
 
         var response = await coordinator.CoordinateAsync(
-            new ChatRequest(
-                "What if someone orders 50 bottles of IPA and 100 bottles of Weiss?",
-                "conversation-1"),
+            new ChatRequest("What if someone orders 100 bottles of IPA?", "conversation-1"),
             CancellationToken.None);
 
-        Assert.Contains("Scenario interpreted as demand for 150 bottle", response.Answer);
+        Assert.Contains("Scenario interpreted as demand for 100 bottle", response.Answer);
         Assert.Contains("IPA", response.Answer);
-        Assert.Contains("Weiss", response.Answer);
-        Assert.Contains("Reorder risk", response.Answer);
+        Assert.Contains("Stock risk", response.Answer);
+        Assert.Contains("IPA reorder policy", response.Answer);
 
         Assert.Contains(mcp.Calls, call => call.ServerName == "masterData" && call.ToolName == "masterdata_resolve_beer");
+        Assert.Contains(mcp.Calls, call => call.ServerName == "sales" && call.ToolName == "get_orders_by_beer");
         Assert.Contains(mcp.Calls, call => call.ServerName == "warehouse" && call.ToolName == "get_beer_availability");
         Assert.Contains(mcp.Calls, call => call.ServerName == "warehouse" && call.ToolName == "get_reorder_thresholds");
-        Assert.DoesNotContain(mcp.Calls, call => call.ServerName.Equals("sales", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(mcp.Calls, call => call.ServerName == "knowledge" && call.ToolName == "search_knowledge_base");
+
+        Assert.DoesNotContain(mcp.Calls, call => call.ServerName == "masterData" && call.ToolName.StartsWith("get_orders", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(mcp.Calls, call => call.ServerName == "warehouse" && call.ToolName == "search_knowledge_base");
+        Assert.DoesNotContain(mcp.Calls, call => call.ServerName == "knowledge" && call.ToolName != "search_knowledge_base");
+    }
+
+    [Fact]
+    public void Agent_request_carries_future_agent_context()
+    {
+        var context = new AgentContext(
+            "conversation-1",
+            "Mother",
+            ["MasterDataAgent", "WarehouseAgent"],
+            new Dictionary<string, object?> { ["businessDate"] = "2026-06-16" });
+
+        var request = new AgentRequest(
+            "evaluate-stock-impact",
+            "What if someone orders 100 bottles of IPA?",
+            new Dictionary<string, object?>(),
+            Guid.CreateVersion7(),
+            context);
+
+        Assert.Equal("conversation-1", request.Context.ConversationId);
+        Assert.Contains("WarehouseAgent", request.Context.InvokedAgents);
+    }
+
+    [Fact]
+    public void Agent_card_providers_describe_specialized_agents()
+    {
+        IAgentCardProvider[] providers =
+        [
+            new MasterDataAgentCardProvider(),
+            new SalesAgentCardProvider(),
+            new WarehouseAgentCardProvider(),
+            new KnowledgeAgentCardProvider()
+        ];
+
+        var cards = providers.Select(provider => provider.GetAgentCard()).ToArray();
+
+        Assert.All(cards, card =>
+        {
+            Assert.False(string.IsNullOrWhiteSpace(card.Name));
+            Assert.False(string.IsNullOrWhiteSpace(card.Description));
+            Assert.False(string.IsNullOrWhiteSpace(card.Version));
+            Assert.NotEmpty(card.Skills);
+            Assert.NotEmpty(card.Capabilities);
+        });
+
+        Assert.Contains(cards, card => card.Name == nameof(SalesAgent)
+                                       && card.Skills.Any(skill => skill.Name == "interpret-demand-signal"));
+        Assert.Contains(cards, card => card.Name == nameof(WarehouseAgent)
+                                       && card.Capabilities.Any(capability => capability.Name == "evaluate-stock-impact"));
+        Assert.Contains(cards, card => card.Name == nameof(MasterDataAgent)
+                                       && card.Skills.Any(skill => skill.Name == "resolve-beer-catalog"));
+        Assert.Contains(cards, card => card.Name == nameof(KnowledgeAgent)
+                                       && card.Capabilities.Any(capability => capability.Name == "retrieve-business-knowledge"));
+    }
+
+    [Fact]
+    public void Mother_can_inspect_registered_agent_cards()
+    {
+        var mcp = new RecordingMcpToolClient();
+        var coordinator = new MotherCoordinator(
+        [
+            new MasterDataAgent(mcp),
+            new SalesAgent(mcp),
+            new WarehouseAgent(mcp),
+            new KnowledgeAgent(mcp)
+        ],
+        [
+            new MasterDataAgentCardProvider(),
+            new SalesAgentCardProvider(),
+            new WarehouseAgentCardProvider(),
+            new KnowledgeAgentCardProvider()
+        ]);
+
+        var cards = coordinator.InspectAgentCards();
+
+        Assert.Equal(4, cards.Count);
+        Assert.Contains(cards, card => card.Name == nameof(KnowledgeAgent)
+                                       && card.Skills.Any(skill => skill.Name == "retrieve-business-knowledge"));
     }
 
     private sealed class RecordingMcpToolClient : IMcpToolClient
@@ -58,8 +140,10 @@ public sealed class MotherCoordinatorTests
             object? response = (serverName.ToLowerInvariant(), toolName) switch
             {
                 ("masterdata", "masterdata_resolve_beer") => ResolveBeer(argumentJson.GetProperty("beerName").GetString()!),
+                ("sales", "get_orders_by_beer") => Array.Empty<object>(),
                 ("warehouse", "get_beer_availability") => GetAvailability(argumentJson.GetProperty("beerId").GetString()!),
                 ("warehouse", "get_reorder_thresholds") => GetThreshold(argumentJson.GetProperty("beerId").GetString()!),
+                ("knowledge", "search_knowledge_base") => GetKnowledgePolicy(),
                 _ => default(TResponse)
             };
 
@@ -116,6 +200,21 @@ public sealed class MotherCoordinatorTests
                     }
                 },
                 JsonOptions);
+
+        private static SearchKnowledgeResult GetKnowledgePolicy()
+            => new(
+            [
+                new KnowledgeSearchResultItem(
+                    Guid.CreateVersion7(),
+                    Guid.CreateVersion7(),
+                    1,
+                    "IPA reorder policy",
+                    "Warehouse",
+                    ["ipa", "reorder"],
+                    "IPA reorder policy: review replenishment when projected stock reaches the threshold.",
+                    0.91,
+                    12)
+            ]);
     }
 
     private sealed record McpCall(string ServerName, string ToolName);

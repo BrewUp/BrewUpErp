@@ -22,7 +22,7 @@ public class MasterDataTools(IMcpMasterDataFacade mcpMasterDataFacade)
         CancellationToken cancellationToken) =>
         await mcpMasterDataFacade.GetBeerDetailsAsync(beerId, cancellationToken);
     
-    [McpServerTool(Name = "masterdata_resolve_beer")]
+    [McpServerTool(Name = "resolve-beer-catalog")]
     [Description(
         "Returns the details of a beer. Use this tool when someone asks for resolve beer name.")]
     public async Task<object> GetBeerDetailsFromName(
