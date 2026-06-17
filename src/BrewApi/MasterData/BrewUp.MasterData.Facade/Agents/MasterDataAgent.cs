@@ -30,7 +30,7 @@ internal sealed class MasterDataAgent(IMcpToolClient mcpToolClient) : IAgent
         {
             var beer = await mcpToolClient.CallToolAsync<BeerJson>(
                 serverName: "masterData",
-                toolName: "masterdata_resolve_beer",
+                toolName: "resolve-beer-catalog",
                 arguments: new { beerName = demandItem.BeerName },
                 cancellationToken);
 

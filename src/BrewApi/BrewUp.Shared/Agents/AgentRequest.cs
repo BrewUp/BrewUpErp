@@ -6,9 +6,3 @@ public sealed record AgentRequest(
     IReadOnlyDictionary<string, object?> Inputs,
     Guid CorrelationId,
     AgentContext Context);
-
-public sealed record AgentContext(
-    string ConversationId,
-    string RequestedBy,
-    IReadOnlyCollection<string> InvokedAgents,
-    IReadOnlyDictionary<string, object?> Metadata);
