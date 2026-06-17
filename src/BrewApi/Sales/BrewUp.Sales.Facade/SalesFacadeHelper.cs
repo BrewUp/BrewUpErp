@@ -1,8 +1,10 @@
 using System.Globalization;
 using BrewUp.Sales.Domain;
 using BrewUp.Sales.Facade.Acl;
+using BrewUp.Sales.Facade.Agents;
 using BrewUp.Sales.Infrastructure;
 using BrewUp.Sales.ReadModel;
+using BrewUp.Shared.Agents;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,13 +32,16 @@ public static class SalesFacadeHelper
                     DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
             };
         });
-        
+
         services.AddScoped<ISalesFacade, SalesFacade>();
+        services.AddScoped<SalesAgent>();
+        services.AddScoped<IAgent>(sp => sp.GetRequiredService<SalesAgent>());
+        services.AddScoped<IAgentCardProvider, SalesAgentCardProvider>();
 
         services.AddSalesDomain();
         services.AddReadModel();
         services.AddInfrastructure(configurationManager);
-        
+
         services.AddIntegrationEventHandler<CustomerCreatedEventHandler>();
         services.AddIntegrationEventHandler<CustomerUpdatedEventHandler>();
         services.AddIntegrationEventHandler<CustomerDeletedEventHandler>();

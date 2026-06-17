@@ -2,11 +2,13 @@ using System.Globalization;
 using BrewUp.Knowledge.Core;
 using BrewUp.Knowledge.Core.Chunking;
 using BrewUp.Knowledge.Core.CommandHandlers;
-using BrewUp.Knowledge.Infrastructure;
+using BrewUp.Knowledge.Facade.Agents;
 using BrewUp.Knowledge.Facade.Evaluation;
 using BrewUp.Knowledge.Facade.Governance;
+using BrewUp.Knowledge.Infrastructure;
 using BrewUp.Knowledge.ReadModel;
 using BrewUp.Knowledge.ReadModel.QueryHandlers;
+using BrewUp.Shared.Agents;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,14 +36,17 @@ public static class KnowledgeFacadeHelper
                     DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
             };
         });
-        
+
         services.AddScoped<IKnowledgeFacade, KnowledgeFacade>();
+        services.AddScoped<KnowledgeAgent>();
+        services.AddScoped<IAgent>(sp => sp.GetRequiredService<KnowledgeAgent>());
+        services.AddScoped<IAgentCardProvider, KnowledgeAgentCardProvider>();
         services.AddScoped<GetKnowledgeDocumentsHandler>();
         services.AddScoped<GetKnowledgeDocumentHandler>();
         services.AddScoped<DeleteKnowledgeDocumentHandler>();
         services.AddScoped<ReindexKnowledgeDocumentHandler>();
         services.AddScoped<KnowledgeRetrievalEvaluator>();
-        
+
         services.AddCore();
         services.AddInfrastructure(configuration);
         services.AddKnowledgeReadModel();

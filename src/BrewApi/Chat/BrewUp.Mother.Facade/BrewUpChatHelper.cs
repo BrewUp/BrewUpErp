@@ -7,6 +7,7 @@ using BrewUp.Mother.Facade.Agents;
 using BrewUp.Mother.Facade.Chat;
 using BrewUp.Mother.Facade.Mcp;
 using BrewUp.Shared;
+using BrewUp.Shared.Agents;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -62,18 +63,6 @@ public static class BrewUpChatHelper
         
         // MCP clients + tool catalog are kept alive for the whole app lifetime.
         services.AddSingleton<IMcpToolsProvider, McpToolsProvider>();
-        services.AddScoped<MasterDataAgent>();
-        services.AddScoped<SalesAgent>();
-        services.AddScoped<WarehouseAgent>();
-        services.AddScoped<KnowledgeAgent>();
-        services.AddScoped<IAgent>(sp => sp.GetRequiredService<MasterDataAgent>());
-        services.AddScoped<IAgent>(sp => sp.GetRequiredService<SalesAgent>());
-        services.AddScoped<IAgent>(sp => sp.GetRequiredService<WarehouseAgent>());
-        services.AddScoped<IAgent>(sp => sp.GetRequiredService<KnowledgeAgent>());
-        services.AddScoped<IAgentCardProvider, MasterDataAgentCardProvider>();
-        services.AddScoped<IAgentCardProvider, SalesAgentCardProvider>();
-        services.AddScoped<IAgentCardProvider, WarehouseAgentCardProvider>();
-        services.AddScoped<IAgentCardProvider, KnowledgeAgentCardProvider>();
         services.AddScoped<MotherCoordinator>();
         
         services.AddSingleton<IChatClient>(sp =>

@@ -1,8 +1,8 @@
 using System.Text.Json;
 using BrewUp.Mother.Facade.Agents;
-using BrewUp.Mother.McpClients;
 using BrewUp.Mother.SharedKernel.Chat;
 using BrewUp.Knowledge.SharedKernel.Documents;
+using BrewUp.Shared.Agents;
 using BrewUp.Shared.CustomTypes;
 using BrewUp.Shared.ExternalContracts.MasterData.Beers;
 using BrewUp.Shared.ExternalContracts.Warehouse;
@@ -11,17 +11,16 @@ namespace BrewUp.Rest.Tests.Chat;
 
 public sealed class MotherCoordinatorTests
 {
+    private const string MasterDataAgentName = "MasterDataAgent";
+    private const string SalesAgentName = "SalesAgent";
+    private const string WarehouseAgentName = "WarehouseAgent";
+    private const string KnowledgeAgentName = "KnowledgeAgent";
+
     [Fact]
     public async Task Coordinates_specialized_agents_for_inventory_what_if()
     {
         var mcp = new RecordingMcpToolClient();
-        var coordinator = new MotherCoordinator(
-        [
-            new MasterDataAgent(mcp),
-            new SalesAgent(mcp),
-            new WarehouseAgent(mcp),
-            new KnowledgeAgent(mcp)
-        ]);
+        var coordinator = new MotherCoordinator(CreateTestAgents(mcp));
 
         var response = await coordinator.CoordinateAsync(
             new ChatRequest("What if someone orders 100 bottles of IPA?", "conversation-1"),
@@ -68,10 +67,10 @@ public sealed class MotherCoordinatorTests
     {
         IAgentCardProvider[] providers =
         [
-            new MasterDataAgentCardProvider(),
-            new SalesAgentCardProvider(),
-            new WarehouseAgentCardProvider(),
-            new KnowledgeAgentCardProvider()
+            CreateCardProvider(MasterDataAgentName, "Resolves BrewUp beers and product catalog data.", "resolve-beer-catalog"),
+            CreateCardProvider(SalesAgentName, "Interprets demand and sales impact.", "interpret-demand-signal"),
+            CreateCardProvider(WarehouseAgentName, "Evaluates stock availability and fulfillment impact.", "evaluate-stock-impact"),
+            CreateCardProvider(KnowledgeAgentName, "Retrieves documented BrewUp operational knowledge.", "retrieve-business-knowledge")
         ];
 
         var cards = providers.Select(provider => provider.GetAgentCard()).ToArray();
@@ -85,13 +84,13 @@ public sealed class MotherCoordinatorTests
             Assert.NotEmpty(card.Capabilities);
         });
 
-        Assert.Contains(cards, card => card.Name == nameof(SalesAgent)
+        Assert.Contains(cards, card => card.Name == SalesAgentName
                                        && card.Skills.Any(skill => skill.Name == "interpret-demand-signal"));
-        Assert.Contains(cards, card => card.Name == nameof(WarehouseAgent)
+        Assert.Contains(cards, card => card.Name == WarehouseAgentName
                                        && card.Capabilities.Any(capability => capability.Name == "evaluate-stock-impact"));
-        Assert.Contains(cards, card => card.Name == nameof(MasterDataAgent)
+        Assert.Contains(cards, card => card.Name == MasterDataAgentName
                                        && card.Skills.Any(skill => skill.Name == "resolve-beer-catalog"));
-        Assert.Contains(cards, card => card.Name == nameof(KnowledgeAgent)
+        Assert.Contains(cards, card => card.Name == KnowledgeAgentName
                                        && card.Capabilities.Any(capability => capability.Name == "retrieve-business-knowledge"));
     }
 
@@ -100,24 +99,231 @@ public sealed class MotherCoordinatorTests
     {
         var mcp = new RecordingMcpToolClient();
         var coordinator = new MotherCoordinator(
+            CreateTestAgents(mcp),
         [
-            new MasterDataAgent(mcp),
-            new SalesAgent(mcp),
-            new WarehouseAgent(mcp),
-            new KnowledgeAgent(mcp)
-        ],
-        [
-            new MasterDataAgentCardProvider(),
-            new SalesAgentCardProvider(),
-            new WarehouseAgentCardProvider(),
-            new KnowledgeAgentCardProvider()
+            CreateCardProvider(MasterDataAgentName, "Resolves BrewUp beers and product catalog data.", "resolve-beer-catalog"),
+            CreateCardProvider(SalesAgentName, "Interprets demand and sales impact.", "interpret-demand-signal"),
+            CreateCardProvider(WarehouseAgentName, "Evaluates stock availability and fulfillment impact.", "evaluate-stock-impact"),
+            CreateCardProvider(KnowledgeAgentName, "Retrieves documented BrewUp operational knowledge.", "retrieve-business-knowledge")
         ]);
 
         var cards = coordinator.InspectAgentCards();
 
         Assert.Equal(4, cards.Count);
-        Assert.Contains(cards, card => card.Name == nameof(KnowledgeAgent)
+        Assert.Contains(cards, card => card.Name == KnowledgeAgentName
                                        && card.Skills.Any(skill => skill.Name == "retrieve-business-knowledge"));
+    }
+
+    private static IAgent[] CreateTestAgents(RecordingMcpToolClient mcp)
+        =>
+        [
+            new TestMasterDataAgent(mcp),
+            new TestSalesAgent(mcp),
+            new TestWarehouseAgent(mcp),
+            new TestKnowledgeAgent(mcp)
+        ];
+
+    private static IAgentCardProvider CreateCardProvider(string agentName, string description, string capabilityName)
+        => new TestAgentCardProvider(new AgentCard(
+            agentName,
+            description,
+            "1.0.0",
+            [new AgentSkill(capabilityName, description)],
+            [new AgentCapability(capabilityName, description)]));
+
+    private abstract class TestAgentBase(
+        string name,
+        string capabilityName,
+        string capabilityDescription) : IAgent
+    {
+        public string Name => name;
+        public string SystemPrompt => $"{name} test prompt.";
+        public IReadOnlyCollection<AgentCapability> Capabilities { get; } =
+        [
+            new AgentCapability(capabilityName, capabilityDescription)
+        ];
+
+        public bool CanHandle(string capabilityName)
+            => Capabilities.Any(capability => capability.Name == capabilityName);
+
+        public abstract Task<AgentResponse> HandleAsync(AgentRequest request, CancellationToken cancellationToken);
+    }
+
+    private sealed class TestMasterDataAgent(RecordingMcpToolClient mcp) : TestAgentBase(
+        MasterDataAgentName,
+        "resolve-beer-catalog",
+        "Resolves BrewUp beers and product catalog data.")
+    {
+        public override async Task<AgentResponse> HandleAsync(AgentRequest request, CancellationToken cancellationToken)
+        {
+            var demandItems = GetInput<IReadOnlyCollection<DemandItem>>(request, "demandItems");
+            var resolved = new List<ResolvedBeerDemand>();
+
+            foreach (var demandItem in demandItems)
+            {
+                var beer = await mcp.CallToolAsync<BeerJson>(
+                    "masterData",
+                    "masterdata_resolve_beer",
+                    new { beerName = demandItem.BeerName },
+                    cancellationToken);
+
+                if (beer is not null)
+                    resolved.Add(new ResolvedBeerDemand(demandItem, beer));
+            }
+
+            return new AgentResponse(
+                Name,
+                $"Resolved {resolved.Count} demand item(s).",
+                new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved });
+        }
+    }
+
+    private sealed class TestSalesAgent(RecordingMcpToolClient mcp) : TestAgentBase(
+        SalesAgentName,
+        "interpret-demand-signal",
+        "Interprets demand and sales impact.")
+    {
+        public override async Task<AgentResponse> HandleAsync(AgentRequest request, CancellationToken cancellationToken)
+        {
+            var resolved = GetInput<IReadOnlyCollection<ResolvedBeerDemand>>(request, "resolvedBeerDemand");
+            var lines = new List<SalesDemandLine>();
+
+            foreach (var item in resolved)
+            {
+                await mcp.CallToolAsync<object>(
+                    "sales",
+                    "get_orders_by_beer",
+                    new { beerName = item.Beer.BeerName },
+                    cancellationToken);
+
+                var unitPrice = item.Beer.Price.Value;
+                lines.Add(new SalesDemandLine(
+                    item.Beer.BeerId,
+                    item.Beer.BeerName,
+                    item.Demand.Quantity,
+                    item.Demand.UnitOfMeasure,
+                    unitPrice,
+                    unitPrice * item.Demand.Quantity));
+            }
+
+            var signal = new SalesDemandSignal(
+                lines,
+                lines.Sum(line => line.Quantity),
+                lines.Sum(line => line.LineAmount));
+
+            return new AgentResponse(
+                Name,
+                $"Interpreted demand for {signal.TotalQuantity} item(s).",
+                new Dictionary<string, object?> { ["salesDemandSignal"] = signal });
+        }
+    }
+
+    private sealed class TestWarehouseAgent(RecordingMcpToolClient mcp) : TestAgentBase(
+        WarehouseAgentName,
+        "evaluate-stock-impact",
+        "Evaluates stock availability and fulfillment impact.")
+    {
+        public override async Task<AgentResponse> HandleAsync(AgentRequest request, CancellationToken cancellationToken)
+        {
+            var salesSignal = GetInput<SalesDemandSignal>(request, "salesDemandSignal");
+            var lines = new List<WarehouseImpactLine>();
+
+            foreach (var line in salesSignal.Lines)
+            {
+                var availability = await mcp.CallToolAsync<AvailabilityWithThresholdJson>(
+                    "warehouse",
+                    "get_beer_availability",
+                    new { beerId = line.BeerId },
+                    cancellationToken);
+
+                var thresholdJson = await mcp.CallToolAsync<JsonElement>(
+                    "warehouse",
+                    "get_reorder_thresholds",
+                    new { beerId = line.BeerId },
+                    cancellationToken);
+
+                var available = availability?.Quantity ?? 0;
+                var reorderThreshold = ExtractThreshold(thresholdJson, availability?.ReorderThreshold ?? 0);
+                var remaining = available - line.Quantity;
+
+                lines.Add(new WarehouseImpactLine(
+                    line.BeerId,
+                    line.BeerName,
+                    line.Quantity,
+                    available,
+                    remaining,
+                    reorderThreshold,
+                    remaining < 0,
+                    remaining >= 0 && remaining <= reorderThreshold,
+                    availability?.UnitOfMeasure ?? line.UnitOfMeasure));
+            }
+
+            var impact = new WarehouseImpact(
+                lines,
+                lines.Any(line => line.StockRisk),
+                lines.Any(line => line.ReorderRisk));
+
+            return new AgentResponse(
+                Name,
+                "Evaluated warehouse impact.",
+                new Dictionary<string, object?> { ["warehouseImpact"] = impact });
+        }
+    }
+
+    private sealed class TestKnowledgeAgent(RecordingMcpToolClient mcp) : TestAgentBase(
+        KnowledgeAgentName,
+        "retrieve-business-knowledge",
+        "Retrieves documented BrewUp operational knowledge.")
+    {
+        public override async Task<AgentResponse> HandleAsync(AgentRequest request, CancellationToken cancellationToken)
+        {
+            var resolved = GetInput<IReadOnlyCollection<ResolvedBeerDemand>>(request, "resolvedBeerDemand");
+            var query = $"reorder policy {string.Join(' ', resolved.Select(item => item.Beer.BeerStyle))}";
+
+            var searchResult = await mcp.CallToolAsync<SearchKnowledgeResult>(
+                "knowledge",
+                "search_knowledge_base",
+                new { query },
+                cancellationToken);
+
+            var findings = searchResult?.Items
+                .Select(result => new KnowledgeFinding(
+                    result.Title,
+                    result.Scope,
+                    result.Content,
+                    result.Score))
+                .ToArray() ?? [];
+
+            return new AgentResponse(
+                Name,
+                $"Retrieved {findings.Length} knowledge finding(s).",
+                new Dictionary<string, object?> { ["knowledgeResult"] = new KnowledgeResult(findings) });
+        }
+    }
+
+    private sealed class TestAgentCardProvider(AgentCard card) : IAgentCardProvider
+    {
+        public AgentCard GetAgentCard() => card;
+    }
+
+    private static T GetInput<T>(AgentRequest request, string key)
+    {
+        Assert.True(request.Inputs.TryGetValue(key, out var value), $"Missing input '{key}'.");
+        return Assert.IsAssignableFrom<T>(value);
+    }
+
+    private static decimal ExtractThreshold(JsonElement thresholdJson, decimal fallback)
+    {
+        if (thresholdJson.ValueKind == JsonValueKind.Object
+            && thresholdJson.TryGetProperty("thresholdQuantity", out var thresholdQuantity)
+            && thresholdQuantity.ValueKind == JsonValueKind.Object
+            && thresholdQuantity.TryGetProperty("value", out var value)
+            && value.TryGetDecimal(out var threshold))
+        {
+            return threshold;
+        }
+
+        return fallback;
     }
 
     private sealed class RecordingMcpToolClient : IMcpToolClient

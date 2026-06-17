@@ -1,4 +1,3 @@
-﻿using BrewUp.Mother.McpClients;
 using BrewUp.Shared.Agents;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +8,7 @@ public static class SharedHelper
     public static IServiceCollection AddShared(this IServiceCollection services)
     {
         services.AddScoped<IMcpToolClient, McpToolClient>();
-        
+
         return services;
     }
 }

@@ -27,7 +27,6 @@
     <ItemGroup>
         <ProjectReference Include="..\BrewUp.Mother.SharedKernel\BrewUp.Mother.SharedKernel.csproj" />
         <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
-        <ProjectReference Include="..\..\Knowledge\BrewUp.Knowledge.SharedKernel\BrewUp.Knowledge.SharedKernel.csproj" />
     </ItemGroup>
 
 </Project>
