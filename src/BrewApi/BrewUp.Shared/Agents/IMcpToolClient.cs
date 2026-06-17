@@ -1,4 +1,4 @@
-﻿namespace BrewUp.Mother.McpClients;
+namespace BrewUp.Shared.Agents;
 
 public interface IMcpToolClient
 {

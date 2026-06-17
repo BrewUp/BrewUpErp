@@ -1,6 +1,8 @@
-namespace BrewUp.Mother.Facade.Agents;
+using BrewUp.Shared.Agents;
 
-public sealed class SalesAgentCardProvider : IAgentCardProvider
+namespace BrewUp.Sales.Facade.Agents;
+
+internal sealed class SalesAgentCardProvider : IAgentCardProvider
 {
     public AgentCard GetAgentCard()
         => new(

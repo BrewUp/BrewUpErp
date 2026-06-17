@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using BrewUp.Mother.SharedKernel.Chat;
+using BrewUp.Shared.Agents;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using ChatResponse = BrewUp.Mother.SharedKernel.Chat.ChatResponse;
@@ -13,6 +14,11 @@ public sealed class MotherCoordinator(
     IEnumerable<IAgentCardProvider>? agentCardProviders = null,
     ILogger<MotherCoordinator>? logger = null)
 {
+    private const string MasterDataAgentName = "MasterDataAgent";
+    private const string SalesAgentName = "SalesAgent";
+    private const string WarehouseAgentName = "WarehouseAgent";
+    private const string KnowledgeAgentName = "KnowledgeAgent";
+
     private static readonly Regex DemandPattern = new(
         @"(?<quantity>\d+(?:[.,]\d+)?)\s*(?:bottles?|bottle|pz|pieces?)\s+(?:of\s+)?(?<beer>[a-zA-Z][a-zA-Z0-9\s'-]*?)(?=\s+(?:and|,)|\?|$)",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -45,7 +51,7 @@ public sealed class MotherCoordinator(
             new Dictionary<string, object?>());
 
         var masterDataResponse = await AskAsync(
-            nameof(MasterDataAgent),
+            MasterDataAgentName,
             "resolve-beer-catalog",
             request.Message,
             new Dictionary<string, object?> { ["demandItems"] = demandItems },
@@ -62,7 +68,7 @@ public sealed class MotherCoordinator(
                 request.ConversationId);
 
         var salesResponse = await AskAsync(
-            nameof(SalesAgent),
+            SalesAgentName,
             "interpret-demand-signal",
             request.Message,
             new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved },
@@ -74,7 +80,7 @@ public sealed class MotherCoordinator(
         var salesSignal = salesResponse.GetRequired<SalesDemandSignal>("salesDemandSignal");
 
         var warehouseResponse = await AskAsync(
-            nameof(WarehouseAgent),
+            WarehouseAgentName,
             "evaluate-stock-impact",
             request.Message,
             new Dictionary<string, object?> { ["salesDemandSignal"] = salesSignal },
@@ -84,7 +90,7 @@ public sealed class MotherCoordinator(
             cancellationToken);
 
         var knowledgeResponse = await AskAsync(
-            nameof(KnowledgeAgent),
+            KnowledgeAgentName,
             "retrieve-business-knowledge",
             request.Message,
             new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved },

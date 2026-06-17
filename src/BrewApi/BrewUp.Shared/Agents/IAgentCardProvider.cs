@@ -1,4 +1,4 @@
-namespace BrewUp.Mother.Facade.Agents;
+namespace BrewUp.Shared.Agents;
 
 public interface IAgentCardProvider
 {

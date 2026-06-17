@@ -1,9 +1,9 @@
 using BrewUp.Knowledge.SharedKernel.Documents;
-using BrewUp.Mother.McpClients;
+using BrewUp.Shared.Agents;
 
-namespace BrewUp.Mother.Facade.Agents;
+namespace BrewUp.Knowledge.Facade.Agents;
 
-public sealed class KnowledgeAgent(IMcpToolClient mcpToolClient) : IAgent
+internal sealed class KnowledgeAgent(IMcpToolClient mcpToolClient) : IAgent
 {
     private const string RetrieveBusinessKnowledge = "retrieve-business-knowledge";
 

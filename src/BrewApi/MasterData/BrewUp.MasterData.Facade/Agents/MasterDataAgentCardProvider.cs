@@ -1,6 +1,8 @@
-namespace BrewUp.Mother.Facade.Agents;
+using BrewUp.Shared.Agents;
 
-public sealed class MasterDataAgentCardProvider : IAgentCardProvider
+namespace BrewUp.MasterData.Facade.Agents;
+
+internal sealed class MasterDataAgentCardProvider : IAgentCardProvider
 {
     public AgentCard GetAgentCard()
         => new(

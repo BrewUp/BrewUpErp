@@ -1,10 +1,10 @@
 using System.Text.Json;
-using BrewUp.Mother.McpClients;
+using BrewUp.Shared.Agents;
 using BrewUp.Shared.ExternalContracts.Warehouse;
 
-namespace BrewUp.Mother.Facade.Agents;
+namespace BrewUp.Warehouse.Facade.Agents;
 
-public sealed class WarehouseAgent(IMcpToolClient mcpToolClient) : IAgent
+internal sealed class WarehouseAgent(IMcpToolClient mcpToolClient) : IAgent
 {
     private const string EvaluateStockImpact = "evaluate-stock-impact";
 

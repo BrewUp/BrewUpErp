@@ -1,6 +1,6 @@
-namespace BrewUp.Mother.Facade.Agents;
+namespace BrewUp.Shared.Agents;
 
-internal static class AgentResponseExtensions
+public static class AgentResponseExtensions
 {
     public static T GetRequired<T>(this AgentResponse response, string key)
     {

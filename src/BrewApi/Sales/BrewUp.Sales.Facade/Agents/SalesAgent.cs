@@ -1,8 +1,8 @@
-using BrewUp.Mother.McpClients;
+using BrewUp.Shared.Agents;
 
-namespace BrewUp.Mother.Facade.Agents;
+namespace BrewUp.Sales.Facade.Agents;
 
-public sealed class SalesAgent(IMcpToolClient mcpToolClient) : IAgent
+internal sealed class SalesAgent(IMcpToolClient mcpToolClient) : IAgent
 {
     private const string InterpretDemand = "interpret-demand-signal";
 

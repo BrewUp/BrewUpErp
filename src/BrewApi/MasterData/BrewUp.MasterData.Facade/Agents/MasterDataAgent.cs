@@ -1,9 +1,9 @@
-using BrewUp.Mother.McpClients;
+using BrewUp.Shared.Agents;
 using BrewUp.Shared.ExternalContracts.MasterData.Beers;
 
-namespace BrewUp.Mother.Facade.Agents;
+namespace BrewUp.MasterData.Facade.Agents;
 
-public sealed class MasterDataAgent(IMcpToolClient mcpToolClient) : IAgent
+internal sealed class MasterDataAgent(IMcpToolClient mcpToolClient) : IAgent
 {
     private const string ResolveBeerCatalog = "resolve-beer-catalog";
 
@@ -30,7 +30,7 @@ public sealed class MasterDataAgent(IMcpToolClient mcpToolClient) : IAgent
         {
             var beer = await mcpToolClient.CallToolAsync<BeerJson>(
                 serverName: "masterData",
-                toolName: "resolve-beer-catalog",
+                toolName: "masterdata_resolve_beer",
                 arguments: new { beerName = demandItem.BeerName },
                 cancellationToken);
 
