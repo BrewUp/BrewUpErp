@@ -23,6 +23,13 @@ public static class BrewUpChatHelper
         services.AddHttpClient();
         services.AddShared();
 
+        var a2aOptions = configuration
+                             .GetSection(MotherA2AOptions.SectionName)
+                             .Get<MotherA2AOptions>()
+                         ?? new MotherA2AOptions();
+
+        services.AddSingleton(a2aOptions);
+
         // Dedicated resilient HttpClient for MCP transports:
         //  - long enough timeout to cover multi-round tool calling
         //  - accepts both JSON and SSE responses
@@ -63,6 +70,14 @@ public static class BrewUpChatHelper
         
         // MCP clients + tool catalog are kept alive for the whole app lifetime.
         services.AddSingleton<IMcpToolsProvider, McpToolsProvider>();
+        services.AddHttpClient("a2a-knowledge", client =>
+        {
+            client.Timeout = TimeSpan.FromMinutes(3);
+
+            if (!string.IsNullOrWhiteSpace(a2aOptions.KnowledgeAgentUrl))
+                client.BaseAddress = new Uri(a2aOptions.KnowledgeAgentUrl.TrimEnd('/') + "/");
+        });
+        services.AddScoped<IKnowledgeAgentA2AClient, HttpKnowledgeAgentA2AClient>();
         services.AddScoped<MotherCoordinator>();
         
         services.AddSingleton<IChatClient>(sp =>

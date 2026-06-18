@@ -1,3 +1,4 @@
+using BrewUp.Shared;
 using BrewUp.Shared.Agents;
 using BrewUp.Warehouse.Domain;
 using BrewUp.Warehouse.Facade.Acl;
@@ -13,6 +14,7 @@ public static class WarehouseFacadeHelper
 {
     public static IServiceCollection AddWarehouse(this IServiceCollection services)
     {
+        services.AddShared();
         services.AddScoped<IWarehouseFacade, WarehouseFacade>();
         services.AddScoped<WarehouseAgent>();
         services.AddScoped<IAgent>(sp => sp.GetRequiredService<WarehouseAgent>());

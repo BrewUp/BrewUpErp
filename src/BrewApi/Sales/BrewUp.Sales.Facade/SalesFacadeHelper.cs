@@ -4,6 +4,7 @@ using BrewUp.Sales.Facade.Acl;
 using BrewUp.Sales.Facade.Agents;
 using BrewUp.Sales.Infrastructure;
 using BrewUp.Sales.ReadModel;
+using BrewUp.Shared;
 using BrewUp.Shared.Agents;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +18,7 @@ public static class SalesFacadeHelper
     public static IServiceCollection AddSalesFacade(this IServiceCollection services,
         IConfigurationManager configurationManager)
     {
+        services.AddShared();
         services.AddValidation();
         services.AddProblemDetails(options =>
         {

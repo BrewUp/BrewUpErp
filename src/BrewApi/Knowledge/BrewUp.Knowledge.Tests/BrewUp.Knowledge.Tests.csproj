@@ -28,6 +28,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\BrewUp.Knowledge.Core\BrewUp.Knowledge.Core.csproj" />
+        <ProjectReference Include="..\BrewUp.Knowledge.Agent\BrewUp.Knowledge.Agent.csproj" />
         <ProjectReference Include="..\BrewUp.Knowledge.Facade\BrewUp.Knowledge.Facade.csproj" />
         <ProjectReference Include="..\BrewUp.Knowledge.Infrastructure\BrewUp.Knowledge.Infrastructure.csproj" />
         <ProjectReference Include="..\BrewUp.Knowledge.ReadModel\BrewUp.Knowledge.ReadModel.csproj" />

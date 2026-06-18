@@ -18,6 +18,7 @@
     <Project Path="Dashboards/BrewUp.Dashboards.Tests/BrewUp.Dashboards.Tests.csproj" />
   </Folder>
   <Folder Name="/50 Modules/Knowledge/">
+    <Project Path="Knowledge/BrewUp.Knowledge.Agent/BrewUp.Knowledge.Agent.csproj" />
     <Project Path="Knowledge/BrewUp.Knowledge.Core/BrewUp.Knowledge.Core.csproj" />
     <Project Path="Knowledge/BrewUp.Knowledge.Facade/BrewUp.Knowledge.Facade.csproj" />
     <Project Path="Knowledge/BrewUp.Knowledge.Infrastructure/BrewUp.Knowledge.Infrastructure.csproj" />

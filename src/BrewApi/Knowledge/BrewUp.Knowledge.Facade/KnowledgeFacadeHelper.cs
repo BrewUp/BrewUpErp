@@ -8,6 +8,7 @@ using BrewUp.Knowledge.Facade.Governance;
 using BrewUp.Knowledge.Infrastructure;
 using BrewUp.Knowledge.ReadModel;
 using BrewUp.Knowledge.ReadModel.QueryHandlers;
+using BrewUp.Shared;
 using BrewUp.Shared.Agents;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,7 @@ public static class KnowledgeFacadeHelper
         this IServiceCollection services,
         IConfiguration? configuration = null)
     {
+        services.AddShared();
         services.AddValidation();
         services.AddProblemDetails(options =>
         {

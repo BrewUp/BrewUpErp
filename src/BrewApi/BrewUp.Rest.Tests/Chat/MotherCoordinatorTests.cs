@@ -114,6 +114,34 @@ public sealed class MotherCoordinatorTests
                                        && card.Skills.Any(skill => skill.Name == "retrieve-business-knowledge"));
     }
 
+    [Fact]
+    public async Task Coordinates_knowledge_question_through_a2a_when_enabled()
+    {
+        var mcp = new RecordingMcpToolClient();
+        var a2aClient = new RecordingKnowledgeAgentA2aClient();
+        var coordinator = new MotherCoordinator(
+            CreateTestAgents(mcp),
+            [],
+            knowledgeAgentA2aClient: a2aClient,
+            a2aOptions: new MotherA2AOptions
+            {
+                Enabled = true,
+                KnowledgeAgentUrl = "http://knowledge-agent"
+            });
+
+        var request = new ChatRequest("What is the reorder policy for IPA?", "conversation-a2a");
+
+        Assert.True(coordinator.CanCoordinate(request));
+
+        var response = await coordinator.CoordinateAsync(request, CancellationToken.None);
+
+        Assert.Contains("IPA reorder policy", response.Answer);
+        Assert.True(a2aClient.CardDiscovered);
+        Assert.Equal("What is the reorder policy for IPA?", a2aClient.LastQuestion);
+        Assert.NotEqual(Guid.Empty, a2aClient.LastCorrelationId);
+        Assert.DoesNotContain(mcp.Calls, call => call.ServerName == "knowledge");
+    }
+
     private static IAgent[] CreateTestAgents(RecordingMcpToolClient mcp)
         =>
         [
@@ -304,6 +332,43 @@ public sealed class MotherCoordinatorTests
     private sealed class TestAgentCardProvider(AgentCard card) : IAgentCardProvider
     {
         public AgentCard GetAgentCard() => card;
+    }
+
+    private sealed class RecordingKnowledgeAgentA2aClient : IKnowledgeAgentA2AClient
+    {
+        public bool CardDiscovered { get; private set; }
+        public string? LastQuestion { get; private set; }
+        public Guid LastCorrelationId { get; private set; }
+
+        public Task<AgentCard> GetAgentCardAsync(CancellationToken cancellationToken)
+        {
+            CardDiscovered = true;
+
+            return Task.FromResult(new AgentCard(
+                "BrewUp Knowledge Agent",
+                "Provides access to documented BrewUp business knowledge, operational procedures, company policies, brewery processes, and business rules.",
+                "1.0.0",
+                [new AgentSkill("search_knowledge", "Search BrewUp documented knowledge.")],
+                [new AgentCapability("knowledge retrieval", "Retrieves documented BrewUp business knowledge.")]));
+        }
+
+        public Task<KnowledgeResult> SubmitKnowledgeTaskAsync(
+            string question,
+            Guid correlationId,
+            CancellationToken cancellationToken)
+        {
+            LastQuestion = question;
+            LastCorrelationId = correlationId;
+
+            return Task.FromResult(new KnowledgeResult(
+            [
+                new KnowledgeFinding(
+                    "IPA reorder policy",
+                    "Warehouse",
+                    "IPA reorder policy: review replenishment when projected stock reaches the threshold.",
+                    0.91)
+            ]));
+        }
     }
 
     private static T GetInput<T>(AgentRequest request, string key)

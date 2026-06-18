@@ -4,6 +4,7 @@ using BrewUp.MasterData.Facade.Acl;
 using BrewUp.MasterData.Facade.Agents;
 using BrewUp.MasterData.Infrastructure;
 using BrewUp.MasterData.ReadModel;
+using BrewUp.Shared;
 using BrewUp.Shared.Agents;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ public static class MasterDataHelper
 {
     public static IServiceCollection AddMasterDataFacade(this IServiceCollection services)
     {
+        services.AddShared();
         services.AddValidation();
         services.AddProblemDetails(options =>
         {
