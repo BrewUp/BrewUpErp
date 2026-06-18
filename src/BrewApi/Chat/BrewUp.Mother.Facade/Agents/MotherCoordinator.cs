@@ -12,6 +12,8 @@ namespace BrewUp.Mother.Facade.Agents;
 public sealed class MotherCoordinator(
     IEnumerable<IAgent> agents,
     IEnumerable<IAgentCardProvider>? agentCardProviders = null,
+    IKnowledgeAgentA2AClient? knowledgeAgentA2aClient = null,
+    MotherA2AOptions? a2aOptions = null,
     ILogger<MotherCoordinator>? logger = null)
 {
     private const string MasterDataAgentName = "MasterDataAgent";
@@ -26,6 +28,7 @@ public sealed class MotherCoordinator(
     private readonly IReadOnlyDictionary<string, IAgent> _agents = agents.ToDictionary(a => a.Name);
     private readonly IReadOnlyCollection<IAgentCardProvider> _agentCardProviders =
         agentCardProviders?.ToArray() ?? [];
+    private readonly MotherA2AOptions _a2aOptions = a2aOptions ?? new MotherA2AOptions();
     private readonly ILogger<MotherCoordinator> _logger = logger ?? NullLogger<MotherCoordinator>.Instance;
 
     public IReadOnlyCollection<AgentCard> InspectAgentCards()
@@ -34,10 +37,14 @@ public sealed class MotherCoordinator(
             .ToArray();
 
     public bool CanCoordinate(ChatRequest request)
-        => IsWhatIf(request.Message) && ParseDemand(request.Message).Count > 0;
+        => (IsWhatIf(request.Message) && ParseDemand(request.Message).Count > 0)
+           || (_a2aOptions.Enabled && IsKnowledgeQuestion(request.Message));
 
     public async Task<ChatResponse> CoordinateAsync(ChatRequest request, CancellationToken cancellationToken)
     {
+        if (_a2aOptions.Enabled && IsKnowledgeQuestion(request.Message))
+            return await CoordinateKnowledgeOnlyAsync(request, cancellationToken);
+
         var demandItems = ParseDemand(request.Message);
         if (demandItems.Count == 0)
             return new ChatResponse("I could not identify the requested beer quantities in the scenario.", request.ConversationId);
@@ -149,6 +156,51 @@ public sealed class MotherCoordinator(
            || message.Contains("what happens if", StringComparison.OrdinalIgnoreCase)
            || message.Contains("impact", StringComparison.OrdinalIgnoreCase)
            || message.Contains("simulation", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsKnowledgeQuestion(string message)
+        => message.Contains("policy", StringComparison.OrdinalIgnoreCase)
+           || message.Contains("procedure", StringComparison.OrdinalIgnoreCase)
+           || message.Contains("documentation", StringComparison.OrdinalIgnoreCase)
+           || message.Contains("documented", StringComparison.OrdinalIgnoreCase)
+           || message.Contains("quality standard", StringComparison.OrdinalIgnoreCase)
+           || message.Contains("how is beer produced", StringComparison.OrdinalIgnoreCase)
+           || message.Contains("inventory management", StringComparison.OrdinalIgnoreCase);
+
+    private async Task<ChatResponse> CoordinateKnowledgeOnlyAsync(
+        ChatRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (knowledgeAgentA2aClient is null)
+            throw new InvalidOperationException("Knowledge A2A mode is enabled, but no KnowledgeAgent A2A client is registered.");
+
+        var correlationId = Guid.CreateVersion7();
+        var card = await knowledgeAgentA2aClient.GetAgentCardAsync(cancellationToken);
+
+        _logger.LogInformation(
+            "Mother discovered KnowledgeAgent {AgentName} with correlation {CorrelationId}",
+            card.Name,
+            correlationId);
+
+        _logger.LogInformation(
+            "Mother delegated task to KnowledgeAgent with correlation {CorrelationId}",
+            correlationId);
+
+        var result = await knowledgeAgentA2aClient.SubmitKnowledgeTaskAsync(
+            request.Message,
+            correlationId,
+            cancellationToken);
+
+        return new ChatResponse(BuildKnowledgeAnswer(result), request.ConversationId);
+    }
+
+    private static string BuildKnowledgeAnswer(KnowledgeResult knowledgeResult)
+    {
+        if (knowledgeResult.Findings.Count == 0)
+            return "BrewUp ERP does not expose that information yet.";
+
+        var first = knowledgeResult.Findings.First();
+        return $"{first.Title}: {first.Content}";
+    }
 
     private static IReadOnlyCollection<DemandItem> ParseDemand(string message)
         => DemandPattern

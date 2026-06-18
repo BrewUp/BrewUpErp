@@ -6,7 +6,7 @@ namespace BrewUp.Rest.Tests.Rest;
 
 public sealed class IntegrationFixture : IIntegrationFixture, IDisposable
 {
-    public readonly TestClient Client;
+    public readonly TestClient? Client;
     
     public IntegrationFixture()
     {
@@ -19,12 +19,12 @@ public sealed class IntegrationFixture : IIntegrationFixture, IDisposable
     
     public TestClient GetClient()
     {
-        return Client;
+        return Client ?? throw new InvalidOperationException("Integration test client was not initialized.");
     }
 
     public void ResetAll()
     {
-        Client.ResetHeaders();
+        Client?.ResetHeaders();
     }
     
     private class MonitoringApplication : WebApplicationFactory<Program>
@@ -40,12 +40,13 @@ public sealed class IntegrationFixture : IIntegrationFixture, IDisposable
 
     public void Dispose()
     {
+        Client?.Dispose();
         GC.SuppressFinalize(this);
     }
     
     ~IntegrationFixture()
     {
-        Client.Dispose();
+        Client?.Dispose();
     }
 
     #endregion
