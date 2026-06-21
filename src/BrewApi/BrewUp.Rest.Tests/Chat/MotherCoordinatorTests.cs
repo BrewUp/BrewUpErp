@@ -191,7 +191,7 @@ public sealed class MotherCoordinatorTests
             {
                 var beer = await mcp.CallToolAsync<BeerJson>(
                     "masterData",
-                    "masterdata_resolve_beer",
+                    "resolve-beer-catalog",
                     new { beerName = demandItem.BeerName },
                     cancellationToken);
 
