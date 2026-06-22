@@ -6,6 +6,9 @@
 # Generated files
 .idea/
 
+# Codex
+docs/
+
 # User-specific files
 *.rsuser
 *.suo

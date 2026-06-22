@@ -11,7 +11,7 @@ public class SalesModule : IModule
     /// <summary>
     /// Indicates whether the module is enabled and should be registered in the application.
     /// </summary>
-    public bool IsEnabled => true;
+    public bool IsEnabled => false;
     /// <summary>
     /// Set the order in which the module should be registered in the application.
     /// Modules with lower order values will be registered before those with higher values.
