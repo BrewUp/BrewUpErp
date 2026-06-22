@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace BrewUp.Knowledge.Agent;
 
 public sealed class KnowledgeAgentExecutor(
-    IMcpToolClient mcpToolClient,
+    IKnowledgeAgentToolInvoker toolInvoker,
     ILogger<KnowledgeAgentExecutor>? logger = null)
 {
     public const string AgentName = "BrewUp Knowledge Agent";
@@ -15,22 +15,65 @@ public sealed class KnowledgeAgentExecutor(
         A2ATaskRequest request,
         CancellationToken cancellationToken)
     {
+        IReadOnlyCollection<McpToolMetadata> tools;
+        try
+        {
+            tools = await toolInvoker.DiscoverToolsAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "KnowledgeAgent could not discover Knowledge MCP tools with correlation {CorrelationId}",
+                request.CorrelationId);
+
+            return Failure(
+                request,
+                "KnowledgeAgent could not discover Knowledge MCP tools from the Knowledge MCP Server.");
+        }
+
+        if (!tools.Any(tool => tool.Name.Equals("search_knowledge_base", StringComparison.OrdinalIgnoreCase)))
+        {
+            _logger.LogWarning(
+                "KnowledgeAgent found no suitable Knowledge tool for correlation {CorrelationId}. Discovered tools: {Tools}",
+                request.CorrelationId,
+                string.Join(", ", tools.Select(tool => tool.Name)));
+
+            return Failure(
+                request,
+                "KnowledgeAgent found no suitable Knowledge tool available for this request.");
+        }
+
         _logger.LogInformation(
-            "KnowledgeAgent executing MCP tool {ToolName} with correlation {CorrelationId}",
+            "KnowledgeAgent selected tool {ToolName} with correlation {CorrelationId}",
             "search_knowledge_base",
             request.CorrelationId);
 
-        var searchResult = await mcpToolClient.CallToolAsync<SearchKnowledgeResult>(
-            serverName: "knowledge",
-            toolName: "search_knowledge_base",
-            arguments: new
-            {
-                query = request.Message,
-                scope = (string?)null,
-                topK = 5,
-                correlationId = request.CorrelationId
-            },
-            cancellationToken);
+        SearchKnowledgeResult? searchResult;
+        try
+        {
+            searchResult = await toolInvoker.SearchKnowledgeBaseAsync(
+                request.Message,
+                scope: null,
+                request.CorrelationId,
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "KnowledgeAgent MCP call failed for tool {ToolName} with correlation {CorrelationId}",
+                "search_knowledge_base",
+                request.CorrelationId);
+
+            return Failure(
+                request,
+                "KnowledgeAgent failed while invoking search_knowledge_base on the Knowledge MCP Server.");
+        }
+
+        _logger.LogInformation(
+            "KnowledgeAgent received result from search_knowledge_base with correlation {CorrelationId}",
+            request.CorrelationId);
 
         var findings = searchResult?.Items
             .Select(item => new KnowledgeFinding(
@@ -60,4 +103,13 @@ public sealed class KnowledgeAgentExecutor(
             result,
             request.CorrelationId);
     }
+
+    private static A2ATaskResponse Failure(A2ATaskRequest request, string summary)
+        => new(
+            request.TaskId,
+            AgentName,
+            false,
+            summary,
+            new KnowledgeResult([]),
+            request.CorrelationId);
 }

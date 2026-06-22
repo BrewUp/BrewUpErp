@@ -12,8 +12,8 @@ namespace BrewUp.Mother.Facade.Agents;
 public sealed class MotherCoordinator(
     IEnumerable<IAgent> agents,
     IEnumerable<IAgentCardProvider>? agentCardProviders = null,
-    IKnowledgeAgentA2AClient? knowledgeAgentA2aClient = null,
-    MotherA2AOptions? a2aOptions = null,
+    IKnowledgeAgentA2AClient? knowledgeAgentA2AClient = null,
+    MotherA2AOptions? a2AOptions = null,
     ILogger<MotherCoordinator>? logger = null)
 {
     private const string MasterDataAgentName = "MasterDataAgent";
@@ -28,7 +28,7 @@ public sealed class MotherCoordinator(
     private readonly IReadOnlyDictionary<string, IAgent> _agents = agents.ToDictionary(a => a.Name);
     private readonly IReadOnlyCollection<IAgentCardProvider> _agentCardProviders =
         agentCardProviders?.ToArray() ?? [];
-    private readonly MotherA2AOptions _a2aOptions = a2aOptions ?? new MotherA2AOptions();
+    private readonly MotherA2AOptions _a2AOptions = a2AOptions ?? new MotherA2AOptions();
     private readonly ILogger<MotherCoordinator> _logger = logger ?? NullLogger<MotherCoordinator>.Instance;
 
     public IReadOnlyCollection<AgentCard> InspectAgentCards()
@@ -38,11 +38,11 @@ public sealed class MotherCoordinator(
 
     public bool CanCoordinate(ChatRequest request)
         => (IsWhatIf(request.Message) && ParseDemand(request.Message).Count > 0)
-           || (_a2aOptions.Enabled && IsKnowledgeQuestion(request.Message));
+           || (_a2AOptions.Enabled && IsKnowledgeQuestion(request.Message));
 
     public async Task<ChatResponse> CoordinateAsync(ChatRequest request, CancellationToken cancellationToken)
     {
-        if (_a2aOptions.Enabled && IsKnowledgeQuestion(request.Message))
+        if (_a2AOptions.Enabled && IsKnowledgeQuestion(request.Message))
             return await CoordinateKnowledgeOnlyAsync(request, cancellationToken);
 
         var demandItems = ParseDemand(request.Message);
@@ -170,11 +170,11 @@ public sealed class MotherCoordinator(
         ChatRequest request,
         CancellationToken cancellationToken)
     {
-        if (knowledgeAgentA2aClient is null)
+        if (knowledgeAgentA2AClient is null)
             throw new InvalidOperationException("Knowledge A2A mode is enabled, but no KnowledgeAgent A2A client is registered.");
 
         var correlationId = Guid.CreateVersion7();
-        var card = await knowledgeAgentA2aClient.GetAgentCardAsync(cancellationToken);
+        var card = await knowledgeAgentA2AClient.GetAgentCardAsync(cancellationToken);
 
         _logger.LogInformation(
             "Mother discovered KnowledgeAgent {AgentName} with correlation {CorrelationId}",
@@ -185,7 +185,7 @@ public sealed class MotherCoordinator(
             "Mother delegated task to KnowledgeAgent with correlation {CorrelationId}",
             correlationId);
 
-        var result = await knowledgeAgentA2aClient.SubmitKnowledgeTaskAsync(
+        var result = await knowledgeAgentA2AClient.SubmitKnowledgeTaskAsync(
             request.Message,
             correlationId,
             cancellationToken);

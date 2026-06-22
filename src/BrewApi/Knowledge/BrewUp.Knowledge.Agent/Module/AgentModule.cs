@@ -30,6 +30,8 @@ public class AgentModule : IModule
         builder.Services.AddLogging();
         builder.Services.AddHttpClient();
         builder.Services.AddShared();
+        builder.Services.Configure<KnowledgeAgentMcpOptions>(
+            builder.Configuration.GetSection("KnowledgeAgent:Mcp"));
         
         builder.Services.AddHttpClient("mcp", client =>
         {
@@ -41,6 +43,7 @@ public class AgentModule : IModule
 
         builder.Services.AddScoped<BrewUpKnowledgeAgentCardProvider>();
         builder.Services.AddScoped<IAgentCardProvider>(sp => sp.GetRequiredService<BrewUpKnowledgeAgentCardProvider>());
+        builder.Services.AddSingleton<IKnowledgeAgentToolInvoker, KnowledgeAgentToolInvoker>();
         builder.Services.AddScoped<KnowledgeAgentExecutor>();
 
         return builder.Services;

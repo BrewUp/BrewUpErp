@@ -122,8 +122,8 @@ public sealed class MotherCoordinatorTests
         var coordinator = new MotherCoordinator(
             CreateTestAgents(mcp),
             [],
-            knowledgeAgentA2aClient: a2aClient,
-            a2aOptions: new MotherA2AOptions
+            knowledgeAgentA2AClient: a2aClient,
+            a2AOptions: new MotherA2AOptions
             {
                 Enabled = true,
                 KnowledgeAgentUrl = "http://knowledge-agent"
@@ -191,7 +191,7 @@ public sealed class MotherCoordinatorTests
             {
                 var beer = await mcp.CallToolAsync<BeerJson>(
                     "masterData",
-                    "resolve-beer-catalog",
+                    "masterdata_resolve_beer",
                     new { beerName = demandItem.BeerName },
                     cancellationToken);
 
@@ -397,6 +397,38 @@ public sealed class MotherCoordinatorTests
         private readonly List<McpCall> _calls = [];
 
         public IReadOnlyCollection<McpCall> Calls => _calls.AsReadOnly();
+
+        public Task<IReadOnlyCollection<McpToolMetadata>> ListToolsAsync(
+            string serverName,
+            CancellationToken cancellationToken)
+        {
+            IReadOnlyCollection<McpToolMetadata> tools = serverName.ToLowerInvariant() switch
+            {
+                "knowledge" =>
+                [
+                    new McpToolMetadata(
+                        "search_knowledge_base",
+                        "Search BrewUp business knowledge.",
+                        null)
+                ],
+                "sales" =>
+                [
+                    new McpToolMetadata("get_orders_by_beer", "Gets orders by beer.", null)
+                ],
+                "warehouse" =>
+                [
+                    new McpToolMetadata("get_beer_availability", "Gets beer availability.", null),
+                    new McpToolMetadata("get_reorder_thresholds", "Gets reorder thresholds.", null)
+                ],
+                "masterdata" =>
+                [
+                    new McpToolMetadata("masterdata_resolve_beer", "Resolves beer catalog data.", null)
+                ],
+                _ => []
+            };
+
+            return Task.FromResult(tools);
+        }
 
         public Task<TResponse?> CallToolAsync<TResponse>(
             string serverName,

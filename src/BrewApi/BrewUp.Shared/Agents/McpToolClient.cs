@@ -15,6 +15,77 @@ internal sealed class McpToolClient(
     private readonly Dictionary<string, string> _servers = LoadServers(configuration);
 
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+
+    public async Task<IReadOnlyCollection<McpToolMetadata>> ListToolsAsync(
+        string serverName,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (!_servers.TryGetValue(serverName, out var serverUrl))
+            throw new InvalidOperationException($"MCP server '{serverName}' is not configured.");
+
+        var client = httpClientFactory.CreateClient("mcp");
+
+        var request = new
+        {
+            jsonrpc = "2.0",
+            id = Guid.NewGuid().ToString("N"),
+            method = "tools/list",
+            @params = new { }
+        };
+
+        logger.LogInformation(
+            "Listing MCP tools from server {ServerName}",
+            serverName);
+
+        using var response = await client.PostAsJsonAsync(
+            serverUrl,
+            request,
+            JsonOptions,
+            cancellationToken);
+
+        var raw = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            logger.LogError(
+                "MCP tools/list failed. Server: {ServerName}, Status: {StatusCode}, Body: {Body}",
+                serverName,
+                response.StatusCode,
+                raw);
+
+            throw new InvalidOperationException(
+                $"MCP tools/list failed for server '{serverName}' with status {(int)response.StatusCode}.");
+        }
+
+        var envelope = JsonSerializer.Deserialize<McpResponseEnvelope>(
+            ExtractJsonPayload(raw),
+            JsonOptions);
+
+        if (envelope?.Error is not null)
+        {
+            logger.LogError(
+                "MCP tools/list returned error. Server: {ServerName}, Error: {Error}",
+                serverName,
+                envelope.Error.Message);
+
+            throw new InvalidOperationException(
+                $"MCP tools/list returned an error for server '{serverName}': {envelope.Error.Message}");
+        }
+
+        if (envelope?.Result is null)
+            return [];
+
+        var tools = ExtractToolMetadata(envelope.Result.Value);
+
+        logger.LogInformation(
+            "MCP server {ServerName} exposed tools: {Tools}",
+            serverName,
+            string.Join(", ", tools.Select(tool => tool.Name)));
+
+        return tools;
+    }
     
     public async Task<TResponse?> CallToolAsync<TResponse>(string serverName, string toolName, object arguments,
         CancellationToken cancellationToken)
@@ -116,6 +187,37 @@ internal sealed class McpToolClient(
 
         return result.Deserialize<TResponse>(JsonOptions)!;
     }
+
+    private static IReadOnlyCollection<McpToolMetadata> ExtractToolMetadata(JsonElement result)
+    {
+        if (!result.TryGetProperty("tools", out var toolsElement)
+            || toolsElement.ValueKind != JsonValueKind.Array)
+            return [];
+
+        return toolsElement
+            .EnumerateArray()
+            .Select(tool =>
+            {
+                var name = tool.TryGetProperty("name", out var nameElement)
+                    ? nameElement.GetString()
+                    : null;
+
+                if (string.IsNullOrWhiteSpace(name))
+                    return null;
+
+                var description = tool.TryGetProperty("description", out var descriptionElement)
+                    ? descriptionElement.GetString()
+                    : null;
+
+                JsonElement? inputSchema = tool.TryGetProperty("inputSchema", out var inputSchemaElement)
+                    ? inputSchemaElement.Clone()
+                    : null;
+
+                return new McpToolMetadata(name, description, inputSchema);
+            })
+            .OfType<McpToolMetadata>()
+            .ToArray();
+    }
     
     private static bool LooksLikeJson(string value)
     {
@@ -152,6 +254,9 @@ internal sealed class McpToolClient(
             .Get<Dictionary<string, string>>()
             ?? [];
 
+        var knowledgeAgentMcp = configuration
+            .GetSection("KnowledgeAgent:Mcp");
+
         var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var (key, value) in servers)
@@ -164,6 +269,13 @@ internal sealed class McpToolClient(
             else
                 result[key] = value;
         }
+
+        var knowledgeAgentServerName = knowledgeAgentMcp["ServerName"];
+        var knowledgeAgentEndpoint = knowledgeAgentMcp["Endpoint"];
+
+        if (!string.IsNullOrWhiteSpace(knowledgeAgentServerName)
+            && !string.IsNullOrWhiteSpace(knowledgeAgentEndpoint))
+            result[knowledgeAgentServerName] = knowledgeAgentEndpoint;
 
         return result;
     }
