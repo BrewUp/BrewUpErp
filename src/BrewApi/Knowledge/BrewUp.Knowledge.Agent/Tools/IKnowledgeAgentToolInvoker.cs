@@ -1,7 +1,7 @@
 using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Shared.Agents;
 
-namespace BrewUp.Knowledge.Agent;
+namespace BrewUp.Knowledge.Agent.Tools;
 
 public interface IKnowledgeAgentToolInvoker
 {

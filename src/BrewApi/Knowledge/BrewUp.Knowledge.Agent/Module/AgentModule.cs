@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using BrewUp.Knowledge.Agent.Tools;
 using BrewUp.Shared;
 using BrewUp.Shared.Agents;
 

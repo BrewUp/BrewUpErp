@@ -2,7 +2,7 @@ using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Shared.Agents;
 using Microsoft.Extensions.Options;
 
-namespace BrewUp.Knowledge.Agent;
+namespace BrewUp.Knowledge.Agent.Tools;
 
 public sealed class KnowledgeAgentToolInvoker(
     IMcpToolClient mcpToolClient,

@@ -1,6 +1,6 @@
 using BrewUp.Shared.Agents;
 
-namespace BrewUp.Knowledge.Agent;
+namespace BrewUp.Knowledge.Agent.Tools;
 
 public sealed class BrewUpKnowledgeAgentCardProvider : IAgentCardProvider
 {
