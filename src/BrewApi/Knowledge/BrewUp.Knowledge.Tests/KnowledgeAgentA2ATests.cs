@@ -1,4 +1,5 @@
 using BrewUp.Knowledge.Agent;
+using BrewUp.Knowledge.Agent.Tools;
 using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Shared.Agents;
 using Microsoft.Extensions.Logging.Abstractions;

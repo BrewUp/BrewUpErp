@@ -2,7 +2,7 @@ using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Shared.Agents;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace BrewUp.Knowledge.Agent;
+namespace BrewUp.Knowledge.Agent.Tools;
 
 public sealed class KnowledgeAgentExecutor(
     IKnowledgeAgentToolInvoker toolInvoker,

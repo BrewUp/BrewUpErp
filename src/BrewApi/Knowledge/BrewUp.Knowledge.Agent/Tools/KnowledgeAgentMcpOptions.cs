@@ -1,4 +1,4 @@
-namespace BrewUp.Knowledge.Agent;
+namespace BrewUp.Knowledge.Agent.Tools;
 
 public sealed class KnowledgeAgentMcpOptions
 {
