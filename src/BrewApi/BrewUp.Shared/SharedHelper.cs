@@ -11,7 +11,7 @@ public static class SharedHelper
     {
         services.AddHttpClient();
         services.TryAddSingleton<IConfiguration>(_ => new ConfigurationBuilder().Build());
-        services.AddScoped<IMcpToolClient, McpToolClient>();
+        services.AddSingleton<IMcpToolClient, McpToolClient>();
 
         return services;
     }
