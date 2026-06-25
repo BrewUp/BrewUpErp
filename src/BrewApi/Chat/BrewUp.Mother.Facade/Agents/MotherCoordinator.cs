@@ -50,6 +50,8 @@ public sealed class MotherCoordinator(
             return new ChatResponse("I could not identify the requested beer quantities in the scenario.", request.ConversationId);
 
         var correlationId = Guid.CreateVersion7();
+        ConversationRoot myConversation = new(correlationId);
+        
         var invokedAgents = new List<string>();
         var context = new AgentContext(
             request.ConversationId ?? string.Empty,
@@ -66,6 +68,7 @@ public sealed class MotherCoordinator(
             context,
             invokedAgents,
             cancellationToken);
+        myConversation.RaiseConversation(masterDataResponse);
 
         var resolved = masterDataResponse.GetRequired<IReadOnlyCollection<ResolvedBeerDemand>>("resolvedBeerDemand");
 
