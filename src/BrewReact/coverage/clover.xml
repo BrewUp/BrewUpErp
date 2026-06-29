@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1779962007751" clover="3.2.0">
+  <project timestamp="1779962007751" name="All files">
+    <metrics statements="71" coveredstatements="65" conditionals="49" coveredconditionals="40" methods="24" coveredmethods="21" elements="144" coveredelements="126" complexity="0" loc="71" ncloc="71" packages="4" files="8" classes="8"/>
+    <package name="components">
+      <metrics statements="36" coveredstatements="33" conditionals="31" coveredconditionals="26" methods="16" coveredmethods="14"/>
+      <file name="BeerCatalog.tsx" path="C:\Sviluppo\MSC\BrewSpa\frontend\src\features\chat\components\BeerCatalog.tsx">
+        <metrics statements="15" coveredstatements="13" conditionals="16" coveredconditionals="12" methods="5" coveredmethods="4"/>
+        <line num="6" count="12" type="stmt"/>
+        <line num="7" count="12" type="stmt"/>
+        <line num="8" count="12" type="stmt"/>
+        <line num="10" count="12" type="stmt"/>
+        <line num="11" count="6" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="6" type="stmt"/>
+        <line num="17" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="6" type="stmt"/>
+        <line num="21" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="25" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="29" count="5" type="stmt"/>
+        <line num="41" count="10" type="cond" truecount="1" falsecount="1"/>
+      </file>
+      <file name="ChatInput.tsx" path="C:\Sviluppo\MSC\BrewSpa\frontend\src\features\chat\components\ChatInput.tsx">
+        <metrics statements="10" coveredstatements="10" conditionals="6" coveredconditionals="5" methods="4" coveredmethods="4"/>
+        <line num="9" count="125" type="stmt"/>
+        <line num="11" count="125" type="stmt"/>
+        <line num="12" count="125" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="16" count="7" type="stmt"/>
+        <line num="17" count="7" type="stmt"/>
+        <line num="21" count="102" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="26" count="125" type="stmt"/>
+        <line num="31" count="101" type="stmt"/>
+      </file>
+      <file name="ChatMessage.tsx" path="C:\Sviluppo\MSC\BrewSpa\frontend\src\features\chat\components\ChatMessage.tsx">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="8" count="27" type="stmt"/>
+      </file>
+      <file name="ChatPage.tsx" path="C:\Sviluppo\MSC\BrewSpa\frontend\src\features\chat\components\ChatPage.tsx">
+        <metrics statements="5" coveredstatements="4" conditionals="4" coveredconditionals="4" methods="3" coveredmethods="2"/>
+        <line num="10" count="16" type="stmt"/>
+        <line num="11" count="16" type="stmt"/>
+        <line num="13" count="16" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+      </file>
+      <file name="ChatThread.tsx" path="C:\Sviluppo\MSC\BrewSpa\frontend\src\features\chat\components\ChatThread.tsx">
+        <metrics statements="5" coveredstatements="5" conditionals="5" coveredconditionals="5" methods="3" coveredmethods="3"/>
+        <line num="11" count="20" type="stmt"/>
+        <line num="13" count="20" type="stmt"/>
+        <line num="14" count="20" type="stmt"/>
+        <line num="17" count="20" type="stmt"/>
+        <line num="23" count="21" type="stmt"/>
+      </file>
+    </package>
+    <package name="hooks">
+      <metrics statements="22" coveredstatements="20" conditionals="13" coveredconditionals="10" methods="5" coveredmethods="4"/>
+      <file name="useChat.ts" path="C:\Sviluppo\MSC\BrewSpa\frontend\src\features\chat\hooks\useChat.ts">
+        <metrics statements="22" coveredstatements="20" conditionals="13" coveredconditionals="10" methods="5" coveredmethods="4"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="13" count="21" type="stmt"/>
+        <line num="17" count="22" type="cond" truecount="4" falsecount="1"/>
+        <line num="19" count="10" type="stmt"/>
+        <line num="25" count="10" type="stmt"/>
+        <line num="33" count="7" type="stmt"/>
+        <line num="39" count="7" type="stmt"/>
+        <line num="47" count="4" type="stmt"/>
+        <line num="53" count="4" type="stmt"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="74" count="16" type="stmt"/>
+        <line num="76" count="16" type="stmt"/>
+        <line num="78" count="5" type="stmt"/>
+        <line num="79" count="5" type="stmt"/>
+        <line num="80" count="5" type="stmt"/>
+        <line num="84" count="4" type="stmt"/>
+        <line num="92" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="93" count="1" type="stmt"/>
+        <line num="99" count="16" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="103" count="16" type="stmt"/>
+      </file>
+    </package>
+    <package name="services">
+      <metrics statements="13" coveredstatements="12" conditionals="5" coveredconditionals="4" methods="3" coveredmethods="3"/>
+      <file name="chatApiService.ts" path="C:\Sviluppo\MSC\BrewSpa\frontend\src\features\chat\services\chatApiService.ts">
+        <metrics statements="13" coveredstatements="12" conditionals="5" coveredconditionals="4" methods="3" coveredmethods="3"/>
+        <line num="15" count="5" type="stmt"/>
+        <line num="16" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="17" count="5" type="stmt"/>
+        <line num="18" count="5" type="cond" truecount="3" falsecount="0"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="24" count="10" type="stmt"/>
+        <line num="25" count="10" type="stmt"/>
+        <line num="26" count="6" type="stmt"/>
+        <line num="28" count="4" type="stmt"/>
+        <line num="33" count="9" type="stmt"/>
+        <line num="34" count="9" type="stmt"/>
+        <line num="35" count="8" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="types">
+      <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="chat.types.ts" path="C:\Sviluppo\MSC\BrewSpa\frontend\src\features\chat\types\chat.types.ts">
+        <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      </file>
+    </package>
+  </project>
+</coverage>
