@@ -1,0 +1,923 @@
+/* ============================================================
+   BrewUp Design Token System — Brewery Theme
+   ============================================================ */
+
+/* ------------------------------------------------------------------
+   Light mode tokens (default)
+   ------------------------------------------------------------------ */
+:root {
+  /* Sidebar layout tokens */
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 56px;
+
+  /* Color tokens */
+  --color-bg: #FDF8EF;
+  --color-surface: #F2E4C7;
+  --color-text: #1C0F07;
+  --color-text-muted: #5A3A22;
+  --color-brand: #8B520A;
+  --color-brand-hover: #6B3E08;
+  --color-on-brand: #FFFFFF;
+  --color-accent: #3A7D44;
+  --color-border: #D4B896;
+  --color-focus: #8B520A;
+  --color-error: #B91C1C;
+  --color-success: #15803D;
+
+  /* Shadow tokens */
+  --shadow-sm: 0 1px 3px rgba(28, 15, 7, 0.12);
+  --shadow-md: 0 4px 12px rgba(28, 15, 7, 0.15);
+
+  /* Typography tokens */
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Lato', 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, Consolas, monospace;
+
+  /* Spacing tokens */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-8: 48px;
+
+  /* Radius tokens */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Base styles */
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.6;
+  color-scheme: light dark;
+  color: var(--color-text);
+  background: var(--color-bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Dark mode overrides — activated by [data-theme="dark"] on <html>
+   ------------------------------------------------------------------ */
+[data-theme="dark"] {
+  --color-bg: #130A03;
+  --color-surface: #1F100A;
+  --color-text: #F2E4C7;
+  --color-text-muted: #A8866A;
+  --color-brand: #D4932E;
+  --color-brand-hover: #E8A83A;
+  --color-on-brand: #1C0F07;
+  --color-accent: #5CAB6A;
+  --color-border: #3A2213;
+  --color-focus: #D4932E;
+  --color-error: #EF4444;
+  --color-success: #22C55E;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* ------------------------------------------------------------------
+   OS preference fallback — for browsers with JS disabled
+   ------------------------------------------------------------------ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #130A03;
+    --color-surface: #1F100A;
+    --color-text: #F2E4C7;
+    --color-text-muted: #A8866A;
+    --color-brand: #D4932E;
+    --color-brand-hover: #E8A83A;
+    --color-on-brand: #1C0F07;
+    --color-accent: #5CAB6A;
+    --color-border: #3A2213;
+    --color-focus: #D4932E;
+    --color-error: #EF4444;
+    --color-success: #22C55E;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Global accessibility: focus-visible outlines (T021)
+   ------------------------------------------------------------------ */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ------------------------------------------------------------------
+   Global structural styles
+   ------------------------------------------------------------------ */
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  color: var(--color-text);
+}
+
+p {
+  margin: 0;
+}
+
+code {
+  font-family: var(--font-mono);
+}
+
+/* ------------------------------------------------------------------
+   App header (T010)
+   ------------------------------------------------------------------ */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.app-header__brand {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-brand);
+  letter-spacing: -0.02em;
+}
+
+/* ------------------------------------------------------------------
+   Theme toggle button (T009)
+   ------------------------------------------------------------------ */
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.theme-toggle:hover {
+  background: var(--color-bg);
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+/* ------------------------------------------------------------------
+   Chat page shell (T011)
+   ------------------------------------------------------------------ */
+.chat-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+  max-width: 860px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+[role="tablist"] {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+  border-bottom: 2px solid var(--color-border);
+}
+
+[role="tab"] {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: color 0.2s, border-color 0.2s;
+  margin-bottom: -2px;
+}
+
+[role="tab"]:hover {
+  color: var(--color-brand);
+}
+
+[role="tab"][aria-selected="true"] {
+  color: var(--color-brand);
+  border-bottom-color: var(--color-brand);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.chat-page__panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+}
+
+/* ------------------------------------------------------------------
+   Chat thread (T012)
+   ------------------------------------------------------------------ */
+.chat-thread {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  min-height: 300px;
+  max-height: 60vh;
+  box-shadow: var(--shadow-sm);
+}
+
+.chat-thread__empty {
+  color: var(--color-text-muted);
+  text-align: center;
+  margin: auto;
+  font-style: italic;
+}
+
+.chat-thread__spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-brand);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Chat message bubbles (T013)
+   ------------------------------------------------------------------ */
+.chat-message {
+  display: flex;
+  max-width: 80%;
+}
+
+.chat-message p {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  line-height: 1.5;
+  box-shadow: var(--shadow-sm);
+  word-break: break-word;
+}
+
+.chat-message--user {
+  align-self: flex-end;
+  margin-left: auto;
+}
+
+.chat-message--user p {
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-lg);
+}
+
+.chat-message--assistant {
+  align-self: flex-start;
+}
+
+.chat-message--assistant p {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg) var(--radius-lg) var(--radius-lg) var(--radius-sm);
+}
+
+/* ------------------------------------------------------------------
+   Chat input (T014)
+   ------------------------------------------------------------------ */
+.chat-input {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.chat-input input {
+  flex: 1;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  min-width: 0;
+  transition: border-color 0.2s;
+}
+
+.chat-input input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.chat-input button {
+  padding: var(--space-2) var(--space-5);
+  background: var(--color-brand);
+  color: var(--color-on-brand);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s;
+}
+
+.chat-input button:hover:not(:disabled) {
+  background: var(--color-brand-hover);
+}
+
+.chat-input button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ------------------------------------------------------------------
+   Beer catalog table (T015)
+   ------------------------------------------------------------------ */
+.beer-catalog {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.beer-catalog th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  color: var(--color-brand);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.beer-catalog td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.beer-catalog tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.beer-catalog tbody tr:hover td {
+  background: rgba(139, 82, 10, 0.06);
+}
+
+.beer-catalog__error {
+  color: var(--color-error);
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.beer-catalog__empty {
+  color: var(--color-text-muted);
+  padding: var(--space-5);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ------------------------------------------------------------------
+   App layout (T005 - sidebar feature)
+   ------------------------------------------------------------------ */
+.app-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-layout__main {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------------
+   Sidebar (T013)
+   ------------------------------------------------------------------ */
+.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 250ms ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar--collapsed {
+  width: var(--sidebar-collapsed-width);
+}
+
+.sidebar__nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2) 0;
+}
+
+.sidebar__footer {
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ------------------------------------------------------------------
+   Sidebar items
+   ------------------------------------------------------------------ */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-item__button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.sidebar-item__button:hover {
+  background: var(--color-bg);
+  color: var(--color-brand);
+}
+
+.sidebar-item__button--active {
+  color: var(--color-brand);
+  font-weight: 700;
+  border-left-color: var(--color-brand);
+  background: rgba(139, 82, 10, 0.08);
+}
+
+[data-theme="dark"] .sidebar-item__button--active {
+  background: rgba(212, 147, 46, 0.1);
+}
+
+.sidebar-item__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-item__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.2s;
+}
+
+.sidebar-item__label--hidden {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------
+   Sidebar toggle button
+   ------------------------------------------------------------------ */
+.sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--space-2);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.sidebar-toggle:hover {
+  background: var(--color-bg);
+  color: var(--color-brand);
+  border-color: var(--color-brand);
+}
+
+/* ------------------------------------------------------------------
+   Module placeholder pages (T005)
+   ------------------------------------------------------------------ */
+.module-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.module-placeholder h1 {
+  font-family: var(--font-heading);
+  color: var(--color-brand);
+  margin-bottom: var(--space-3);
+}
+
+/* ------------------------------------------------------------------
+   Beer catalog table (T015)
+   ------------------------------------------------------------------ */
+.beer-catalog {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.beer-catalog th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  color: var(--color-brand);
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.beer-catalog td {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.beer-catalog tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.beer-catalog tbody tr:hover td {
+  background: rgba(139, 82, 10, 0.06);
+}
+
+.beer-catalog__error {
+  color: var(--color-error);
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.beer-catalog__empty {
+  color: var(--color-text-muted);
+  padding: var(--space-5);
+  text-align: center;
+  font-style: italic;
+}
+
+/* ============================================================
+   Dashboard Module
+   ============================================================ */
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+}
+
+.dashboard-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.dashboard-loading {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+}
+
+.dashboard-error {
+  color: var(--color-error);
+  padding: var(--space-5);
+}
+
+.dashboard-empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dashboard-table th {
+  background: var(--color-surface);
+  font-weight: 600;
+}
+
+.pagination {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  margin-top: var(--space-4);
+}
+
+.pagination button {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  color: var(--color-brand);
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.connection-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.connection-badge--connected {
+  background: var(--color-success);
+  color: #ffffff;
+}
+
+.connection-badge--reconnecting {
+  background: var(--color-brand);
+  color: #ffffff;
+}
+
+.connection-badge--offline {
+  background: var(--color-error);
+  color: #ffffff;
+}
+
+/* ============================================================
+   Dashboard Module
+   ============================================================ */
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5);
+}
+
+.dashboard-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.dashboard-loading {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+}
+
+.dashboard-error {
+  color: var(--color-error);
+  padding: var(--space-5);
+}
+
+.dashboard-empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: var(--space-5);
+  text-align: center;
+}
+
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: var(--shadow-sm);
+}
+
+.dashboard-table th,
+.dashboard-table td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dashboard-table th {
+  background: var(--color-surface);
+  font-weight: 600;
+}
+
+.pagination {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  margin-top: var(--space-4);
+}
+
+.pagination button {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  color: var(--color-brand);
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.connection-badge {
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.connection-badge--connected {
+  background: var(--color-success);
+  color: #ffffff;
+}
+
+.connection-badge--reconnecting {
+  background: var(--color-brand);
+  color: #ffffff;
+}
+
+.connection-badge--offline {
+  background: var(--color-error);
+  color: #ffffff;
+}
+
+/* ===================== Sales Module ===================== */
+.sales-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sales-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sales-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sales-table th,
+.sales-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+}
+
+.sales-table th {
+  font-weight: 600;
+  background-color: var(--color-surface, #f8fafc);
+}
+
+.sales-pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.order-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 800px;
+}
+
+.order-form__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: 6px;
+}
+
+.order-form__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.order-form__actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.order-form__error {
+  color: var(--color-error, #dc2626);
+  padding: 0.5rem;
+  border: 1px solid var(--color-error, #dc2626);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--color-error, #dc2626) 10%, transparent);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.form-field label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.form-field--error {
+  color: var(--color-error, #dc2626);
+  font-size: 0.8rem;
+}
