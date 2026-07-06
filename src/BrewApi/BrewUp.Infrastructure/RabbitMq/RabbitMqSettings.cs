@@ -2,10 +2,11 @@
 
 public class RabbitMqSettings
 {
-    public string Host { get; set; } = string.Empty;
-    public string ExchangeCommandName { get; set; } = string.Empty;
-    public string ExchangeEventName { get; set; } = string.Empty;
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string ClientId { get; set; } = string.Empty;
+    public required string Host { get; init; } = string.Empty;
+    public required string ExchangeCommandName { get; init; } = string.Empty;
+    public required string ExchangeEventName { get; init; } = string.Empty;
+    public required string Username { get; init; } = string.Empty;
+    public required string Password { get; init; } = string.Empty;
+    public required string ClientId { get; init; } = string.Empty;
+    public required bool UseRMQ { get; init; } = false;
 }

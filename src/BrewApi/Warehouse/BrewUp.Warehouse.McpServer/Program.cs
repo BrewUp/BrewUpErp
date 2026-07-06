@@ -14,8 +14,8 @@ builder.Services
     })
     .WithTools<WarehouseTools>();
     
-MongoDbSettings mongoDbSettings = new();
-builder.Configuration.GetSection("BrewUp:MongoDbSettings").Bind(mongoDbSettings);
+MongoDbSettings mongoDbSettings = builder.Configuration.GetSection("BrewUp:MongoDbSettings").Get<MongoDbSettings>()
+                                  ?? throw new InvalidOperationException("Missing configuration section 'BrewUp:MongoDbSettings'.");
 builder.Services.AddMongoDb(mongoDbSettings);
 builder.Services.AddScoped<IMcpWarehouseFacade, McpWarehouseFacade>();
 builder.Services.AddInfrastructure();

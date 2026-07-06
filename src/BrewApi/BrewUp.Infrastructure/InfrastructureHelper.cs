@@ -1,4 +1,5 @@
-﻿using BrewUp.Infrastructure.MongoDb;
+﻿using BrewUp.Infrastructure.AzureServiceBus;
+using BrewUp.Infrastructure.MongoDb;
 using BrewUp.Infrastructure.RabbitMq;
 using BrewUp.Shared.Configuration;
 using Microsoft.Extensions.Configuration;
@@ -16,21 +17,13 @@ public static class InfrastructureHelper
         ILoggerFactory loggerFactory,
         IConfigurationManager configurationManager)
     {
-        MongoDbSettings mongoDbSettings = new();
-        configurationManager.GetSection("BrewUp:MongoDbSettings").Bind(mongoDbSettings);
+        MongoDbSettings mongoDbSettings = configurationManager.GetSection("BrewUp:MongoDbSettings").Get<MongoDbSettings>()
+            ?? throw new InvalidOperationException("Missing configuration section 'BrewUp:MongoDbSettings'.");
         services.AddMongoDb(mongoDbSettings);
         
-        RabbitMqSettings rabbitMqSettings = new();
-        configurationManager.GetSection("BrewUp:RabbitMQ").Bind(rabbitMqSettings);
-        
-        RabbitMQConfiguration rabbitMqConfiguration = new(rabbitMqSettings.Host,
-            rabbitMqSettings.Username,
-            rabbitMqSettings.Password,
-            rabbitMqSettings.ExchangeCommandName,
-            rabbitMqSettings.ExchangeEventName,
-            rabbitMqSettings.ClientId);
-        services.AddMufloneTransportRabbitMQ(loggerFactory, rabbitMqConfiguration);
-        
+        services.AddRabbitMq(loggerFactory, configurationManager);
+        services.AddAzureServiceBus(configurationManager);
+
         EventStoreSettings eventStoreSettings = new();
         configurationManager.GetSection("BrewUp:EventStore").Bind(eventStoreSettings);
         services.AddMufloneEventStore(eventStoreSettings.ConnectionString);

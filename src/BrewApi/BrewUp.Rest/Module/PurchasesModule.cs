@@ -26,7 +26,7 @@ public class PurchasesModule : IModule
     /// <returns></returns>
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
-        builder.Services.AddPurchases(builder.Configuration);
+        builder.Services.AddPurchases();
         
         return builder.Services;
     }
