@@ -83,6 +83,11 @@ public class SalesOrderSaga : AggregateRoot
                 Rows = _rows.ToList()
             }));
     }
+    
+    private void Apply(SagaCustomerBudgetVerified @event)
+    {
+        _customer = @event.Customer;
+    }
 
     internal void MarkAvailabilityChecked(Guid correlationId, IEnumerable<ItemRequested> rows)
     {
@@ -100,10 +105,8 @@ public class SalesOrderSaga : AggregateRoot
         RaiseEvent(new SagaOrderRequestRejected(new WarehouseId(_warehouseId), correlationId, message));
     }
 
-    private void Apply(SagaCustomerBudgetVerified @event)
-    {
-        _customer = @event.Customer;
-    }
+    private void Apply(SagaOrderRequestRejected @event)
+    {}
 
     internal void MarkSalesOrderAsPlaced(Guid correlationId)
     {

@@ -1,673 +1,897 @@
-openapi: 3.0.3
+openapi: 3.1.1
 info:
   title: BrewUp API
-  version: v1.0
-  description: BrewUp ERP REST API
+  description: BrewUp API
   contact:
     name: BrewUp Team
-
+  version: v1.0
 servers:
   - url: /
-
-tags:
-  - name: MasterData
-    description: Master data management – customers, beers, and warehouses
-  - name: Sales
-    description: Sales order management
-  - name: Warehouse
-    description: Warehouse and shipment management
-  - name: Dashboards
-    description: Dashboard analytics
-  - name: Purchases
-    description: Purchase order management
-  - name: BrewUp-Chat
-    description: AI-powered chat assistant and beer catalog queries
-
 paths:
-
-  # ─── MasterData / Customers ───────────────────────────────────────────────
-
   /v1/masterdata/customers:
-    get:
-      tags: [MasterData]
-      operationId: GetCustomers
-      summary: Get a list of customers
-      description: Get a list of customers.
-      parameters:
-        - $ref: '#/components/parameters/PageNumber'
-        - $ref: '#/components/parameters/PageSize'
-      responses:
-        '200':
-          description: Paged list of customers
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PagedResultCustomerJson'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
     post:
-      tags: [MasterData]
-      operationId: CreateCustomer
+      tags:
+        - MasterData
       summary: Create a new customer
       description: Creates a new customer. This endpoint is used to add a new customer.
+      operationId: CreateCustomer
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateCustomerJson'
+              $ref: "#/components/schemas/RegisterCustomerJson"
+        required: true
       responses:
-        '201':
-          description: Customer created successfully
-          headers:
-            Location:
-              description: URL of the newly created customer
-              schema:
-                type: string
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /v1/masterdata/customers/{customerId}:
-    parameters:
-      - $ref: '#/components/parameters/CustomerId'
-
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
     get:
-      tags: [MasterData]
-      operationId: GetCustomerById
-      summary: Get a customer details
-      description: Get full details of a customer.
+      tags:
+        - MasterData
+      summary: Get a list of customers
+      description: Get a list of customers.
+      operationId: GetCustomers
+      parameters:
+        - name: pageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 10
       responses:
-        '200':
-          description: Customer details
+        "200":
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CustomerJson'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
+                $ref: "#/components/schemas/PagedResultOfCustomerJson"
+        "500":
+          description: Internal Server Error
+  /v1/masterdata/customers/{customerId}:
     put:
-      tags: [MasterData]
-      operationId: SaveCustomer
+      tags:
+        - MasterData
       summary: Save customer
       description: Save full details of a customer.
+      operationId: SaveCustomer
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EditCustomerJson'
+              $ref: "#/components/schemas/EditCustomerJson"
+        required: true
       responses:
-        '202':
-          description: Customer update accepted
-          headers:
-            Location:
-              description: URL of the updated customer
-              schema:
-                type: string
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
+        "202":
+          description: Accepted
+        "500":
+          description: Internal Server Error
+    patch:
+      tags:
+        - MasterData
+      summary: Update customer's properties
+      description: Update properties of a customer.
+      operationId: UpdateCustomerProperties
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerPropertiesJson"
+        required: true
+      responses:
+        "202":
+          description: Accepted
+        "500":
+          description: Internal Server Error
     delete:
-      tags: [MasterData]
-      operationId: DeleteCustomer
+      tags:
+        - MasterData
       summary: Delete customer
       description: Delete a customer.
-      responses:
-        '202':
-          description: Customer deletion accepted
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  # ─── MasterData / Beers ───────────────────────────────────────────────────
-
-  /v1/masterdata/beers:
-    get:
-      tags: [MasterData]
-      operationId: GetBeers
-      summary: Get a list of beers
-      description: Get a list of all beers. This endpoint is used to get a list of all beers.
+      operationId: DeleteCustomer
       parameters:
-        - $ref: '#/components/parameters/PageNumber'
-        - $ref: '#/components/parameters/PageSize'
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
-        '200':
-          description: Paged list of beers
+        "202":
+          description: Accepted
+        "500":
+          description: Internal Server Error
+    get:
+      tags:
+        - MasterData
+      summary: Get a customer details
+      description: Get full details of a customer.
+      operationId: GetCustomerById
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PagedResultBeerJson'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
+                $ref: "#/components/schemas/CustomerJson"
+        "500":
+          description: Internal Server Error
+  /v1/masterdata/suppliers:
     post:
-      tags: [MasterData]
-      operationId: CreateBeer
+      tags:
+        - MasterData
+      summary: Create a new supplier
+      description: Creates a new supplier. This endpoint is used to add a new supplier.
+      operationId: CreateSupplier
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterSupplierJson"
+        required: true
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+    get:
+      tags:
+        - MasterData
+      summary: Get a list of suppliers
+      description: Get a list of suppliers.
+      operationId: GetSuppliers
+      parameters:
+        - name: pageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResultOfSupplierJson"
+        "500":
+          description: Internal Server Error
+  /v1/masterdata/suppliers/{supplierId}:
+    get:
+      tags:
+        - MasterData
+      summary: Get a supplier details
+      description: Get full details of a supplier.
+      operationId: GetSupplierById
+      parameters:
+        - name: supplierId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierJson"
+        "500":
+          description: Internal Server Error
+  /v1/masterdata/beers:
+    post:
+      tags:
+        - MasterData
       summary: Create a new beer
       description: Creates a new beer. This endpoint is used to add a new beer.
+      operationId: CreateBeer
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateBeerJson'
+              $ref: "#/components/schemas/RegisterBeerJson"
+        required: true
       responses:
-        '201':
-          description: Beer created successfully
-          headers:
-            Location:
-              description: URL of the newly created beer
-              schema:
-                type: string
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  # ─── MasterData / Warehouse ───────────────────────────────────────────────
-
-  /v1/masterdata/warehouse:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
     get:
-      tags: [MasterData]
-      operationId: GetWarehouses
-      summary: Get a list of warehouses
-      description: Get a list of warehouses.
+      tags:
+        - MasterData
+      summary: Get a list of beers
+      description: Get a list of all beers. This endpoint is used to get a list of all
+        beers.
+      operationId: GetBeers
       parameters:
-        - $ref: '#/components/parameters/Page'
-        - $ref: '#/components/parameters/PageSize'
+        - name: pageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 10
       responses:
-        '200':
-          description: Paged list of warehouses
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PagedResultWarehouseJson'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+  /v1/masterdata/warehouse:
     post:
-      tags: [MasterData]
-      operationId: CreateWarehouse
+      tags:
+        - MasterData
       summary: Create a new warehouse
       description: Creates a new warehouse. This endpoint is used to add a new warehouse.
+      operationId: CreateWarehouse
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateWarehouseJson'
+              $ref: "#/components/schemas/CreateWarehouseJson"
+        required: true
       responses:
-        '201':
-          description: Warehouse created successfully
-          headers:
-            Location:
-              description: URL of the newly created warehouse
-              schema:
-                type: string
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  # ─── Sales ────────────────────────────────────────────────────────────────
-
-  /v1/sales:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
     get:
-      tags: [Sales]
-      operationId: GetSalesOrders
-      summary: Get a list of sales orders
-      description: Get a list of sales orders.
+      tags:
+        - MasterData
+      summary: Get a list of warehouses
+      description: Get a list of warehouses.
+      operationId: GetWarehouses
       parameters:
-        - $ref: '#/components/parameters/PageNumber'
-        - $ref: '#/components/parameters/PageSize'
+        - name: page
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 0
+        - name: pageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 10
       responses:
-        '200':
-          description: Paged list of sales orders
+        "200":
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PagedResultSalesOrderJson'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    post:
-      tags: [Sales]
-      operationId: CreateSalesOrder
-      summary: Create a new sales order
-      description: Creates a new sales order. This endpoint is used to add a new sales order.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateSalesOrderJson'
-      responses:
-        '201':
-          description: Sales order created successfully
-          headers:
-            Location:
-              description: URL of the newly created sales order
-              schema:
-                type: string
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /v1/sales/{orderId}:
-    parameters:
-      - $ref: '#/components/parameters/OrderId'
-
-    get:
-      tags: [Sales]
-      operationId: GetSalesOrderDetails
-      summary: Get sales order details
-      description: Get the full details of a sales order.
-      responses:
-        '200':
-          description: Sales order details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SalesOrderJson'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    put:
-      tags: [Sales]
-      operationId: CloseSalesOrder
-      summary: Close an existing sales order
-      description: Close a sales order. This endpoint is used to close a sales order.
-      responses:
-        '204':
-          description: Sales order closed successfully
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /v1/sales/rows/{orderId}:
-    parameters:
-      - $ref: '#/components/parameters/OrderId'
-
-    patch:
-      tags: [Sales]
-      operationId: AddBeersToSalesOrder
-      summary: Add beers to an existing sales order
-      description: Add beers to an existing sales order. This endpoint is used to add beers to a sales order.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddBeersToCartJson'
-      responses:
-        '201':
-          description: Beers added to sales order successfully
-          headers:
-            Location:
-              description: URL of the updated sales order
-              schema:
-                type: string
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  # ─── Warehouse ────────────────────────────────────────────────────────────
-
-  /v1/warehouse:
-    get:
-      tags: [Warehouse]
-      operationId: GetShipmentOrders
-      summary: Get a list of shipment orders
-      description: Get a list of shipment orders.
-      parameters:
-        - $ref: '#/components/parameters/PageNumber'
-        - $ref: '#/components/parameters/PageSize'
-      responses:
-        '200':
-          description: Paged list of shipment orders
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/PagedResultShipmentJson'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  # ─── Purchases ──────────────────────────────────────────────────────────────
-
+                $ref: "#/components/schemas/PagedResultOfWarehouseJson"
+        "500":
+          description: Internal Server Error
   /v1/purchases:
     post:
-      tags: [Purchases]
-      operationId: CreatePurchaseOrder
+      tags:
+        - Purchases
       summary: Create a new purchase order
-      description: Creates a new purchase order. This endpoint is used to add a new purchase order.
+      description: Creates a new purchase order. This endpoint is used to add a new
+        purchase order.
+      operationId: CreatePurchaseOrder
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreatePurchaseOrderJson'
+              $ref: "#/components/schemas/CreatePurchaseOrderJson"
+        required: true
       responses:
-        '201':
-          description: Purchase order created successfully
-          headers:
-            Location:
-              description: URL of the newly created purchase order
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+  /v1/sales:
+    post:
+      tags:
+        - Sales
+      summary: Create a new sales order
+      description: Creates a new sales order. This endpoint is used to add a new sales
+        order.
+      operationId: CreateSalesOrder
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSalesOrderJson"
+        required: true
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+    get:
+      tags:
+        - Sales
+      summary: Get a list of sales orders
+      description: Get a list of sales orders.
+      operationId: GetSalesOrder
+      parameters:
+        - name: pageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
               schema:
-                type: string
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  # ─── Dashboards ───────────────────────────────────────────────────────────
-
+                $ref: "#/components/schemas/PagedResultOfSalesOrderJson"
+        "500":
+          description: Internal Server Error
+  /v1/sales/rows/{orderId}:
+    patch:
+      tags:
+        - Sales
+      summary: Add beers to an existing sales order
+      description: Add beers to an existing sales order. This endpoint is used to add
+        beers to a sales order.
+      operationId: AddBeersToSalesOrder
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddBeersToCartJson"
+        required: true
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+  /v1/sales/{orderId}:
+    put:
+      tags:
+        - Sales
+      summary: Close an existing sales order
+      description: Close a sales order. This endpoint is used to close a sales order.
+      operationId: CloseSalesOrder
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+    get:
+      tags:
+        - Sales
+      summary: Get sales order details
+      description: Get the full details of a sales order.
+      operationId: GetSalesOrderDetails
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResultOfSalesOrderJson"
+        "500":
+          description: Internal Server Error
+  /v1/warehouse:
+    get:
+      tags:
+        - Warehouse
+      summary: Get a list of shipment orders
+      description: Get a list of shipment orders.
+      operationId: GetShipmentOrders
+      parameters:
+        - name: pageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedResultOfShipmentJson"
+        "500":
+          description: Internal Server Error
+    post:
+      tags:
+        - Warehouse
+      summary: Add item stock to a warehouse
+      description: Adds item stock to an existing warehouse. This endpoint is used to
+        update the stock of an item in a warehouse.
+      operationId: AddItemStock
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddItemStockJson"
+        required: true
+      responses:
+        "202":
+          description: Accepted
+        "500":
+          description: Internal Server Error
   /v1/dashboards/customers:
     get:
-      tags: [Dashboards]
-      operationId: GetSalesByCustomer
+      tags:
+        - Dashboards
       summary: Get a list of sales by Customer
       description: Get a list of sales by Customer.
+      operationId: GetSalesByCustomer
       parameters:
-        - $ref: '#/components/parameters/PageNumber'
-        - $ref: '#/components/parameters/PageSize'
+        - name: pageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 10
       responses:
-        '200':
-          description: Paged list of sales aggregated by customer
+        "200":
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PagedResultSalesByCustomerJson'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
+                $ref: "#/components/schemas/PagedResultOfSalesByCustomerJson"
+        "500":
+          description: Internal Server Error
   /v1/dashboards/products:
     get:
-      tags: [Dashboards]
-      operationId: GetSalesByProduct
+      tags:
+        - Dashboards
       summary: Get a list of sales by Product
       description: Get a list of sales by Product.
+      operationId: GetSalesByProduct
       parameters:
-        - $ref: '#/components/parameters/PageNumber'
-        - $ref: '#/components/parameters/PageSize'
+        - name: pageNumber
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            pattern: ^-?(?:0|[1-9]\d*)$
+            type:
+              - integer
+              - string
+            format: int32
+            default: 10
       responses:
-        '200':
-          description: Paged list of sales aggregated by product
+        "200":
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PagedResultSalesByProductsJson'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  # ─── Chat / AI ────────────────────────────────────────────────────────────
-
-  /ai/beers:
-    get:
-      tags: [BrewUp-Chat]
-      operationId: GetBeersCatalog
-      summary: Get the beer catalog
-      description: Returns the list of all active beers available in the catalog.
-      responses:
-        '200':
-          description: List of beer catalog items
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/BeerCatalogItem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /ai/sales:
+                $ref: "#/components/schemas/PagedResultOfSalesByProductsJson"
+        "500":
+          description: Internal Server Error
+  /v1/sagas:
     post:
-      tags: [BrewUp-Chat]
-      operationId: AskBrewUpChat
-      summary: Ask the BrewUp AI assistant
-      description: Sends a message to the BrewUp AI assistant and returns the answer. Optionally continues an existing conversation.
+      tags:
+        - Sagas
+      summary: Place a new sales order
+      description: Place a new sales order. This endpoint is used to place a new sales
+        order.
+      operationId: PlaceSalesOrder
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChatRequest'
+              $ref: "#/components/schemas/PlaceSalesOrderJson"
+        required: true
       responses:
-        '200':
-          description: AI assistant response
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+  /chat:
+    post:
+      tags:
+        - BrewUp-Mother
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+  /v1/knowledge/ingest:
+    post:
+      tags:
+        - Knowledge
+      summary: Ingest a new Knowledge Document
+      description: Ingests a new Knowledge Document. This endpoint is used to add a
+        new Knowledge Document.
+      operationId: IngestKnowledgeDocument
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IngestKnowledgeDocument"
+        required: true
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+  /v1/knowledge/ingest-file:
+    post:
+      tags:
+        - Knowledge
+      summary: Ingest a new Knowledge Document from a file
+      description: Ingests a new Knowledge Document from a file. This endpoint is used
+        to add a new Knowledge Document.
+      operationId: IngestKnowledgeDocumentFromFile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/KeyValuePairOfstringAndStringValues"
+          application/x-www-form-urlencoded:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/KeyValuePairOfstringAndStringValues"
+        required: true
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+  /v1/knowledge/documents/{documentId}/chunks:
+    get:
+      tags:
+        - Knowledge
+      summary: Get the chunks generated for a Knowledge Document
+      description: Returns the generated chunks for inspection, ordered by sequence.
+      operationId: GetKnowledgeDocumentChunks
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ChatResponse'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-# ─── Components ─────────────────────────────────────────────────────────────
-
-components:
-
-  # ── Parameters ──────────────────────────────────────────────────────────
-
-  parameters:
-    PageNumber:
-      name: pageNumber
-      in: query
-      description: 1-based page number
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
-
-    Page:
-      name: page
-      in: query
-      description: 0-based page index
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-
-    PageSize:
-      name: pageSize
-      in: query
-      description: Number of items per page
-      schema:
-        type: integer
-        default: 10
-        minimum: 1
-        maximum: 100
-
-    CustomerId:
-      name: customerId
-      in: path
-      required: true
-      description: Unique identifier of the customer
-      schema:
-        type: string
-
-    OrderId:
-      name: orderId
-      in: path
-      required: true
-      description: Unique identifier of the sales order
-      schema:
-        type: string
-
-  # ── Responses ────────────────────────────────────────────────────────────
-
-  responses:
-    InternalServerError:
-      description: Internal server error
-      content:
-        application/problem+json:
+                $ref: "#/components/schemas/GetKnowledgeDocumentChunksResult"
+        "500":
+          description: Internal Server Error
+  /v1/knowledge/search:
+    post:
+      tags:
+        - Knowledge
+      summary: Search Knowledge chunks
+      description: Returns the most relevant Knowledge chunks without generating an answer.
+      operationId: SearchKnowledge
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchKnowledgeQuery"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchKnowledgeResult"
+        "400":
+          description: Bad Request
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/HttpValidationProblemDetails"
+        "500":
+          description: Internal Server Error
+  /v1/knowledge/documents:
+    get:
+      tags:
+        - Knowledge
+      summary: List Knowledge Documents
+      description: Returns all ingested Knowledge Documents.
+      operationId: GetKnowledgeDocuments
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetKnowledgeDocumentsResult"
+        "500":
+          description: Internal Server Error
+  /v1/knowledge/documents/{documentId}:
+    get:
+      tags:
+        - Knowledge
+      summary: Get a Knowledge Document
+      description: Returns an ingested Knowledge Document and its chunk count.
+      operationId: GetKnowledgeDocument
+      parameters:
+        - name: documentId
+          in: path
+          required: true
           schema:
-            $ref: '#/components/schemas/ProblemDetails'
-
-  # ── Schemas ──────────────────────────────────────────────────────────────
-
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetKnowledgeDocumentResult"
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+    delete:
+      tags:
+        - Knowledge
+      summary: Delete a Knowledge Document
+      description: Deletes the document and its associated chunks and vectors.
+      operationId: DeleteKnowledgeDocument
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+  /v1/knowledge/documents/{documentId}/reindex:
+    post:
+      tags:
+        - Knowledge
+      summary: Reindex a Knowledge Document
+      description: Regenerates chunks and embeddings from the persisted document content.
+      operationId: ReindexKnowledgeDocument
+      parameters:
+        - name: documentId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReindexKnowledgeDocumentResult"
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+components:
   schemas:
-
-    # ── Shared value objects ────────────────────────────────────────────
-
-    Price:
+    AddBeersToCartJson:
+      required:
+        - orderId
+        - rows
       type: object
-      required: [value, currency]
       properties:
-        value:
-          type: number
-          format: decimal
-          description: Monetary amount (must be greater than 0)
-          minimum: 0.01
-          exclusiveMinimum: true
-        currency:
+        orderId:
           type: string
-          description: ISO 4217 currency code (e.g. EUR, USD)
-
-    Quantity:
+        rows:
+          type: array
+          items:
+            $ref: "#/components/schemas/SalesOrderRowJson"
+    AddItemStockJson:
       type: object
-      required: [value, unitOfMeasure]
       properties:
-        value:
-          type: number
-          format: decimal
-          description: Numeric quantity (must be greater than 0)
-          minimum: 0.01
-          exclusiveMinimum: true
+        id:
+          type: string
+        warehouseId:
+          type: string
+        beerId:
+          type: string
+        quantity:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
         unitOfMeasure:
           type: string
-          description: Unit of measure (e.g. L, kg, pcs)
-
-    # ── Paging ──────────────────────────────────────────────────────────
-
-    PagedResultCustomerJson:
-      allOf:
-        - $ref: '#/components/schemas/PagedResultBase'
-        - type: object
-          properties:
-            results:
-              type: array
-              items:
-                $ref: '#/components/schemas/CustomerJson'
-
-    PagedResultBeerJson:
-      allOf:
-        - $ref: '#/components/schemas/PagedResultBase'
-        - type: object
-          properties:
-            results:
-              type: array
-              items:
-                $ref: '#/components/schemas/BeerJson'
-
-    PagedResultWarehouseJson:
-      allOf:
-        - $ref: '#/components/schemas/PagedResultBase'
-        - type: object
-          properties:
-            results:
-              type: array
-              items:
-                $ref: '#/components/schemas/WarehouseJson'
-
-    PagedResultSalesOrderJson:
-      allOf:
-        - $ref: '#/components/schemas/PagedResultBase'
-        - type: object
-          properties:
-            results:
-              type: array
-              items:
-                $ref: '#/components/schemas/SalesOrderJson'
-
-    PagedResultShipmentJson:
-      allOf:
-        - $ref: '#/components/schemas/PagedResultBase'
-        - type: object
-          properties:
-            results:
-              type: array
-              items:
-                $ref: '#/components/schemas/ShipmentJson'
-
-    PagedResultSalesByCustomerJson:
-      allOf:
-        - $ref: '#/components/schemas/PagedResultBase'
-        - type: object
-          properties:
-            results:
-              type: array
-              items:
-                $ref: '#/components/schemas/SalesByCustomerJson'
-
-    PagedResultSalesByProductsJson:
-      allOf:
-        - $ref: '#/components/schemas/PagedResultBase'
-        - type: object
-          properties:
-            results:
-              type: array
-              items:
-                $ref: '#/components/schemas/SalesByProductsJson'
-
-    PagedResultBase:
+    ChatRequest:
+      required:
+        - message
       type: object
       properties:
-        page:
-          type: integer
-          description: Current page index
-        pageSize:
-          type: integer
-          description: Number of items per page
-        totalRecords:
-          type: integer
-          description: Total number of records across all pages
-
-    # ── MasterData – Customers ───────────────────────────────────────────
-
-    IndirizzoJson:
+        message:
+          type: string
+        conversationId:
+          type:
+            - "null"
+            - string
+    CreatePurchaseOrderJson:
+      required:
+        - orderNumber
+        - orderDate
+        - supplierId
+        - rows
       type: object
-      required: [via, numeroCivico, citta, provincia, cap, nazione]
       properties:
-        via:
+        orderNumber:
           type: string
-          description: Street name
-        numeroCivico:
+        orderDate:
           type: string
-          description: Civic number
-        citta:
+          format: date-time
+        supplierId:
           type: string
-          description: City
-        provincia:
+        deliveryDate:
           type: string
-          description: Province
-        cap:
-          type: string
-          description: Postal code
-        nazione:
-          type: string
-          description: Country
-
-    CreateCustomerJson:
+          format: date-time
+        rows:
+          type: array
+          items:
+            $ref: "#/components/schemas/PurchaseOrderRowJson"
+    CreateSalesOrderJson:
+      required:
+        - orderNumber
+        - orderDate
+        - customerId
+        - customerName
+        - rows
       type: object
-      required: [ragioneSociale, partitaIva]
       properties:
-        ragioneSociale:
+        orderNumber:
           type: string
-          description: Business name / company name
-        partitaIva:
+        orderDate:
           type: string
-          description: Italian VAT number
-        indirizzo:
-          $ref: '#/components/schemas/IndirizzoJson'
-
-    EditCustomerJson:
-      type: object
-      required: [customerId, ragioneSociale, partitaIva]
-      properties:
+          format: date-time
         customerId:
           type: string
-          description: Unique identifier of the customer
-        ragioneSociale:
+        customerName:
           type: string
-          description: Business name / company name
-        partitaIva:
+        deliveryDate:
           type: string
-          description: Italian VAT number
-        indirizzo:
-          $ref: '#/components/schemas/IndirizzoJson'
-
+          format: date-time
+        rows:
+          type: array
+          items:
+            $ref: "#/components/schemas/SalesOrderRowJson"
+    CreateWarehouseJson:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
     CustomerJson:
+      required:
+        - customerId
+        - ragioneSociale
+        - partitaIva
+        - consumerLevel
+        - indirizzo
+        - budgetLimit
+        - isEnabled
       type: object
       properties:
         customerId:
@@ -679,114 +903,716 @@ components:
         consumerLevel:
           type: string
         indirizzo:
-          $ref: '#/components/schemas/IndirizzoJson'
-
-    # ── MasterData – Beers ───────────────────────────────────────────────
-
-    CreateBeerJson:
-      type: object
-      required: [beerName, beerStyle, price]
-      properties:
-        beerName:
-          type: string
-          description: Commercial name of the beer
-        beerStyle:
-          type: string
-          description: Beer style (e.g. IPA, Stout, Lager)
-        alcoholByVolume:
-          type: number
-          format: decimal
-          description: Alcohol by volume percentage
-        packaging:
-          type: string
-          description: Packaging type (e.g. bottle, can, keg)
-        price:
-          $ref: '#/components/schemas/Price'
-        isActive:
+          $ref: "#/components/schemas/IndirizzoJson"
+        budgetLimit:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
+        isEnabled:
           type: boolean
-          default: true
-
-    BeerJson:
+    CustomerPropertiesJson:
+      required:
+        - customerId
+        - isEnabled
+        - consumerLevel
+        - budgetLimit
       type: object
       properties:
-        beerId:
+        customerId:
           type: string
-        beerName:
-          type: string
-        beerStyle:
-          type: string
-        alcoholByVolume:
-          type: number
-          format: decimal
-        packaging:
-          type: string
-        price:
-          $ref: '#/components/schemas/Price'
-        isActive:
+        isEnabled:
           type: boolean
-
-    # ── MasterData – Warehouse ───────────────────────────────────────────
-
-    CreateWarehouseJson:
+        consumerLevel:
+          type: string
+        budgetLimit:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
+    DocumentScope:
+      required:
+        - name
       type: object
-      required: [name]
       properties:
         name:
           type: string
-          description: Name of the warehouse
-
-    WarehouseJson:
+    DocumentSource:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+    EditCustomerJson:
+      required:
+        - customerId
+        - ragioneSociale
+        - partitaIva
+      type: object
+      properties:
+        customerId:
+          type: string
+        ragioneSociale:
+          type: string
+        partitaIva:
+          type: string
+        indirizzo:
+          $ref: "#/components/schemas/IndirizzoJson"
+    GetKnowledgeDocumentChunksResult:
+      required:
+        - documentId
+        - chunkCount
+        - chunks
+      type: object
+      properties:
+        documentId:
+          type: string
+          format: uuid
+        chunkCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        chunks:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeDocumentChunkResult"
+    GetKnowledgeDocumentResult:
+      required:
+        - id
+        - title
+        - scope
+        - source
+        - tags
+        - importedAt
+        - content
+        - chunkCount
       type: object
       properties:
         id:
           type: string
-        name:
+          format: uuid
+        title:
           type: string
-
-    # ── Sales ────────────────────────────────────────────────────────────
-
-    SalesOrderRowJson:
+        scope:
+          type: string
+        source:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        importedAt:
+          type: string
+          format: date-time
+        content:
+          type: string
+        chunkCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    GetKnowledgeDocumentsResult:
+      required:
+        - documents
       type: object
-      required: [beerId, beerName, quantity, price]
+      properties:
+        documents:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeDocumentSummary"
+    HttpValidationProblemDetails:
+      type: object
+      properties:
+        type:
+          type:
+            - "null"
+            - string
+        title:
+          type:
+            - "null"
+            - string
+        status:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+        detail:
+          type:
+            - "null"
+            - string
+        instance:
+          type:
+            - "null"
+            - string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+    IndirizzoJson:
+      required:
+        - via
+        - numeroCivico
+        - citta
+        - provincia
+        - cap
+        - nazione
+      type: object
+      properties:
+        via:
+          type: string
+        numeroCivico:
+          type: string
+        citta:
+          type: string
+        provincia:
+          type: string
+        cap:
+          type: string
+        nazione:
+          type: string
+    IngestKnowledgeDocument:
+      required:
+        - title
+        - content
+        - scope
+        - source
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        scope:
+          $ref: "#/components/schemas/DocumentScope"
+        source:
+          $ref: "#/components/schemas/DocumentSource"
+        tags:
+          type:
+            - "null"
+            - array
+          items:
+            type: string
+    KeyValuePairOfstringAndStringValues:
+      required:
+        - key
+        - value
+      type: object
+      properties:
+        key:
+          type:
+            - "null"
+            - string
+        value:
+          type: array
+          items:
+            type: string
+    KnowledgeDocumentChunkResult:
+      required:
+        - id
+        - sequence
+        - tokenCount
+        - content
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        sequence:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        tokenCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        content:
+          type: string
+    KnowledgeDocumentSummary:
+      required:
+        - id
+        - title
+        - scope
+        - source
+        - tags
+        - importedAt
+        - chunkCount
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        scope:
+          type: string
+        source:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        importedAt:
+          type: string
+          format: date-time
+        chunkCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    KnowledgeSearchResultItem:
+      required:
+        - documentId
+        - chunkId
+        - chunkSequence
+        - documentTitle
+        - scope
+        - tags
+        - content
+        - score
+        - tokenCount
+      type: object
+      properties:
+        documentId:
+          type: string
+          format: uuid
+        chunkId:
+          type: string
+          format: uuid
+        chunkSequence:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        documentTitle:
+          type: string
+        scope:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        content:
+          type: string
+        score:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$
+          type:
+            - number
+            - string
+          format: double
+        tokenCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    OrderRowDto:
+      type: object
       properties:
         beerId:
           type: string
-          description: Unique identifier of the beer
         beerName:
           type: string
-          description: Name of the beer
         quantity:
-          $ref: '#/components/schemas/Quantity'
-        price:
-          $ref: '#/components/schemas/Price'
-
-    CreateSalesOrderJson:
+          $ref: "#/components/schemas/Quantity"
+    PagedResultOfCustomerJson:
+      required:
+        - results
+        - pageSize
+        - page
+        - totalRecords
       type: object
-      required: [orderNumber, orderDate, customerId, customerName, rows]
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomerJson"
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        page:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalRecords:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResultOfSalesByCustomerJson:
+      required:
+        - results
+        - pageSize
+        - page
+        - totalRecords
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/SalesByCustomerJson"
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        page:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalRecords:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResultOfSalesByProductsJson:
+      required:
+        - results
+        - pageSize
+        - page
+        - totalRecords
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/SalesByProductsJson"
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        page:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalRecords:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResultOfSalesOrderJson:
+      required:
+        - results
+        - pageSize
+        - page
+        - totalRecords
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/SalesOrderJson"
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        page:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalRecords:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResultOfShipmentJson:
+      required:
+        - results
+        - pageSize
+        - page
+        - totalRecords
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShipmentJson"
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        page:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalRecords:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResultOfSupplierJson:
+      required:
+        - results
+        - pageSize
+        - page
+        - totalRecords
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/SupplierJson"
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        page:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalRecords:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PagedResultOfWarehouseJson:
+      required:
+        - results
+        - pageSize
+        - page
+        - totalRecords
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/WarehouseJson"
+        pageSize:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        page:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+        totalRecords:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    PlaceSalesOrderJson:
+      required:
+        - orderNumber
+        - orderDate
+        - customerId
+        - warehouseId
+        - rows
+      type: object
       properties:
         orderNumber:
           type: string
-          description: Human-readable order number
         orderDate:
           type: string
           format: date-time
-          description: Date and time the order was placed
         customerId:
           type: string
-          description: Unique identifier of the customer
-        customerName:
+        warehouseId:
           type: string
-          description: Display name of the customer
         deliveryDate:
           type: string
           format: date-time
-          description: Requested delivery date
         rows:
           type: array
-          minItems: 1
           items:
-            $ref: '#/components/schemas/SalesOrderRowJson'
-
+            $ref: "#/components/schemas/SalesOrderRowJson"
+    Price:
+      required:
+        - value
+        - currency
+      type: object
+      properties:
+        value:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
+        currency:
+          type: string
+    PurchaseOrderRowJson:
+      required:
+        - beerId
+        - beerName
+        - quantity
+        - price
+      type: object
+      properties:
+        beerId:
+          type: string
+        beerName:
+          type: string
+        quantity:
+          $ref: "#/components/schemas/Quantity"
+        price:
+          $ref: "#/components/schemas/Price"
+    Quantity:
+      required:
+        - value
+        - unitOfMeasure
+      type: object
+      properties:
+        value:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
+        unitOfMeasure:
+          type: string
+    RegisterBeerJson:
+      required:
+        - beerName
+        - beerStyle
+        - price
+      type: object
+      properties:
+        beerName:
+          type: string
+        beerStyle:
+          type: string
+        alcoholByVolume:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
+        packaging:
+          type: string
+        price:
+          $ref: "#/components/schemas/Price"
+        isActive:
+          type: boolean
+    RegisterCustomerJson:
+      required:
+        - ragioneSociale
+        - partitaIva
+      type: object
+      properties:
+        ragioneSociale:
+          type: string
+        partitaIva:
+          type: string
+        indirizzo:
+          $ref: "#/components/schemas/IndirizzoJson"
+    RegisterSupplierJson:
+      required:
+        - ragioneSociale
+        - partitaIva
+      type: object
+      properties:
+        ragioneSociale:
+          type: string
+        partitaIva:
+          type: string
+        indirizzo:
+          $ref: "#/components/schemas/IndirizzoJson"
+    ReindexKnowledgeDocumentResult:
+      required:
+        - documentId
+        - chunkCount
+      type: object
+      properties:
+        documentId:
+          type: string
+          format: uuid
+        chunkCount:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - integer
+            - string
+          format: int32
+    SalesByCustomerJson:
+      type: object
+      properties:
+        customerId:
+          type: string
+        customerName:
+          type: string
+        year:
+          type: string
+        totalSales:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
+        currency:
+          type: string
+    SalesByProductsJson:
+      type: object
+      properties:
+        productId:
+          type: string
+        productName:
+          type: string
+        year:
+          type: string
+        totalSales:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
+        currency:
+          type: string
+        quantity:
+          pattern: ^-?(?:0|[1-9]\d*)(?:\.\d+)?$
+          type:
+            - number
+            - string
+          format: double
+        unitOfMeasure:
+          type: string
     SalesOrderJson:
       type: object
       properties:
@@ -807,27 +1633,15 @@ components:
         rows:
           type: array
           items:
-            $ref: '#/components/schemas/SalesOrderRowJson'
+            $ref: "#/components/schemas/SalesOrderRowJson"
         status:
           type: string
-          description: Current status of the sales order (e.g. Open, Closed)
-
-    AddBeersToCartJson:
-      type: object
-      required: [orderId, rows]
-      properties:
-        orderId:
-          type: string
-          description: Unique identifier of the target sales order
-        rows:
-          type: array
-          minItems: 1
-          items:
-            $ref: '#/components/schemas/SalesOrderRowJson'
-
-    # ── Warehouse – Shipments ────────────────────────────────────────────
-
-    OrderRowDto:
+    SalesOrderRowJson:
+      required:
+        - beerId
+        - beerName
+        - quantity
+        - price
       type: object
       properties:
         beerId:
@@ -835,8 +1649,36 @@ components:
         beerName:
           type: string
         quantity:
-          $ref: '#/components/schemas/Quantity'
-
+          $ref: "#/components/schemas/Quantity"
+        price:
+          $ref: "#/components/schemas/Price"
+    SearchKnowledgeQuery:
+      required:
+        - query
+      type: object
+      properties:
+        query:
+          type: string
+        scope:
+          type:
+            - "null"
+            - string
+        topK:
+          pattern: ^-?(?:0|[1-9]\d*)$
+          type:
+            - "null"
+            - integer
+            - string
+          format: int32
+    SearchKnowledgeResult:
+      required:
+        - items
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/KnowledgeSearchResultItem"
     ShipmentJson:
       type: object
       properties:
@@ -852,147 +1694,35 @@ components:
         rows:
           type: array
           items:
-            $ref: '#/components/schemas/OrderRowDto'
+            $ref: "#/components/schemas/OrderRowDto"
         shipmentState:
           type: string
-          description: Current state of the shipment (e.g. Pending, Shipped, Delivered)
-
-    # ── Dashboards ───────────────────────────────────────────────────────
-
-    SalesByCustomerJson:
+    SupplierJson:
       type: object
       properties:
-        customerId:
-          type: string
-        customerName:
-          type: string
-        year:
-          type: string
-          description: Reference year (e.g. "2025")
-        totalSales:
-          type: number
-          format: decimal
-        currency:
-          type: string
-
-    SalesByProductsJson:
-      type: object
-      properties:
-        productId:
-          type: string
-        productName:
-          type: string
-        year:
-          type: string
-          description: Reference year (e.g. "2025")
-        totalSales:
-          type: number
-          format: decimal
-        currency:
-          type: string
-        quantity:
-          type: number
-          format: decimal
-        unitOfMeasure:
-          type: string
-
-    # ── Purchases ────────────────────────────────────────────────────────────
-
-    PurchaseOrderRowJson:
-      type: object
-      required: [beerId, beerName, quantity, price]
-      properties:
-        beerId:
-          type: string
-          description: Unique identifier of the beer
-        beerName:
-          type: string
-          description: Name of the beer
-        quantity:
-          $ref: '#/components/schemas/Quantity'
-        price:
-          $ref: '#/components/schemas/Price'
-
-    CreatePurchaseOrderJson:
-      type: object
-      required: [orderNumber, orderDate, supplierId, rows]
-      properties:
-        orderNumber:
-          type: string
-          description: Human-readable order number
-        orderDate:
-          type: string
-          format: date-time
-          description: Date and time the order was placed
         supplierId:
           type: string
-          description: Unique identifier of the supplier
-        deliveryDate:
+        ragioneSociale:
           type: string
-          format: date-time
-          description: Requested delivery date
-        rows:
-          type: array
-          minItems: 1
-          items:
-            $ref: '#/components/schemas/PurchaseOrderRowJson'
-
-    # ── Chat / AI ────────────────────────────────────────────────────────────
-
-    BeerCatalogItem:
+        partitaIva:
+          type: string
+        indirizzo:
+          $ref: "#/components/schemas/IndirizzoJson"
+        isEnabled:
+          type: boolean
+    WarehouseJson:
       type: object
       properties:
-        beerId:
+        id:
           type: string
         name:
           type: string
-        style:
-          type: string
-        alcoholByVolume:
-          type: number
-          format: decimal
-          nullable: true
-        isActive:
-          type: boolean
-
-    ChatRequest:
-      type: object
-      required: [message]
-      properties:
-        message:
-          type: string
-          description: The message to send to the AI assistant
-        conversationId:
-          type: string
-          nullable: true
-          description: Optional conversation ID to continue an existing conversation
-
-    ChatResponse:
-      type: object
-      properties:
-        answer:
-          type: string
-          description: The AI assistant's answer
-        conversationId:
-          type: string
-          nullable: true
-          description: Conversation ID for continuing the conversation
-
-    # ── Problem Details ──────────────────────────────────────────────────
-
-    ProblemDetails:
-      type: object
-      properties:
-        type:
-          type: string
-        title:
-          type: string
-        status:
-          type: integer
-        detail:
-          type: string
-        instance:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
+tags:
+  - name: MasterData
+  - name: Purchases
+  - name: Sales
+  - name: Warehouse
+  - name: Dashboards
+  - name: Sagas
+  - name: BrewUp-Mother
+  - name: Knowledge
