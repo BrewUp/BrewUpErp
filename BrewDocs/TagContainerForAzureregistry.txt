@@ -1,0 +1,5 @@
+docker tag brewup.knowledge.agent:latest brewupregistry.azurecr.io/brewup.knowledge.agent:latest
+docker tag brewup.knowledge.mcpserver:latest brewupregistry.azurecr.io/brewup.knowledge.mcpserver:latest
+
+docker push brewupregistry.azurecr.io/brewup.knowledge.agent:latest
+docker push brewupregistry.azurecr.io/brewup.knowledge.mcpserver:latest
