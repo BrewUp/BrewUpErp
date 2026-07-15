@@ -74,10 +74,12 @@
   </Folder>
   <Folder Name="/80 Infrastructure/">
     <Project Path="BrewUp.Infrastructure/BrewUp.Infrastructure.csproj" />
-    <Project Path="Muflone/Muflone.Transport.Azure/Muflone.Transport.Azure.csproj" />
   </Folder>
   <Folder Name="/90 Presentation/">
     <Project Path="BrewUp.Rest.Tests/BrewUp.Rest.Tests.csproj" />
     <Project Path="BrewUp.Rest/BrewUp.Rest.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="compose.yaml" />
   </Folder>
 </Solution>

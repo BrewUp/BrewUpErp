@@ -1,24 +1,13 @@
-using BrewUp.Knowledge.Infrastructure;
-using BrewUp.Knowledge.McpServer;
-using BrewUp.Knowledge.McpServer.Tools;
-using BrewUp.Knowledge.ReadModel;
+using BrewUp.Knowledge.McpServer.Module;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services
-    .AddMcpServer()
-    .WithHttpTransport(options =>
-    {
-        options.Stateless = true;
-    })
-    .WithTools<KnowledgeTools>();
+// Explicit composition-root pattern for better control and visibility of module registration and configuration
+builder.RegisterModules([
+    new KnowledgeModule()
+]);
 
-builder.Services.AddScoped<IKnowledgeFacade, KnowledgeFacade>();
-builder.Services.AddInfrastructureForMcp(builder.Configuration);
-builder.Services.AddKnowledgeReadModel();
-    
 var app = builder.Build();
-
-app.MapMcp("/mcp");
+app.ConfigureModules();
 
 app.Run();

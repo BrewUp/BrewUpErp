@@ -1,0 +1,7 @@
+﻿services:
+  brewup.knowledge.agent:
+    image: brewup.knowledge.agent
+    build:
+      context: .
+      dockerfile: Dockerfile
+
