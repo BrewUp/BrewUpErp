@@ -1,0 +1,98 @@
+name: brewup
+
+services:
+  knowledge-mcp:
+    image: brewup.knowledge.mcpserver:latest
+    build:
+      context: .
+      dockerfile: Knowledge/BrewUp.Knowledge.McpServer/Dockerfile
+    container_name: brewup-knowledge-mcp
+    ports:
+      - "8081:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+    networks:
+      - brewup-network
+    restart: unless-stopped
+
+  master-data-mcp:
+    image: brewup.masterdata.mcpserver:latest
+    build:
+      context: .
+      dockerfile: MasterData/BrewUp.MasterData.McpServer/Dockerfile
+    container_name: brewup-master-data-mcp
+    ports:
+      - "8082:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+    networks:
+      - brewup-network
+    restart: unless-stopped
+
+  warehouse-mcp:
+    image: brewup.warehouse.mcpserver:latest
+    build:
+      context: .
+      dockerfile: Warehouse/BrewUp.Warehouse.McpServer/Dockerfile
+    container_name: brewup-warehouse-mcp
+    ports:
+      - "8083:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+    networks:
+      - brewup-network
+    restart: unless-stopped
+
+  sales-mcp:
+    image: brewup.sales.mcpserver:latest
+    build:
+      context: .
+      dockerfile: Sales/BrewUp.Sales.McpServer/Dockerfile
+    container_name: brewup-sales-mcp
+    ports:
+      - "8084:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+    networks:
+      - brewup-network
+    restart: unless-stopped
+
+  knowledge-agent:
+    image: brewup.knowledge.agent:latest
+    build:
+      context: .
+      dockerfile: Knowledge/BrewUp.Knowledge.Agent/Dockerfile
+    container_name: brewup-knowledge-agent
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+
+      # Container-to-container communication uses the Compose service name.
+      # This overrides the localhost endpoint used outside Docker.
+      KnowledgeAgent__Mcp__Endpoint: http://knowledge-mcp:8080/mcp
+    depends_on:
+      - knowledge-mcp
+    networks:
+      - brewup-network
+    restart: unless-stopped
+
+networks:
+  brewup-network:
+    name: brewup-network
+    driver: bridge
