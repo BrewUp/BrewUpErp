@@ -28,6 +28,8 @@ public class AgentModule : IModule
     /// <returns></returns>
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
+        builder.AddServiceDefaults();
+        
         builder.Services.AddLogging();
         builder.Services.AddHttpClient();
         builder.Services.AddShared();
@@ -74,6 +76,9 @@ public class AgentModule : IModule
             var response = await executor.ExecuteAsync(request, cancellationToken);
             return Results.Ok(response);
         });
+
+        // Espone /health e /alive e completa la configurazione Aspire.
+        app.MapDefaultEndpoints();
         
         return app;
     }

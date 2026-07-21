@@ -28,6 +28,8 @@ public class MasterDataModule : IModule
     /// <returns></returns>
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
+        builder.AddServiceDefaults();
+        
         builder.Services
             .AddMcpServer()
             .WithHttpTransport(options =>
@@ -53,6 +55,9 @@ public class MasterDataModule : IModule
             .WithName("HealthCheck")
             .WithTags("Health");
 
+        // Espone /health e /alive e completa la configurazione Aspire.
+        app.MapDefaultEndpoints();
+        
         return app;
     }
 }

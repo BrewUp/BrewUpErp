@@ -82,4 +82,5 @@
   <Folder Name="/Solution Items/">
     <File Path="compose.yaml" />
   </Folder>
+  <Project Path="BrewOrchestrator.ServiceDefaults/BrewOrchestrator.ServiceDefaults.csproj" />
 </Solution>
