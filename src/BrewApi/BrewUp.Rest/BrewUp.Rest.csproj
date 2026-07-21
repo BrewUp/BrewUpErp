@@ -13,6 +13,7 @@
             <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
             <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="10.0.10" />
             <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.16.0" />
+            <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.16.0" />
             <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.16.0" />
             <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.16.0" />
             <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.16.0" />
@@ -29,6 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\BrewOrchestrator.ServiceDefaults\BrewOrchestrator.ServiceDefaults.csproj" />
       <ProjectReference Include="..\BrewUp.Infrastructure\BrewUp.Infrastructure.csproj" />
       <ProjectReference Include="..\Chat\BrewUp.Mother.Facade\BrewUp.Mother.Facade.csproj" />
       <ProjectReference Include="..\Dashboards\BrewUp.Dashboards.Facade\BrewUp.Dashboards.Facade.csproj" />

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BrewOrchestrator.Host/BrewOrchestrator.Host.csproj" />
+  <Project Path="BrewOrchestrator.ServiceDefaults/BrewOrchestrator.ServiceDefaults.csproj" />
+</Solution>

@@ -7,6 +7,7 @@ builder.RegisterModules([
     new SharedModule(),
     new CorsModule(),
     new LoggingModule(),
+    new TelemetryModule(),
     new InfrastructureModule(),
     new OpenApiModule(),
     new MasterDataModule(),

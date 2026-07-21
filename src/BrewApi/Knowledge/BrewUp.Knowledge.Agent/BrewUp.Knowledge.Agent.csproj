@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BrewUp.Shared\BrewUp.Shared.csproj" />
     <ProjectReference Include="..\BrewUp.Knowledge.SharedKernel\BrewUp.Knowledge.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\BrewOrchestrator.ServiceDefaults\BrewOrchestrator.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>

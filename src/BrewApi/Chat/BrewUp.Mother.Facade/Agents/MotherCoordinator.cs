@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using BrewUp.Mother.Facade.Telemetry;
 using BrewUp.Mother.SharedKernel.Chat;
 using BrewUp.Shared.Agents;
 using Microsoft.Extensions.Logging;
@@ -42,79 +44,115 @@ public sealed class MotherCoordinator(
 
     public async Task<ChatResponse> CoordinateAsync(ChatRequest request, CancellationToken cancellationToken)
     {
-        if (_a2AOptions.Enabled && IsKnowledgeQuestion(request.Message))
-            return await CoordinateKnowledgeOnlyAsync(request, cancellationToken);
+        using var activity = MotherTelemetry.Source.StartActivity("Mother.Coordinate", ActivityKind.Internal);
+        activity?.SetTag("brewup.conversation.id", request.ConversationId);
+        activity?.SetTag("brewup.request.message", request.Message);
 
-        var demandItems = ParseDemand(request.Message);
-        if (demandItems.Count == 0)
-            return new ChatResponse("I could not identify the requested beer quantities in the scenario.", request.ConversationId);
+        try
+        {
+            if (_a2AOptions.Enabled && IsKnowledgeQuestion(request.Message))
+            {
+                activity?.SetTag("brewup.coordination.path", "knowledge-only");
+                return await CoordinateKnowledgeOnlyAsync(request, cancellationToken);
+            }
 
-        var correlationId = Guid.CreateVersion7();
-        ConversationRoot myConversation = new(correlationId);
-        
-        var invokedAgents = new List<string>();
-        var context = new AgentContext(
-            request.ConversationId ?? string.Empty,
-            "Mother",
-            invokedAgents.AsReadOnly(),
-            new Dictionary<string, object?>());
+            activity?.SetTag("brewup.coordination.path", "what-if");
 
-        var masterDataResponse = await AskAsync(
-            MasterDataAgentName,
-            "resolve-beer-catalog",
-            request.Message,
-            new Dictionary<string, object?> { ["demandItems"] = demandItems },
-            correlationId,
-            context,
-            invokedAgents,
-            cancellationToken);
-        myConversation.RaiseConversation(masterDataResponse);
+            var demandItems = ParseDemand(request.Message);
+            activity?.SetTag("brewup.demand.count", demandItems.Count);
+            activity?.AddEvent(new ActivityEvent(
+                "demand.parsed",
+                tags: new ActivityTagsCollection { ["brewup.demand.count"] = demandItems.Count }));
 
-        var resolved = masterDataResponse.GetRequired<IReadOnlyCollection<ResolvedBeerDemand>>("resolvedBeerDemand");
+            if (demandItems.Count == 0)
+            {
+                activity?.SetTag("brewup.coordination.outcome", "no-demand-identified");
+                return new ChatResponse("I could not identify the requested beer quantities in the scenario.", request.ConversationId);
+            }
 
-        if (resolved.Count == 0)
+            var correlationId = Guid.CreateVersion7();
+            activity?.SetTag("brewup.correlation.id", correlationId);
+            ConversationRoot myConversation = new(correlationId);
+
+            var invokedAgents = new List<string>();
+            var context = new AgentContext(
+                request.ConversationId ?? string.Empty,
+                "Mother",
+                invokedAgents.AsReadOnly(),
+                new Dictionary<string, object?>());
+
+            var masterDataResponse = await AskAsync(
+                MasterDataAgentName,
+                "resolve-beer-catalog",
+                request.Message,
+                new Dictionary<string, object?> { ["demandItems"] = demandItems },
+                correlationId,
+                context,
+                invokedAgents,
+                cancellationToken);
+            myConversation.RaiseConversation(masterDataResponse);
+
+            var resolved = masterDataResponse.GetRequired<IReadOnlyCollection<ResolvedBeerDemand>>("resolvedBeerDemand");
+            activity?.SetTag("brewup.masterdata.resolved.count", resolved.Count);
+
+            if (resolved.Count == 0)
+            {
+                activity?.SetTag("brewup.coordination.outcome", "masterdata-unresolved");
+                return new ChatResponse(
+                    "BrewUp ERP does not expose the requested product or beer information yet.",
+                    request.ConversationId);
+            }
+
+            var salesResponse = await AskAsync(
+                SalesAgentName,
+                "interpret-demand-signal",
+                request.Message,
+                new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved },
+                correlationId,
+                context,
+                invokedAgents,
+                cancellationToken);
+
+            var salesSignal = salesResponse.GetRequired<SalesDemandSignal>("salesDemandSignal");
+
+            var warehouseResponse = await AskAsync(
+                WarehouseAgentName,
+                "evaluate-stock-impact",
+                request.Message,
+                new Dictionary<string, object?> { ["salesDemandSignal"] = salesSignal },
+                correlationId,
+                context,
+                invokedAgents,
+                cancellationToken);
+
+            var knowledgeResponse = await AskAsync(
+                KnowledgeAgentName,
+                "retrieve-business-knowledge",
+                request.Message,
+                new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved },
+                correlationId,
+                context,
+                invokedAgents,
+                cancellationToken);
+
+            var warehouseImpact = warehouseResponse.GetRequired<WarehouseImpact>("warehouseImpact");
+            var knowledgeResult = knowledgeResponse.GetRequired<KnowledgeResult>("knowledgeResult");
+
+            activity?.SetTag("brewup.invoked.agents", string.Join(",", invokedAgents));
+            activity?.SetTag("brewup.warehouse.stock_risk", warehouseImpact.HasStockRisk);
+            activity?.SetTag("brewup.warehouse.reorder_risk", warehouseImpact.HasReorderRisk);
+            activity?.SetTag("brewup.coordination.outcome", "completed");
+
             return new ChatResponse(
-                "BrewUp ERP does not expose the requested product or beer information yet.",
+                BuildBusinessAnswer(resolved, salesSignal, warehouseImpact, knowledgeResult),
                 request.ConversationId);
-
-        var salesResponse = await AskAsync(
-            SalesAgentName,
-            "interpret-demand-signal",
-            request.Message,
-            new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved },
-            correlationId,
-            context,
-            invokedAgents,
-            cancellationToken);
-
-        var salesSignal = salesResponse.GetRequired<SalesDemandSignal>("salesDemandSignal");
-
-        var warehouseResponse = await AskAsync(
-            WarehouseAgentName,
-            "evaluate-stock-impact",
-            request.Message,
-            new Dictionary<string, object?> { ["salesDemandSignal"] = salesSignal },
-            correlationId,
-            context,
-            invokedAgents,
-            cancellationToken);
-
-        var knowledgeResponse = await AskAsync(
-            KnowledgeAgentName,
-            "retrieve-business-knowledge",
-            request.Message,
-            new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved },
-            correlationId,
-            context,
-            invokedAgents,
-            cancellationToken);
-
-        var warehouseImpact = warehouseResponse.GetRequired<WarehouseImpact>("warehouseImpact");
-        var knowledgeResult = knowledgeResponse.GetRequired<KnowledgeResult>("knowledgeResult");
-
-        return new ChatResponse(
-            BuildBusinessAnswer(resolved, salesSignal, warehouseImpact, knowledgeResult),
-            request.ConversationId);
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            throw;
+        }
     }
 
     private async Task<AgentResponse> AskAsync(
@@ -133,25 +171,44 @@ public sealed class MotherCoordinator(
         if (!agent.CanHandle(capability))
             throw new InvalidOperationException($"{agentName} cannot handle capability '{capability}'.");
 
-        _logger.LogInformation(
-            "Mother delegating to {AgentName} for {Capability} with correlation {CorrelationId}",
-            agentName,
-            capability,
-            correlationId);
+        using var activity = MotherTelemetry.Source.StartActivity($"Agent.{agentName}", ActivityKind.Client);
+        activity?.SetTag("brewup.agent.name", agentName);
+        activity?.SetTag("brewup.agent.capability", capability);
+        activity?.SetTag("brewup.correlation.id", correlationId);
 
-        invokedAgents.Add(agentName);
+        try
+        {
+            _logger.LogInformation(
+                "Mother delegating to {AgentName} for {Capability} with correlation {CorrelationId}",
+                agentName,
+                capability,
+                correlationId);
 
-        var response = await agent.HandleAsync(
-            new AgentRequest(capability, originalQuestion, inputs, correlationId, context),
-            cancellationToken);
+            invokedAgents.Add(agentName);
 
-        _logger.LogInformation(
-            "Mother received {AgentName} result for {Capability}: {Summary}",
-            response.AgentName,
-            capability,
-            response.Summary);
+            var response = await agent.HandleAsync(
+                new AgentRequest(capability, originalQuestion, inputs, correlationId, context),
+                cancellationToken);
 
-        return response;
+            activity?.SetTag("brewup.agent.response.success", response.IsSuccessful);
+            activity?.SetTag("brewup.agent.response.summary", response.Summary);
+            if (!response.IsSuccessful)
+                activity?.SetStatus(ActivityStatusCode.Error, response.Summary);
+
+            _logger.LogInformation(
+                "Mother received {AgentName} result for {Capability}: {Summary}",
+                response.AgentName,
+                capability,
+                response.Summary);
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            throw;
+        }
     }
 
     private static bool IsWhatIf(string message)
@@ -173,27 +230,51 @@ public sealed class MotherCoordinator(
         ChatRequest request,
         CancellationToken cancellationToken)
     {
-        if (knowledgeAgentA2AClient is null)
-            throw new InvalidOperationException("Knowledge A2A mode is enabled, but no KnowledgeAgent A2A client is registered.");
+        using var activity = MotherTelemetry.Source.StartActivity("Agent.KnowledgeAgent.A2A", ActivityKind.Client);
+        activity?.SetTag("brewup.agent.name", KnowledgeAgentName);
+        activity?.SetTag("brewup.agent.transport", "a2a");
+        activity?.SetTag("brewup.conversation.id", request.ConversationId);
 
-        var correlationId = Guid.CreateVersion7();
-        var card = await knowledgeAgentA2AClient.GetAgentCardAsync(cancellationToken);
+        try
+        {
+            if (knowledgeAgentA2AClient is null)
+                throw new InvalidOperationException("Knowledge A2A mode is enabled, but no KnowledgeAgent A2A client is registered.");
 
-        _logger.LogInformation(
-            "Mother discovered KnowledgeAgent {AgentName} with correlation {CorrelationId}",
-            card.Name,
-            correlationId);
+            var correlationId = Guid.CreateVersion7();
+            activity?.SetTag("brewup.correlation.id", correlationId);
 
-        _logger.LogInformation(
-            "Mother delegated task to KnowledgeAgent with correlation {CorrelationId}",
-            correlationId);
+            var card = await knowledgeAgentA2AClient.GetAgentCardAsync(cancellationToken);
+            activity?.SetTag("brewup.agent.card.name", card.Name);
+            activity?.AddEvent(new ActivityEvent(
+                "a2a.agent.discovered",
+                tags: new ActivityTagsCollection { ["brewup.agent.card.name"] = card.Name }));
 
-        var result = await knowledgeAgentA2AClient.SubmitKnowledgeTaskAsync(
-            request.Message,
-            correlationId,
-            cancellationToken);
+            _logger.LogInformation(
+                "Mother discovered KnowledgeAgent {AgentName} with correlation {CorrelationId}",
+                card.Name,
+                correlationId);
 
-        return new ChatResponse(BuildKnowledgeAnswer(result), request.ConversationId);
+            _logger.LogInformation(
+                "Mother delegated task to KnowledgeAgent with correlation {CorrelationId}",
+                correlationId);
+
+            activity?.AddEvent(new ActivityEvent("a2a.task.submitted"));
+
+            var result = await knowledgeAgentA2AClient.SubmitKnowledgeTaskAsync(
+                request.Message,
+                correlationId,
+                cancellationToken);
+
+            activity?.SetTag("brewup.knowledge.findings.count", result.Findings.Count);
+
+            return new ChatResponse(BuildKnowledgeAnswer(result), request.ConversationId);
+        }
+        catch (Exception ex)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.AddException(ex);
+            throw;
+        }
     }
 
     private static string BuildKnowledgeAnswer(KnowledgeResult knowledgeResult)

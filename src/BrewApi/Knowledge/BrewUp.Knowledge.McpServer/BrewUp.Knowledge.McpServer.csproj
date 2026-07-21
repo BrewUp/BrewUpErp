@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\BrewOrchestrator.ServiceDefaults\BrewOrchestrator.ServiceDefaults.csproj" />
       <ProjectReference Include="..\BrewUp.Knowledge.ReadModel\BrewUp.Knowledge.ReadModel.csproj" />
     </ItemGroup>
 

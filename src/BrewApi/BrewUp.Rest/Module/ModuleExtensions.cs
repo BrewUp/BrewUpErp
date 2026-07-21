@@ -16,6 +16,8 @@ internal static class ModuleExtensions
             .OrderBy(m => m.Order)
             .ToList();
 
+        AspireModule.Register(builder);
+        
         foreach (var module in activeModules)
         {
             module.Register(builder);
@@ -32,6 +34,8 @@ internal static class ModuleExtensions
             module.Configure(app);
         }
 
+        AspireModule.Configure(app);
+        
         return app;
     }
 }

@@ -377,3 +377,4 @@ mobile/**/appsettings.json
 
 # Container environment files
 .env
+SetBrewUpEnvironment.ps1

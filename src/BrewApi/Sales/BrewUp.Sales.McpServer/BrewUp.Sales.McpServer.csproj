@@ -21,6 +21,7 @@
       <ProjectReference Include="..\BrewUp.Sales.Infrastructure\BrewUp.Sales.Infrastructure.csproj" />
       <ProjectReference Include="..\BrewUp.Sales.ReadModel\BrewUp.Sales.ReadModel.csproj" />
       <ProjectReference Include="..\BrewUp.Sales.SharedKernel\BrewUp.Sales.SharedKernel.csproj" />
+      <ProjectReference Include="..\..\BrewOrchestrator.ServiceDefaults\BrewOrchestrator.ServiceDefaults.csproj" />
     </ItemGroup>
     
     <ItemGroup>

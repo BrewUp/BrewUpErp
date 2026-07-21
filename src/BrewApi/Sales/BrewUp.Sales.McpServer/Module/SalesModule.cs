@@ -31,6 +31,8 @@ public class SalesModule : IModule
     /// <returns></returns>
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
+        builder.AddServiceDefaults();
+        
         builder.Services
             .AddMcpServer()
             .WithHttpTransport(options =>
@@ -55,6 +57,9 @@ public class SalesModule : IModule
         app.MapGet("/health", () => Results.Ok("Sales-MCP is healthy."))
             .WithName("HealthCheck")
             .WithTags("Health");
+
+        // Espone /health e /alive e completa la configurazione Aspire.
+        app.MapDefaultEndpoints();
         
         return app;
     }
