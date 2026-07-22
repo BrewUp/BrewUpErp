@@ -65,57 +65,17 @@ public static class BrewUpContainerExtensions
             .WithEnvironment(
                 "KnowledgeAgent__Mcp__DefaultTopK",
                 "5");
-
-        // ---------------------------------------------------------------------
-        // Optional: Mother.
-        // Uncomment this block after replacing the image name with the real one.
-        // ---------------------------------------------------------------------
-
-        /*
-        var mother = builder
-            .AddContainer(
-                "mother",
-                "brewup.mother",
-                "latest")
-            .WithBrewUpInfrastructure(parameters)
-            .WithHttpEndpoint(
-                name: "http",
-                targetPort: 8080)
-            .WithReference(knowledgeAgent.GetEndpoint("http"))
-            .WithReference(salesMcp.GetEndpoint("http"))
-            .WithReference(warehouseMcp.GetEndpoint("http"))
+        
+        var restApi = builder
+            .AddProject<Projects.BrewUp_Rest>("brewup-rest")
+            .WithReference(knowledgeMcp.GetEndpoint("http"))
             .WithReference(masterDataMcp.GetEndpoint("http"))
-            .WaitFor(knowledgeAgent)
-            .WaitFor(salesMcp)
-            .WaitFor(warehouseMcp)
+            .WithReference(warehouseMcp.GetEndpoint("http"))
+            .WithReference(salesMcp.GetEndpoint("http"))
+            .WaitFor(knowledgeMcp)
             .WaitFor(masterDataMcp)
-            .WithEnvironment(
-                "BrewUp__Mother__A2A__Enabled",
-                "true")
-            .WithEnvironment(
-                "BrewUp__Mother__A2A__KnowledgeAgentUrl",
-                knowledgeAgent.GetEndpoint("http"))
-            .WithEnvironment(
-                "BrewUp__McpServers__MotherUrl",
-                ReferenceExpression.Create(
-                    $"{mother.GetEndpoint("http")}/mcp"))
-            .WithEnvironment(
-                "BrewUp__McpServers__SalesUrl",
-                ReferenceExpression.Create(
-                    $"{salesMcp.GetEndpoint("http")}/mcp"))
-            .WithEnvironment(
-                "BrewUp__McpServers__WarehouseUrl",
-                ReferenceExpression.Create(
-                    $"{warehouseMcp.GetEndpoint("http")}/mcp"))
-            .WithEnvironment(
-                "BrewUp__McpServers__MasterDataUrl",
-                ReferenceExpression.Create(
-                    $"{masterDataMcp.GetEndpoint("http")}/mcp"))
-            .WithEnvironment(
-                "BrewUp__McpServers__KnowledgeUrl",
-                ReferenceExpression.Create(
-                    $"{knowledgeMcp.GetEndpoint("http")}/mcp"));
-        */
+            .WaitFor(warehouseMcp)
+            .WaitFor(salesMcp);
 
         return builder;
     }

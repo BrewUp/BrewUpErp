@@ -8,9 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Agents.AI" Version="1.13.0" />
+    <PackageReference Include="Microsoft.Agents.AI" Version="1.14.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
-    <PackageReference Include="Scalar.AspNetCore" Version="2.16.12" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.16.16" />
   </ItemGroup>
 
   <ItemGroup>

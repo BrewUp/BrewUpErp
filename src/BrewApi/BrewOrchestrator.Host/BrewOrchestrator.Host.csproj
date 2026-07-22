@@ -8,4 +8,8 @@
     <UserSecretsId>0b4dc85a-3d74-4e59-9e5c-da75ec9232d7</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BrewUp.Rest\BrewUp.Rest.csproj" />
+  </ItemGroup>
+
 </Project>
