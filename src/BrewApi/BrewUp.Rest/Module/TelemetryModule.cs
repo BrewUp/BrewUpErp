@@ -34,9 +34,6 @@ public class TelemetryModule : IModule
     public IServiceCollection Register(WebApplicationBuilder builder)
     {
         var serviceName = builder.Configuration["OpenTelemetry:ServiceName"] ?? "BrewUp.Rest";
-        var otlpEndpoint = builder.Configuration["OpenTelemetry:Otlp:Endpoint"];
-        var otlpEndpointFromEnv = Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT");
-        var hasOtlpEndpoint = !string.IsNullOrWhiteSpace(otlpEndpoint) || !string.IsNullOrWhiteSpace(otlpEndpointFromEnv);
         var useConsoleExporter = builder.Configuration.GetValue(
             "OpenTelemetry:UseConsoleExporter",
             builder.Environment.IsDevelopment());
@@ -58,11 +55,9 @@ public class TelemetryModule : IModule
                 if (useConsoleExporter)
                     tracing.AddConsoleExporter();
 
-                // Reads OTEL_EXPORTER_OTLP_ENDPOINT when not set explicitly (e.g. injected by .NET Aspire).
-                if (!string.IsNullOrWhiteSpace(otlpEndpoint))
-                    tracing.AddOtlpExporter(o => o.Endpoint = new Uri(otlpEndpoint));
-                else if (hasOtlpEndpoint)
-                    tracing.AddOtlpExporter();
+                // OTLP export is configured centrally by ServiceDefaults via UseOtlpExporter()
+                // (reads OTEL_EXPORTER_OTLP_ENDPOINT, injected by .NET Aspire). Signal-specific
+                // AddOtlpExporter must NOT be mixed with the cross-cutting UseOtlpExporter.
             })
             .WithMetrics(metrics =>
             {
@@ -72,10 +67,7 @@ public class TelemetryModule : IModule
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
 
-                if (!string.IsNullOrWhiteSpace(otlpEndpoint))
-                    metrics.AddOtlpExporter(o => o.Endpoint = new Uri(otlpEndpoint));
-                else if (hasOtlpEndpoint)
-                    metrics.AddOtlpExporter();
+                // OTLP export is configured centrally by ServiceDefaults via UseOtlpExporter().
             });
 
         return builder.Services;

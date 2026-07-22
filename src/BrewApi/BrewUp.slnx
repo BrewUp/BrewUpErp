@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/00 Aspire/">
+    <Project Path="BrewOrchestrator.Host/BrewOrchestrator.Host.csproj" />
+    <Project Path="BrewOrchestrator.ServiceDefaults/BrewOrchestrator.ServiceDefaults.csproj" />
+  </Folder>
   <Folder Name="/30 Shared/">
     <Project Path="BrewUp.Shared.Tests/BrewUp.Shared.Tests.csproj" />
     <Project Path="BrewUp.Shared/BrewUp.Shared.csproj" />
@@ -82,5 +86,4 @@
   <Folder Name="/Solution Items/">
     <File Path="compose.yaml" />
   </Folder>
-  <Project Path="BrewOrchestrator.ServiceDefaults/BrewOrchestrator.ServiceDefaults.csproj" />
 </Solution>

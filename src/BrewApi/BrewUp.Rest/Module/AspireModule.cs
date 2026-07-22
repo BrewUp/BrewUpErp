@@ -1,5 +1,8 @@
 ﻿namespace BrewUp.Rest.Module;
 
+/// <summary>
+/// AspireModule for Aspire configuration.
+/// </summary>
 public static class AspireModule
 {
     /// <summary>
