@@ -1,0 +1,17 @@
+az login
+az acr login --name brewupregistry
+
+docker tag brewup.knowledge.agent:latest brewupregistry.azurecr.io/brewup.knowledge.agent:latest
+docker tag brewup.knowledge.mcpserver:latest brewupregistry.azurecr.io/brewup.knowledge.mcpserver:latest
+docker tag brewup.sales.mcpserver:latest brewupregistry.azurecr.io/brewup.sales.mcpserver:latest
+docker tag brewup.warehouse.mcpserver:latest brewupregistry.azurecr.io/brewup.warehouse.mcpserver:latest
+docker tag brewup.masterdata.mcpserver:latest brewupregistry.azurecr.io/brewup.masterdata.mcpserver:latest
+
+docker push brewupregistry.azurecr.io/brewup.knowledge.agent:latest
+docker push brewupregistry.azurecr.io/brewup.knowledge.mcpserver:latest
+docker push brewupregistry.azurecr.io/brewup.sales.mcpserver:latest
+docker push brewupregistry.azurecr.io/brewup.warehouse.mcpserver:latest
+docker push brewupregistry.azurecr.io/brewup.masterdata.mcpserver:latest
+
+
+docker compose -f mcp-docker-compose.yml up --build -d

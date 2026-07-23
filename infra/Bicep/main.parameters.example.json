@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "westeurope"
+    },
+    "environmentName": {
+      "value": "dev"
+    },
+    "workloadName": {
+      "value": "brewup-knowledge"
+    },
+    "containerRegistryName": {
+      "value": "brewupregistry"
+    },
+    "imageTag": {
+      "value": "latest"
+    },
+    "deployContainerApps": {
+      "value": true
+    },
+    "mongoDbConnectionString": {
+      "value": ""
+    },
+    "mongoDbDatabaseName": {
+      "value": "BrewUp"
+    },
+    "sqlServerConnectionString": {
+      "value": ""
+    },
+    "sqlServerDimensions": {
+      "value": 1536
+    },
+    "knowledgeVectorStore": {
+      "value": "SqlServer"
+    },
+    "knowledgeAgentMcpServerName": {
+      "value": "knowledge"
+    },
+    "knowledgeAgentDefaultTopK": {
+      "value": 5
+    },
+    "minReplicas": {
+      "value": 1
+    },
+    "maxReplicas": {
+      "value": 3
+    }
+  }
+}
