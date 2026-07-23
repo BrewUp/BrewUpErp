@@ -5,12 +5,14 @@ using Azure.Core;
 using Azure.Identity;
 using BrewUp.Mother.Facade.Agents;
 using BrewUp.Mother.Facade.Chat;
+using BrewUp.Mother.Facade.Configuration;
+using BrewUp.Mother.Facade.Foundry;
 using BrewUp.Mother.Facade.Mcp;
 using BrewUp.Shared;
-using BrewUp.Shared.Agents;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace BrewUp.Mother.Facade;
 
@@ -23,12 +25,12 @@ public static class BrewUpChatHelper
         services.AddHttpClient();
         services.AddShared();
 
-        var a2aOptions = configuration
+        var a2AOptions = configuration
                              .GetSection(MotherA2AOptions.SectionName)
                              .Get<MotherA2AOptions>()
                          ?? new MotherA2AOptions();
 
-        services.AddSingleton(a2aOptions);
+        services.AddSingleton(a2AOptions);
 
         // Dedicated resilient HttpClient for MCP transports:
         //  - long enough timeout to cover multi-round tool calling
@@ -65,6 +67,12 @@ public static class BrewUpChatHelper
                           .Get<AzureOpenAiOptions>()
                       ?? throw new InvalidOperationException(
                           "Missing AzureOpenAI configuration section.");
+        
+        var foundryOptions = configuration
+                          .GetSection(FoundryLimitsOptions.SectionName)
+                          .Get<FoundryLimitsOptions>()
+                      ?? throw new InvalidOperationException(
+                          "Missing Foundry Limit configuration section.");
 
         services.AddSingleton(options);
         
@@ -74,8 +82,8 @@ public static class BrewUpChatHelper
         {
             client.Timeout = TimeSpan.FromMinutes(3);
 
-            if (!string.IsNullOrWhiteSpace(a2aOptions.KnowledgeAgentUrl))
-                client.BaseAddress = new Uri(a2aOptions.KnowledgeAgentUrl.TrimEnd('/') + "/");
+            if (!string.IsNullOrWhiteSpace(a2AOptions.KnowledgeAgentUrl))
+                client.BaseAddress = new Uri(a2AOptions.KnowledgeAgentUrl.TrimEnd('/') + "/");
         });
         services.AddScoped<IKnowledgeAgentA2AClient, HttpKnowledgeAgentA2AClient>();
         services.AddScoped<MotherCoordinator>();
@@ -117,15 +125,42 @@ public static class BrewUpChatHelper
                     new AzureKeyCredential(options.ApiKey),
                     azureOptions);
             }
-
-            return azureClient
+            
+            var rawChatClient = azureClient
                 .GetChatClient(options.DeploymentName)
-                .AsIChatClient()
+                .AsIChatClient();
+            
+            var guardedChatClient =
+                new FoundryGuardedChatClient(
+                    rawChatClient,
+                    foundryOptions,
+                    sp.GetRequiredService<
+                        ILogger<FoundryGuardedChatClient>>());
+
+            return guardedChatClient
                 .AsBuilder()
-                .UseFunctionInvocation()
+                .UseFunctionInvocation(
+                    configure: functionClient =>
+                    {
+                        functionClient.MaximumIterationsPerRequest =
+                            foundryOptions.MaximumFunctionIterations;
+
+                        functionClient.MaximumConsecutiveErrorsPerRequest =
+                            foundryOptions.MaximumConsecutiveFunctionErrors;
+                    })
                 .UseLogging()
-                .UseOpenTelemetry(sourceName: "BrewUp.Chat")
+                .UseOpenTelemetry(
+                    sourceName: "BrewUp.Chat")
                 .Build(sp);
+            
+            // return azureClient
+            //     .GetChatClient(options.DeploymentName)
+            //     .AsIChatClient()
+            //     .AsBuilder()
+            //     .UseFunctionInvocation()
+            //     .UseLogging()
+            //     .UseOpenTelemetry(sourceName: "BrewUp.Chat")
+            //     .Build(sp);
         });
 
         services.AddScoped<BrewUpChatService>();
