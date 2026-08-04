@@ -1,0 +1,155 @@
+name: brewup
+
+services:
+
+  knowledge-mcp:
+    image: brewup.knowledge.mcpserver:latest
+    build:
+      context: .
+      dockerfile: Knowledge/BrewUp.Knowledge.McpServer/Dockerfile
+
+    # Niente container_name e niente porta host fissa.
+    expose:
+      - "8080"
+
+    env_file:
+      - .env
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+
+    labels:
+      - "traefik.enable=true"
+
+      # Le richieste verso /mcp vengono inoltrate al servizio.
+      - "traefik.http.routers.knowledge-mcp.rule=PathPrefix(`/mcp`)"
+      - "traefik.http.routers.knowledge-mcp.entrypoints=web"
+
+      # Porta interna sulla quale ascolta ASP.NET Core.
+      - "traefik.http.services.knowledge-mcp.loadbalancer.server.port=8080"
+
+      # Rete usata da Traefik per raggiungere le repliche.
+      - "traefik.docker.network=brewup-network"
+
+    networks:
+      - brewup-network
+
+    restart: unless-stopped
+
+
+  mcp-gateway:
+    image: traefik:v3.6
+
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+
+    ports:
+      # Endpoint MCP esposto verso l'host.
+      - "8081:80"
+
+      # Dashboard Traefik.
+      - "8090:8080"
+
+    volumes:
+      # Traefik osserva i container Docker.
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+    networks:
+      - brewup-network
+
+    restart: unless-stopped
+
+
+  knowledge-agent:
+    image: brewup.knowledge.agent:latest
+    build:
+      context: .
+      dockerfile: Knowledge/BrewUp.Knowledge.Agent/Dockerfile
+
+    container_name: brewup-knowledge-agent
+
+    ports:
+      - "8080:8080"
+
+    env_file:
+      - .env
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+
+      # L'agent non chiama più direttamente knowledge-mcp.
+      # Chiama il load balancer.
+      KnowledgeAgent__Mcp__Endpoint: http://mcp-gateway/mcp
+
+    depends_on:
+      - knowledge-mcp
+      - mcp-gateway
+
+    networks:
+      - brewup-network
+
+    restart: unless-stopped
+
+
+  # Gli altri servizi rimangono invariati.
+  master-data-mcp:
+    image: brewup.masterdata.mcpserver:latest
+    build:
+      context: .
+      dockerfile: MasterData/BrewUp.MasterData.McpServer/Dockerfile
+    container_name: brewup-master-data-mcp
+    ports:
+      - "8082:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+    networks:
+      - brewup-network
+    restart: unless-stopped
+
+  warehouse-mcp:
+    image: brewup.warehouse.mcpserver:latest
+    build:
+      context: .
+      dockerfile: Warehouse/BrewUp.Warehouse.McpServer/Dockerfile
+    container_name: brewup-warehouse-mcp
+    ports:
+      - "8083:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+    networks:
+      - brewup-network
+    restart: unless-stopped
+
+  sales-mcp:
+    image: brewup.sales.mcpserver:latest
+    build:
+      context: .
+      dockerfile: Sales/BrewUp.Sales.McpServer/Dockerfile
+    container_name: brewup-sales-mcp
+    ports:
+      - "8084:8080"
+    env_file:
+      - .env
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+    networks:
+      - brewup-network
+    restart: unless-stopped
+
+
+networks:
+  brewup-network:
+    name: brewup-network
+    driver: bridge
