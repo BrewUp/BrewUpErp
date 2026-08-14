@@ -1,5 +1,4 @@
-﻿using BrewUp.Rest.Module;
-using Microsoft.AspNetCore.Mvc.Testing;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Hosting;
 
 namespace BrewUp.Rest.Tests.Rest;
