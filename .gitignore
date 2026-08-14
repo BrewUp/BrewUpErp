@@ -6,8 +6,9 @@
 # Generated files
 .idea/
 
-# Generated files
-docs/
+# Generated files (but keep the README diagrams)
+docs/*
+!docs/images/
 
 # User-specific files
 *.rsuser

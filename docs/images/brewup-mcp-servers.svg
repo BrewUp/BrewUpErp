@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 470" width="1040" height="470" role="img" aria-label="The four BrewUp MCP servers and the tools each one exposes: MasterData MCP on port 8082 with eight tools, Sales MCP on 8084 with seven tools, Warehouse MCP on 8083 with two tools, and Knowledge MCP on 8081 with the search_knowledge_base tool.">
+  <rect x="0" y="0" width="1040" height="470" fill="#FBF7F0"/>
+
+  <g font-family="ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+    <text x="32" y="40" font-size="19" font-weight="600" fill="#2B2622">BrewUp MCP servers — one per module</text>
+    <text x="32" y="64" font-size="11" fill="#6B6257">Each is a stateless HTTP MCP server — MapMcp("/mcp") — composed with the explicit IModule root, and shipped as its own container image.</text>
+
+    <!-- MasterData -->
+    <rect x="32" y="100" width="222" height="300" rx="8" fill="#FFFFFF" stroke="#C2761B" stroke-width="1.5"/>
+    <rect x="32" y="100" width="222" height="66" rx="8" fill="#FDF1DE"/>
+    <line x1="32" y1="166" x2="254" y2="166" stroke="#C2761B" stroke-width="1.2"/>
+    <text x="48" y="126" font-size="13.5" font-weight="600" fill="#8A5210">MasterData MCP</text>
+    <text x="48" y="146" font-size="10.5" fill="#C2761B">:8082 · 8 tools</text>
+    <text x="48" y="159" font-size="9.5" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" fill="#C2761B">brewup.masterdata.mcpserver</text>
+    <g font-size="9.5" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" fill="#2B2622">
+      <text x="48" y="192">get_catalog_beers</text>
+      <text x="48" y="214">get_beer_details</text>
+      <text x="48" y="236">resolve-beer-catalog</text>
+      <text x="48" y="258">get_active_customers</text>
+      <text x="48" y="280">get_customer_info</text>
+      <text x="48" y="302">get_active_suppliers</text>
+      <text x="48" y="324">get_supplier_info</text>
+      <text x="48" y="346">get_active_warehouses</text>
+    </g>
+    <line x1="48" y1="362" x2="238" y2="362" stroke="#E0D6C6" stroke-width="1"/>
+    <text x="48" y="380" font-size="10" fill="#6B6257">reads MongoDB read models</text>
+
+    <!-- Sales -->
+    <rect x="286" y="100" width="222" height="300" rx="8" fill="#FFFFFF" stroke="#C2761B" stroke-width="1.5"/>
+    <rect x="286" y="100" width="222" height="66" rx="8" fill="#FDF1DE"/>
+    <line x1="286" y1="166" x2="508" y2="166" stroke="#C2761B" stroke-width="1.2"/>
+    <text x="302" y="126" font-size="13.5" font-weight="600" fill="#8A5210">Sales MCP</text>
+    <text x="302" y="146" font-size="10.5" fill="#C2761B">:8084 · 7 tools</text>
+    <text x="302" y="159" font-size="9.5" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" fill="#C2761B">brewup.sales.mcpserver</text>
+    <g font-size="9.5" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" fill="#2B2622">
+      <text x="302" y="192">get_open_sales_orders</text>
+      <text x="302" y="214">get_sales_order_details</text>
+      <text x="302" y="236">get_orders_by_customer</text>
+      <text x="302" y="258">get_orders_by_beer</text>
+      <text x="302" y="280">get_late_sales_orders</text>
+      <text x="302" y="302">get_customer_total_purchased</text>
+      <text x="302" y="324">get_sales_order_total_quantities</text>
+    </g>
+    <line x1="302" y1="362" x2="492" y2="362" stroke="#E0D6C6" stroke-width="1"/>
+    <text x="302" y="380" font-size="10" fill="#6B6257">reads MongoDB read models</text>
+
+    <!-- Warehouse -->
+    <rect x="540" y="100" width="222" height="300" rx="8" fill="#FFFFFF" stroke="#C2761B" stroke-width="1.5"/>
+    <rect x="540" y="100" width="222" height="66" rx="8" fill="#FDF1DE"/>
+    <line x1="540" y1="166" x2="762" y2="166" stroke="#C2761B" stroke-width="1.2"/>
+    <text x="556" y="126" font-size="13.5" font-weight="600" fill="#8A5210">Warehouse MCP</text>
+    <text x="556" y="146" font-size="10.5" fill="#C2761B">:8083 · 2 tools</text>
+    <text x="556" y="159" font-size="9.5" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" fill="#C2761B">brewup.warehouse.mcpserver</text>
+    <g font-size="9.5" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" fill="#2B2622">
+      <text x="556" y="192">get_beer_availability</text>
+      <text x="556" y="214">get_reorder_thresholds</text>
+    </g>
+    <text x="556" y="246" font-size="10" fill="#6B6257">The two signals Mother needs to</text>
+    <text x="556" y="262" font-size="10" fill="#6B6257">answer a “what if we sell N bottles”</text>
+    <text x="556" y="278" font-size="10" fill="#6B6257">question: is there stock, and does</text>
+    <text x="556" y="294" font-size="10" fill="#6B6257">the remainder cross the reorder</text>
+    <text x="556" y="310" font-size="10" fill="#6B6257">threshold.</text>
+    <line x1="556" y1="362" x2="746" y2="362" stroke="#E0D6C6" stroke-width="1"/>
+    <text x="556" y="380" font-size="10" fill="#6B6257">reads MongoDB read models</text>
+
+    <!-- Knowledge -->
+    <rect x="794" y="100" width="222" height="300" rx="8" fill="#FFFFFF" stroke="#C2761B" stroke-width="1.5"/>
+    <rect x="794" y="100" width="222" height="66" rx="8" fill="#FDF1DE"/>
+    <line x1="794" y1="166" x2="1016" y2="166" stroke="#C2761B" stroke-width="1.2"/>
+    <text x="810" y="126" font-size="13.5" font-weight="600" fill="#8A5210">Knowledge MCP</text>
+    <text x="810" y="146" font-size="10.5" fill="#C2761B">:8081 · 1 tool</text>
+    <text x="810" y="159" font-size="9.5" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" fill="#C2761B">brewup.knowledge.mcpserver</text>
+    <g font-size="9.5" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" fill="#2B2622">
+      <text x="810" y="192">search_knowledge_base</text>
+    </g>
+    <text x="810" y="222" font-size="10" fill="#6B6257">params: query, scope</text>
+    <text x="810" y="238" font-size="10" fill="#6B6257">(General · Sales · Warehouse ·</text>
+    <text x="810" y="254" font-size="10" fill="#6B6257">MasterData · Production), topK</text>
+    <text x="810" y="278" font-size="10" fill="#6B6257">RAG over ingested documents:</text>
+    <text x="810" y="294" font-size="10" fill="#6B6257">embed the query, vector-search the</text>
+    <text x="810" y="310" font-size="10" fill="#6B6257">chunks, return scored findings.</text>
+    <line x1="810" y1="362" x2="1000" y2="362" stroke="#E0D6C6" stroke-width="1"/>
+    <text x="810" y="380" font-size="10" fill="#6B6257">SQL Server vectors + embeddings</text>
+
+    <text x="32" y="438" font-size="10.5" fill="#6B6257">Ports shown are the host ports used by the Aspire AppHost and by infra/Docker/mcp-docker-compose.yml. Running a server with dotnet run instead uses its</text>
+    <text x="32" y="454" font-size="10.5" fill="#6B6257">launchSettings port: MasterData 5007 · Sales 5229 · Warehouse 5279 · Knowledge 5236.</text>
+  </g>
+</svg>

@@ -14,13 +14,20 @@ internal sealed class BeersQueries(IMongoClient mongoClient) : IQueries<Beer>
     public async Task<Result<Beer>> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
+        try
+        {
+            var collection = _database.GetCollection<Beer>(nameof(Beer));
+            var filter = Builders<Beer>.Filter.Eq("_id", id);
         
-        var collection = _database.GetCollection<Beer>(nameof(Beer));
-        var filter = Builders<Beer>.Filter.Eq("_id", id);
-        
-        return await collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken) > 0
-            ? Result<Beer>.Success((await collection.FindAsync(filter, cancellationToken: cancellationToken)).First(cancellationToken: cancellationToken))
-            : Result<Beer>.Success(ConstructAggregate<Beer>());
+            return await collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken) > 0
+                ? Result<Beer>.Success((await collection.FindAsync(filter, cancellationToken: cancellationToken)).First(cancellationToken: cancellationToken))
+                : Result<Beer>.Error($"A beer with Id {id} was not found");
+        }
+        catch (Exception e)
+        {
+            return Result<Beer>.Error(e.Message);
+        }
     }
 
     public async Task<Result<PagedResult<Beer>>> GetByFilterAsync(Expression<Func<Beer, bool>>? query, int page, int pageSize, CancellationToken cancellationToken)
