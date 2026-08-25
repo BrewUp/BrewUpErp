@@ -63,6 +63,7 @@ public class TelemetryModule : IModule
             {
                 metrics
                     .SetResourceBuilder(resourceBuilder)
+                    .AddMeter(MotherTelemetry.MeterName)
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();

@@ -1,7 +1,10 @@
 ﻿using System.Net.Http.Headers;
+using BrewUp.Knowledge.Agent.Telemetry;
 using BrewUp.Knowledge.Agent.Tools;
 using BrewUp.Shared;
 using BrewUp.Shared.Agents;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 
 namespace BrewUp.Knowledge.Agent.Module;
 
@@ -33,6 +36,9 @@ public class AgentModule : IModule
         builder.Services.AddLogging();
         builder.Services.AddHttpClient();
         builder.Services.AddShared();
+        builder.Services.AddOpenTelemetry()
+            .WithTracing(tracing => tracing.AddSource(KnowledgeAgentTelemetry.SourceName))
+            .WithMetrics(metrics => metrics.AddMeter(KnowledgeAgentTelemetry.MeterName));
         builder.Services.Configure<KnowledgeAgentMcpOptions>(
             builder.Configuration.GetSection("KnowledgeAgent:Mcp"));
         
