@@ -80,6 +80,8 @@ public sealed class MotherCoordinator(
         activity?.SetTag("gen_ai.operation.name", "invoke_workflow");
         activity?.SetTag("gen_ai.workflow.name", WhatIfWorkflowName);
         activity?.SetTag("brewup.agent_run.id", run.RunId);
+        if (!string.IsNullOrWhiteSpace(run.ConversationId))
+            activity?.SetTag("gen_ai.conversation.id", run.ConversationId);
 
         try
         {
@@ -185,7 +187,7 @@ public sealed class MotherCoordinator(
                 knowledgeResult);
 
             RecordEvaluation(evaluation);
-            run.SetOutcome(evaluation.Passed ? "completed" : "partial");
+            run.SetOutcome("completed");
             activity?.SetTag("brewup.outcome", run.Outcome);
             activity?.AddEvent(new ActivityEvent(
                 "outcome",
@@ -199,6 +201,7 @@ public sealed class MotherCoordinator(
         {
             run.SetOutcome("failed");
             activity?.SetTag("brewup.outcome", run.Outcome);
+            activity?.SetTag("error.type", ex.GetType().FullName);
             activity?.SetStatus(ActivityStatusCode.Error);
             activity?.AddException(ex);
             throw;
@@ -215,21 +218,25 @@ public sealed class MotherCoordinator(
         ICollection<string> invokedAgents,
         CancellationToken cancellationToken)
     {
-        if (!_agents.TryGetValue(agentName, out var agent))
-            throw new InvalidOperationException($"{agentName} is not registered.");
-
-        if (!agent.CanHandle(capability))
-            throw new InvalidOperationException($"{agentName} cannot handle capability '{capability}'.");
-
-        using var activity = MotherTelemetry.Source.StartActivity($"invoke_agent {agentName}", ActivityKind.Client);
+        using var activity = MotherTelemetry.Source.StartActivity(
+            $"invoke_agent {agentName}",
+            ActivityKind.Internal);
         activity?.SetTag("gen_ai.operation.name", "invoke_agent");
         activity?.SetTag("gen_ai.agent.name", agentName);
         activity?.SetTag("gen_ai.agent.id", GetAgentId(agentName));
         activity?.SetTag("brewup.agent.capability", capability);
         activity?.SetTag("brewup.agent_run.id", run.RunId);
+        if (!string.IsNullOrWhiteSpace(run.ConversationId))
+            activity?.SetTag("gen_ai.conversation.id", run.ConversationId);
 
         try
         {
+            if (!_agents.TryGetValue(agentName, out var agent))
+                throw new InvalidOperationException($"{agentName} is not registered.");
+
+            if (!agent.CanHandle(capability))
+                throw new InvalidOperationException($"{agentName} cannot handle capability '{capability}'.");
+
             _logger.LogInformation(
                 "Mother delegating to {AgentName} for {Capability} with correlation {CorrelationId}",
                 agentName,
@@ -242,11 +249,9 @@ public sealed class MotherCoordinator(
                 new AgentRequest(capability, originalQuestion, inputs, run.RunId, context),
                 cancellationToken);
 
-            var outcome = response.IsSuccessful ? "completed" : "failed";
+            const string outcome = "completed";
             activity?.SetTag("brewup.agent.success", response.IsSuccessful);
             activity?.SetTag("brewup.outcome", outcome);
-            if (!response.IsSuccessful)
-                activity?.SetStatus(ActivityStatusCode.Error);
 
             _logger.LogInformation(
                 "Mother received {AgentName} result for {Capability} with success {AgentSuccess}",
@@ -262,6 +267,7 @@ public sealed class MotherCoordinator(
         {
             activity?.SetTag("brewup.agent.success", false);
             activity?.SetTag("brewup.outcome", "failed");
+            activity?.SetTag("error.type", ex.GetType().FullName);
             activity?.SetStatus(ActivityStatusCode.Error);
             activity?.AddException(ex);
             RecordHandoff(agentName, "failed");
@@ -297,6 +303,8 @@ public sealed class MotherCoordinator(
         activity?.SetTag("gen_ai.agent.id", GetAgentId(KnowledgeAgentName));
         activity?.SetTag("brewup.agent.transport", "a2a");
         activity?.SetTag("brewup.agent_run.id", run.RunId);
+        if (!string.IsNullOrWhiteSpace(run.ConversationId))
+            activity?.SetTag("gen_ai.conversation.id", run.ConversationId);
 
         try
         {
@@ -323,19 +331,14 @@ public sealed class MotherCoordinator(
             var result = await knowledgeAgentA2AClient.SubmitKnowledgeTaskAsync(
                 request.Message,
                 run.RunId,
+                run.ConversationId,
                 cancellationToken);
 
-            var isSuccessful = result.Findings.Count > 0;
-            var outcome = isSuccessful ? "completed" : "partial";
             activity?.SetTag("brewup.knowledge.findings.count", result.Findings.Count);
-            activity?.SetTag("brewup.agent.success", isSuccessful);
-            activity?.SetTag("brewup.outcome", outcome);
-            run.SetOutcome(outcome);
-
-            if (!isSuccessful)
-                activity?.SetStatus(ActivityStatusCode.Error);
-
-            RecordHandoff(KnowledgeAgentName, outcome);
+            activity?.SetTag("brewup.agent.success", true);
+            activity?.SetTag("brewup.outcome", "completed");
+            run.SetOutcome("completed");
+            RecordHandoff(KnowledgeAgentName, "completed");
 
             return new ChatResponse(BuildKnowledgeAnswer(result), request.ConversationId);
         }
@@ -344,6 +347,7 @@ public sealed class MotherCoordinator(
             run.SetOutcome("failed");
             activity?.SetTag("brewup.agent.success", false);
             activity?.SetTag("brewup.outcome", run.Outcome);
+            activity?.SetTag("error.type", ex.GetType().FullName);
             activity?.SetStatus(ActivityStatusCode.Error);
             activity?.AddException(ex);
             RecordHandoff(KnowledgeAgentName, "failed");

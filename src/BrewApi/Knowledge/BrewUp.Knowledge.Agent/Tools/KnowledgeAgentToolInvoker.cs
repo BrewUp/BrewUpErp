@@ -55,6 +55,7 @@ public sealed class KnowledgeAgentToolInvoker(
         CancellationToken cancellationToken)
     {
         var serverName = options.Value.ServerName;
+        var conversationId = Activity.Current?.GetTagItem("gen_ai.conversation.id") as string;
 
         logger.LogInformation(
             "KnowledgeAgent invoked search_knowledge_base through {ServerName} with correlation {CorrelationId}",
@@ -63,10 +64,14 @@ public sealed class KnowledgeAgentToolInvoker(
 
         using var activity = KnowledgeAgentTelemetry.Source.StartActivity(
             "execute_tool search_knowledge_base",
-            ActivityKind.Client);
+            ActivityKind.Internal);
         activity?.SetTag("gen_ai.operation.name", "execute_tool");
         activity?.SetTag("gen_ai.tool.name", "search_knowledge_base");
+        activity?.SetTag("gen_ai.tool.type", "datastore");
+        activity?.SetTag("gen_ai.agent.name", KnowledgeAgentExecutor.AgentName);
         activity?.SetTag("brewup.agent_run.id", correlationId);
+        if (!string.IsNullOrWhiteSpace(conversationId))
+            activity?.SetTag("gen_ai.conversation.id", conversationId);
 
         try
         {
@@ -89,6 +94,7 @@ public sealed class KnowledgeAgentToolInvoker(
         catch (Exception ex)
         {
             activity?.SetTag("brewup.outcome", "failed");
+            activity?.SetTag("error.type", ex.GetType().FullName);
             activity?.SetStatus(ActivityStatusCode.Error);
             activity?.AddException(ex);
             RecordToolCall("failed");

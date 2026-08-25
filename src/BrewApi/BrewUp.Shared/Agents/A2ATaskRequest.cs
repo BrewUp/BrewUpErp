@@ -4,4 +4,7 @@ public sealed record A2ATaskRequest(
     string TaskId,
     string Message,
     Guid CorrelationId,
-    IReadOnlyDictionary<string, object?> Metadata);
+    IReadOnlyDictionary<string, object?> Metadata)
+{
+    public const string ConversationIdMetadataKey = "conversationId";
+}

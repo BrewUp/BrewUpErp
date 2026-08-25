@@ -31,14 +31,22 @@ internal sealed class HttpKnowledgeAgentA2AClient(
     public async Task<KnowledgeResult> SubmitKnowledgeTaskAsync(
         string question,
         Guid correlationId,
+        string? conversationId,
         CancellationToken cancellationToken)
     {
         var client = CreateClient();
+        IReadOnlyDictionary<string, object?> metadata = string.IsNullOrWhiteSpace(conversationId)
+            ? new Dictionary<string, object?>()
+            : new Dictionary<string, object?>
+            {
+                [A2ATaskRequest.ConversationIdMetadataKey] = conversationId
+            };
+
         var task = new A2ATaskRequest(
             Guid.CreateVersion7().ToString("N"),
             question,
             correlationId,
-            new Dictionary<string, object?>());
+            metadata);
 
         logger.LogInformation(
             "Mother delegated task to KnowledgeAgent with correlation {CorrelationId}",

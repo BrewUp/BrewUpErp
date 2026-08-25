@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using BrewUp.Knowledge.Agent.Telemetry;
 using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Shared.Agents;
@@ -19,35 +20,40 @@ public sealed class KnowledgeAgentExecutor(
     {
         using var activity = KnowledgeAgentTelemetry.Source.StartActivity(
             $"invoke_agent {AgentName}",
-            ActivityKind.Client);
+            ActivityKind.Internal);
         activity?.SetTag("gen_ai.operation.name", "invoke_agent");
         activity?.SetTag("gen_ai.agent.name", AgentName);
         activity?.SetTag("gen_ai.agent.id", "brewup.knowledge");
         activity?.SetTag("brewup.agent_run.id", request.CorrelationId);
+        if (TryGetConversationId(request, out var conversationId))
+            activity?.SetTag("gen_ai.conversation.id", conversationId);
 
         try
         {
-            var response = await ExecuteCoreAsync(request, cancellationToken);
-            var outcome = response.IsSuccessful ? "completed" : "failed";
-            activity?.SetTag("brewup.agent.success", response.IsSuccessful);
-            activity?.SetTag("brewup.outcome", outcome);
+            var result = await ExecuteCoreAsync(request, cancellationToken);
+            activity?.SetTag("brewup.agent.success", result.ErrorType is null);
+            activity?.SetTag("brewup.outcome", result.ErrorType is null ? "completed" : "failed");
 
-            if (!response.IsSuccessful)
+            if (result.ErrorType is not null)
+            {
+                activity?.SetTag("error.type", result.ErrorType);
                 activity?.SetStatus(ActivityStatusCode.Error);
+            }
 
-            return response;
+            return result.Response;
         }
         catch (Exception ex)
         {
             activity?.SetTag("brewup.agent.success", false);
             activity?.SetTag("brewup.outcome", "failed");
+            activity?.SetTag("error.type", ex.GetType().FullName);
             activity?.SetStatus(ActivityStatusCode.Error);
             activity?.AddException(ex);
             throw;
         }
     }
 
-    private async Task<A2ATaskResponse> ExecuteCoreAsync(
+    private async Task<KnowledgeAgentExecutionResult> ExecuteCoreAsync(
         A2ATaskRequest request,
         CancellationToken cancellationToken)
     {
@@ -66,7 +72,8 @@ public sealed class KnowledgeAgentExecutor(
 
             return Failure(
                 request,
-                "KnowledgeAgent could not discover Knowledge MCP tools from the Knowledge MCP Server.");
+                "KnowledgeAgent could not discover Knowledge MCP tools from the Knowledge MCP Server.",
+                ex.GetType().FullName);
         }
 
         if (!tools.Any(tool => tool.Name.Equals("search_knowledge_base", StringComparison.OrdinalIgnoreCase)))
@@ -78,7 +85,8 @@ public sealed class KnowledgeAgentExecutor(
 
             return Failure(
                 request,
-                "KnowledgeAgent found no suitable Knowledge tool available for this request.");
+                "KnowledgeAgent found no suitable Knowledge tool available for this request.",
+                typeof(InvalidOperationException).FullName);
         }
 
         _logger.LogInformation(
@@ -106,7 +114,8 @@ public sealed class KnowledgeAgentExecutor(
 
             return Failure(
                 request,
-                "KnowledgeAgent failed while invoking search_knowledge_base on the Knowledge MCP Server.");
+                "KnowledgeAgent failed while invoking search_knowledge_base on the Knowledge MCP Server.",
+                ex.GetType().FullName);
         }
 
         _logger.LogInformation(
@@ -133,21 +142,50 @@ public sealed class KnowledgeAgentExecutor(
             request.CorrelationId,
             isSuccessful);
 
-        return new A2ATaskResponse(
-            request.TaskId,
-            AgentName,
-            isSuccessful,
-            summary,
-            result,
-            request.CorrelationId);
+        return new KnowledgeAgentExecutionResult(
+            new A2ATaskResponse(
+                request.TaskId,
+                AgentName,
+                isSuccessful,
+                summary,
+                result,
+                request.CorrelationId),
+            ErrorType: null);
     }
 
-    private static A2ATaskResponse Failure(A2ATaskRequest request, string summary)
+    private static KnowledgeAgentExecutionResult Failure(
+        A2ATaskRequest request,
+        string summary,
+        string? errorType)
         => new(
-            request.TaskId,
-            AgentName,
-            false,
-            summary,
-            new KnowledgeResult([]),
-            request.CorrelationId);
+            new A2ATaskResponse(
+                request.TaskId,
+                AgentName,
+                false,
+                summary,
+                new KnowledgeResult([]),
+                request.CorrelationId),
+            errorType);
+
+    private static bool TryGetConversationId(A2ATaskRequest request, out string? conversationId)
+    {
+        if (!request.Metadata.TryGetValue(A2ATaskRequest.ConversationIdMetadataKey, out var value))
+        {
+            conversationId = null;
+            return false;
+        }
+
+        conversationId = value switch
+        {
+            string id => id,
+            JsonElement { ValueKind: JsonValueKind.String } element => element.GetString(),
+            _ => null
+        };
+
+        return !string.IsNullOrWhiteSpace(conversationId);
+    }
+
+    private sealed record KnowledgeAgentExecutionResult(
+        A2ATaskResponse Response,
+        string? ErrorType);
 }
