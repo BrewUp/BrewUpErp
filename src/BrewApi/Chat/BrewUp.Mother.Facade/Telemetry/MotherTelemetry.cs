@@ -7,7 +7,7 @@ namespace BrewUp.Mother.Facade.Telemetry;
 /// <summary>
 /// Central telemetry definitions for the Mother coordination pipeline.
 /// The <see cref="Source"/> is used to emit distributed tracing spans for every
-/// non-deterministic coordination step, so the whole orchestration can be reconstructed.
+/// semantic coordination step, so the whole orchestration can be reconstructed.
 /// </summary>
 public static class MotherTelemetry
 {
