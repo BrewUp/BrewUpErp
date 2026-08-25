@@ -251,8 +251,11 @@ Supporting details worth knowing:
 - `FoundryGuardedChatClient` applies the `BrewUp:FoundryLimits` budget (concurrency, requests/minute,
   queue length, max output tokens, max function‑calling iterations) so a small Foundry deployment
   cannot be overrun.
-- Every coordination step opens an activity on the `BrewUp.Mother` source and carries a single
-  `correlationId`, so a full request — including the A2A hop — is one trace in the dashboard.
+- Every AI request creates a semantic **AgentRun** on the existing OpenTelemetry trace. Mother then adds
+  workflow and agent spans that explain *why* the underlying HTTP, MCP, model and database calls happened.
+- The run has its own `brewup.agent_run.id`, separate from the technical `TraceId` and the user
+  `ConversationId`. The same run identifier is reused as the A2A correlation ID instead of creating
+  unrelated identifiers at each layer.
 
 ---
 
@@ -281,8 +284,98 @@ Telemetry, end to end:
 | Source | What it emits |
 |---|---|
 | `BrewOrchestrator.ServiceDefaults` | ASP.NET Core, HttpClient and runtime instrumentation; OTLP export when `OTEL_EXPORTER_OTLP_ENDPOINT` is set |
-| `TelemetryModule` (`BrewUp.Rest`) | Adds the `BrewUp.Mother` and `BrewUp.Chat` activity sources, plus SqlClient instrumentation; console exporter in Development |
-| `MotherTelemetry` | `Mother.Coordinate`, `Agent.<Name>`, `Agent.KnowledgeAgent.A2A` spans with correlation, demand counts and stock‑risk tags |
+| `TelemetryModule` (`BrewUp.Rest`) | Registers the `BrewUp.Mother.Coordinator` and `BrewUp.Chat` activity sources, the `BrewUp.Agent` meter and SqlClient instrumentation; console exporter in Development |
+| `MotherTelemetry` | `AgentRun`, `invoke_workflow`, `invoke_agent` and `evaluation` spans, plus agent run, duration and handoff metrics |
+| `KnowledgeAgentTelemetry` | Internal Knowledge Agent execution and `execute_tool search_knowledge_base` spans, plus tool-call metrics |
+| `BrewUp.Chat` | Existing Microsoft.Extensions.AI model and function-calling instrumentation |
+
+The semantic spans complement rather than replace the existing distributed trace. A what-if request is
+represented conceptually as:
+
+```text
+HTTP POST /chat
+└── AgentRun                                      INTERNAL
+    route = what-if
+    brewup.agent_run.id = <run id>
+    gen_ai.conversation.id = <conversation id>
+    └── invoke_workflow brewup.what-if            INTERNAL
+        ├── invoke_agent MasterDataAgent          INTERNAL
+        │   └── existing MCP / HTTP / database spans
+        ├── invoke_agent SalesAgent               INTERNAL
+        │   └── existing MCP / HTTP / database spans
+        ├── invoke_agent WarehouseAgent           INTERNAL
+        │   └── existing MCP / HTTP / database spans
+        ├── invoke_agent KnowledgeAgent           INTERNAL
+        │   └── existing MCP / HTTP / retrieval spans
+        └── evaluation                            INTERNAL
+```
+
+Mother is intentionally represented as a deterministic workflow:
+
+```text
+gen_ai.operation.name = invoke_workflow
+gen_ai.workflow.name  = brewup.what-if
+```
+
+Real agent calls use `gen_ai.operation.name = invoke_agent`, `gen_ai.agent.name` and a stable
+`gen_ai.agent.id`. In-process agent calls are `INTERNAL`; only the remote A2A call made by Mother is a
+`CLIENT` operation. On the Knowledge Agent service the server-side semantic execution remains internal,
+while the underlying MCP/HTTP transport retains its existing client span:
+
+```text
+invoke_agent KnowledgeAgent                       CLIENT
+└── HttpClient / ASP.NET A2A transport            CLIENT / SERVER
+    └── invoke_agent BrewUp Knowledge Agent       INTERNAL
+        └── execute_tool search_knowledge_base    INTERNAL
+            gen_ai.tool.type = datastore
+            └── MCP / HTTP / vector search        existing transport/data spans
+```
+
+### Correlation and outcomes
+
+The three identifiers deliberately remain distinct:
+
+| Identifier | Meaning |
+|---|---|
+| OpenTelemetry `TraceId` | Technical distributed trace across processes and transports |
+| `gen_ai.conversation.id` | User conversation/session, propagated when available |
+| `brewup.agent_run.id` | One semantic execution of a user request; also carried through the A2A correlation mechanism |
+
+`brewup.route` has one of three low-cardinality values: `direct-ai`, `what-if` or `knowledge-a2a`.
+`brewup.outcome` describes operational execution (`completed`, `partial` or `failed`) and is independent
+from deterministic evidence evaluation. Consequently, a valid trace can show:
+
+```text
+HTTP success                  = true
+brewup.outcome                = completed
+brewup.evaluation.passed      = false
+```
+
+This means the workflow completed, but the gathered bounded-context evidence was insufficient. A valid
+Knowledge lookup that returns zero findings is not marked as an OpenTelemetry error. Error status is
+reserved for operational failures such as exceptions, timeouts, protocol failures or unavailable tools;
+failed semantic spans record the exception and a stable `error.type`.
+
+### Agent metrics
+
+The existing OpenTelemetry metrics pipeline exports these instruments from the `BrewUp.Agent` meter:
+
+| Metric | Purpose |
+|---|---|
+| `brewup.agent.runs` | Number of semantic agent runs |
+| `brewup.agent.run.duration` | End-to-end run duration in seconds |
+| `brewup.agent.handoffs` | Delegations from Mother to specialized agents |
+| `brewup.agent.tool.calls` | Knowledge Agent tool executions |
+
+Metric dimensions are intentionally low-cardinality (`route`, `outcome`, `agent`, `tool`). Run IDs,
+trace IDs, conversation IDs, customer/product data, prompts and responses are never metric dimensions.
+
+### Telemetry privacy defaults
+
+Custom telemetry does not record prompts, responses, tool arguments, tool results or customer/business
+content by default. It records only structured operational facts such as route, outcome, agent/tool name,
+success, evidence availability and result counts. Sensitive Microsoft.Extensions.AI telemetry remains
+opt-in; `OpenTelemetryChatClient.EnableSensitiveData` is not enabled globally.
 
 ---
 
