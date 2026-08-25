@@ -115,6 +115,36 @@ public sealed class MotherCoordinatorTests
     }
 
     [Fact]
+    public void Reports_low_cardinality_route_for_each_existing_chat_path()
+    {
+        var coordinator = new MotherCoordinator(
+            CreateTestAgents(new RecordingMcpToolClient()),
+            [],
+            knowledgeAgentA2AClient: new RecordingKnowledgeAgentA2aClient(),
+            a2AOptions: new MotherA2AOptions
+            {
+                Enabled = true,
+                KnowledgeAgentUrl = "http://knowledge-agent"
+            });
+
+        Assert.Equal(
+            "what-if",
+            coordinator.GetRoute(new ChatRequest(
+                "What if someone orders 100 bottles of IPA?",
+                "conversation-what-if")));
+        Assert.Equal(
+            "knowledge-a2a",
+            coordinator.GetRoute(new ChatRequest(
+                "What is the reorder policy for IPA?",
+                "conversation-knowledge")));
+        Assert.Equal(
+            "direct-ai",
+            coordinator.GetRoute(new ChatRequest(
+                "Show all customers",
+                "conversation-direct")));
+    }
+
+    [Fact]
     public async Task Coordinates_knowledge_question_through_a2a_when_enabled()
     {
         var mcp = new RecordingMcpToolClient();

@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using BrewUp.Mother.Facade.Agents;
 using BrewUp.Mother.Facade.Mcp;
+using BrewUp.Mother.Facade.Telemetry;
 using BrewUp.Mother.SharedKernel.Chat;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Logging;
@@ -147,41 +149,66 @@ public sealed class BrewUpChatService(
         ChatRequest request,
         CancellationToken cancellationToken)
     {
-        if (motherCoordinator.CanCoordinate(request))
-            return await motherCoordinator.CoordinateAsync(request, cancellationToken);
+        AgentRunContext run = new(Guid.CreateVersion7(), request.ConversationId);
+        var route = motherCoordinator.GetRoute(request);
+        var startedAt = Stopwatch.GetTimestamp();
 
-        var messages = new List<ChatMessage>
-        {
-            new(ChatRole.System, SystemPrompt),
-            new(ChatRole.User, request.Message)
-        };
-
-        IReadOnlyList<AITool> tools;
-        try
-        {
-            tools = await mcpToolsProvider.GetToolsAsync(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Failed to load MCP tools.");
-            tools = [];
-        }
-
-        // function inferred
-        var options = new ChatOptions
-        {
-            Tools = tools.Count > 0 ? tools.ToList() : null
-        };
+        using var activity = MotherTelemetry.Source.StartActivity("AgentRun");
+        activity?.SetTag("brewup.agent_run.id", run.RunId);
+        activity?.SetTag("brewup.route", route);
 
         try
         {
+            if (motherCoordinator.CanCoordinate(request))
+                return await motherCoordinator.CoordinateAsync(request, run, cancellationToken);
+
+            var messages = new List<ChatMessage>
+            {
+                new(ChatRole.System, SystemPrompt),
+                new(ChatRole.User, request.Message)
+            };
+
+            IReadOnlyList<AITool> tools;
+            try
+            {
+                tools = await mcpToolsProvider.GetToolsAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to load MCP tools.");
+                tools = [];
+            }
+
+            var options = new ChatOptions
+            {
+                Tools = tools.Count > 0 ? tools.ToList() : null
+            };
+
             var response = await chatClient.GetResponseAsync(messages, options, cancellationToken);
             return new ChatResponse(response.Text, request.ConversationId);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Chat completion failed for conversation {ConversationId}.", request.ConversationId);
+            run.SetOutcome("failed");
+            activity?.SetStatus(ActivityStatusCode.Error);
+            activity?.AddException(ex);
+            logger.LogError(ex, "Agent run failed for conversation {ConversationId}.", request.ConversationId);
             throw;
+        }
+        finally
+        {
+            activity?.SetTag("brewup.outcome", run.Outcome);
+
+            TagList tags = new()
+            {
+                { "route", route },
+                { "outcome", run.Outcome }
+            };
+
+            MotherTelemetry.AgentRuns.Add(1, tags);
+            MotherTelemetry.AgentRunDuration.Record(
+                Stopwatch.GetElapsedTime(startedAt).TotalSeconds,
+                tags);
         }
     }
 }

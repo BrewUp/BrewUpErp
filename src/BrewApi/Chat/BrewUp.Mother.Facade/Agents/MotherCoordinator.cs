@@ -22,6 +22,10 @@ public sealed class MotherCoordinator(
     private const string SalesAgentName = "SalesAgent";
     private const string WarehouseAgentName = "WarehouseAgent";
     private const string KnowledgeAgentName = "KnowledgeAgent";
+    private const string DirectAiRoute = "direct-ai";
+    private const string WhatIfRoute = "what-if";
+    private const string KnowledgeA2ARoute = "knowledge-a2a";
+    private const string WhatIfWorkflowName = "brewup.what-if";
 
     private static readonly Regex DemandPattern = new(
         @"(?<quantity>\d+(?:[.,]\d+)?)\s*(?:bottles?|bottle|pz|pieces?)\s+(?:of\s+)?(?<beer>[a-zA-Z][a-zA-Z0-9\s'-]*?)(?=\s+(?:and|,)|\?|$)",
@@ -39,25 +43,46 @@ public sealed class MotherCoordinator(
             .ToArray();
 
     public bool CanCoordinate(ChatRequest request)
-        => (IsWhatIf(request.Message) && ParseDemand(request.Message).Count > 0)
-           || (_a2AOptions.Enabled && IsKnowledgeQuestion(request.Message));
+        => GetRoute(request) != DirectAiRoute;
 
-    public async Task<ChatResponse> CoordinateAsync(ChatRequest request, CancellationToken cancellationToken)
+    internal string GetRoute(ChatRequest request)
     {
-        using var activity = MotherTelemetry.Source.StartActivity("Mother.Coordinate", ActivityKind.Internal);
-        activity?.SetTag("brewup.conversation.id", request.ConversationId);
-        activity?.SetTag("brewup.request.message", request.Message);
+        if (_a2AOptions.Enabled && IsKnowledgeQuestion(request.Message))
+            return KnowledgeA2ARoute;
+
+        return IsWhatIf(request.Message) && ParseDemand(request.Message).Count > 0
+            ? WhatIfRoute
+            : DirectAiRoute;
+    }
+
+    public Task<ChatResponse> CoordinateAsync(ChatRequest request, CancellationToken cancellationToken)
+        => CoordinateAsync(
+            request,
+            new AgentRunContext(Guid.CreateVersion7(), request.ConversationId),
+            cancellationToken);
+
+    public Task<ChatResponse> CoordinateAsync(
+        ChatRequest request,
+        AgentRunContext run,
+        CancellationToken cancellationToken)
+        => GetRoute(request) == KnowledgeA2ARoute
+            ? CoordinateKnowledgeOnlyAsync(request, run, cancellationToken)
+            : CoordinateWhatIfAsync(request, run, cancellationToken);
+
+    private async Task<ChatResponse> CoordinateWhatIfAsync(
+        ChatRequest request,
+        AgentRunContext run,
+        CancellationToken cancellationToken)
+    {
+        using var activity = MotherTelemetry.Source.StartActivity(
+            $"invoke_workflow {WhatIfWorkflowName}",
+            ActivityKind.Internal);
+        activity?.SetTag("gen_ai.operation.name", "invoke_workflow");
+        activity?.SetTag("gen_ai.workflow.name", WhatIfWorkflowName);
+        activity?.SetTag("brewup.agent_run.id", run.RunId);
 
         try
         {
-            if (_a2AOptions.Enabled && IsKnowledgeQuestion(request.Message))
-            {
-                activity?.SetTag("brewup.coordination.path", "knowledge-only");
-                return await CoordinateKnowledgeOnlyAsync(request, cancellationToken);
-            }
-
-            activity?.SetTag("brewup.coordination.path", "what-if");
-
             var demandItems = ParseDemand(request.Message);
             activity?.SetTag("brewup.demand.count", demandItems.Count);
             activity?.AddEvent(new ActivityEvent(
@@ -66,17 +91,17 @@ public sealed class MotherCoordinator(
 
             if (demandItems.Count == 0)
             {
-                activity?.SetTag("brewup.coordination.outcome", "no-demand-identified");
+                RecordEvaluation(new WhatIfWorkflowEvaluation(false, false, false, false, false));
+                run.SetOutcome("partial");
+                activity?.SetTag("brewup.outcome", run.Outcome);
                 return new ChatResponse("I could not identify the requested beer quantities in the scenario.", request.ConversationId);
             }
 
-            var correlationId = Guid.CreateVersion7();
-            activity?.SetTag("brewup.correlation.id", correlationId);
-            ConversationRoot myConversation = new(correlationId);
+            ConversationRoot myConversation = new(run.RunId);
 
             var invokedAgents = new List<string>();
             var context = new AgentContext(
-                request.ConversationId ?? string.Empty,
+                run.ConversationId ?? string.Empty,
                 "Mother",
                 invokedAgents.AsReadOnly(),
                 new Dictionary<string, object?>());
@@ -86,7 +111,7 @@ public sealed class MotherCoordinator(
                 "resolve-beer-catalog",
                 request.Message,
                 new Dictionary<string, object?> { ["demandItems"] = demandItems },
-                correlationId,
+                run,
                 context,
                 invokedAgents,
                 cancellationToken);
@@ -97,7 +122,14 @@ public sealed class MotherCoordinator(
 
             if (resolved.Count == 0)
             {
-                activity?.SetTag("brewup.coordination.outcome", "masterdata-unresolved");
+                RecordEvaluation(new WhatIfWorkflowEvaluation(
+                    masterDataResponse.IsSuccessful,
+                    false,
+                    false,
+                    false,
+                    false));
+                run.SetOutcome("partial");
+                activity?.SetTag("brewup.outcome", run.Outcome);
                 return new ChatResponse(
                     "BrewUp ERP does not expose the requested product or beer information yet.",
                     request.ConversationId);
@@ -108,7 +140,7 @@ public sealed class MotherCoordinator(
                 "interpret-demand-signal",
                 request.Message,
                 new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved },
-                correlationId,
+                run,
                 context,
                 invokedAgents,
                 cancellationToken);
@@ -120,7 +152,7 @@ public sealed class MotherCoordinator(
                 "evaluate-stock-impact",
                 request.Message,
                 new Dictionary<string, object?> { ["salesDemandSignal"] = salesSignal },
-                correlationId,
+                run,
                 context,
                 invokedAgents,
                 cancellationToken);
@@ -130,7 +162,7 @@ public sealed class MotherCoordinator(
                 "retrieve-business-knowledge",
                 request.Message,
                 new Dictionary<string, object?> { ["resolvedBeerDemand"] = resolved },
-                correlationId,
+                run,
                 context,
                 invokedAgents,
                 cancellationToken);
@@ -138,10 +170,26 @@ public sealed class MotherCoordinator(
             var warehouseImpact = warehouseResponse.GetRequired<WarehouseImpact>("warehouseImpact");
             var knowledgeResult = knowledgeResponse.GetRequired<KnowledgeResult>("knowledgeResult");
 
-            activity?.SetTag("brewup.invoked.agents", string.Join(",", invokedAgents));
             activity?.SetTag("brewup.warehouse.stock_risk", warehouseImpact.HasStockRisk);
             activity?.SetTag("brewup.warehouse.reorder_risk", warehouseImpact.HasReorderRisk);
-            activity?.SetTag("brewup.coordination.outcome", "completed");
+
+            var evaluation = WhatIfWorkflowEvaluator.Evaluate(
+                demandItems,
+                resolved,
+                masterDataResponse,
+                salesResponse,
+                salesSignal,
+                warehouseResponse,
+                warehouseImpact,
+                knowledgeResponse,
+                knowledgeResult);
+
+            RecordEvaluation(evaluation);
+            run.SetOutcome(evaluation.Passed ? "completed" : "partial");
+            activity?.SetTag("brewup.outcome", run.Outcome);
+            activity?.AddEvent(new ActivityEvent(
+                "outcome",
+                tags: new ActivityTagsCollection { ["brewup.outcome"] = run.Outcome }));
 
             return new ChatResponse(
                 BuildBusinessAnswer(resolved, salesSignal, warehouseImpact, knowledgeResult),
@@ -149,7 +197,9 @@ public sealed class MotherCoordinator(
         }
         catch (Exception ex)
         {
-            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            run.SetOutcome("failed");
+            activity?.SetTag("brewup.outcome", run.Outcome);
+            activity?.SetStatus(ActivityStatusCode.Error);
             activity?.AddException(ex);
             throw;
         }
@@ -160,7 +210,7 @@ public sealed class MotherCoordinator(
         string capability,
         string originalQuestion,
         IReadOnlyDictionary<string, object?> inputs,
-        Guid correlationId,
+        AgentRunContext run,
         AgentContext context,
         ICollection<string> invokedAgents,
         CancellationToken cancellationToken)
@@ -171,10 +221,12 @@ public sealed class MotherCoordinator(
         if (!agent.CanHandle(capability))
             throw new InvalidOperationException($"{agentName} cannot handle capability '{capability}'.");
 
-        using var activity = MotherTelemetry.Source.StartActivity($"Agent.{agentName}", ActivityKind.Client);
-        activity?.SetTag("brewup.agent.name", agentName);
+        using var activity = MotherTelemetry.Source.StartActivity($"invoke_agent {agentName}", ActivityKind.Client);
+        activity?.SetTag("gen_ai.operation.name", "invoke_agent");
+        activity?.SetTag("gen_ai.agent.name", agentName);
+        activity?.SetTag("gen_ai.agent.id", GetAgentId(agentName));
         activity?.SetTag("brewup.agent.capability", capability);
-        activity?.SetTag("brewup.correlation.id", correlationId);
+        activity?.SetTag("brewup.agent_run.id", run.RunId);
 
         try
         {
@@ -182,31 +234,37 @@ public sealed class MotherCoordinator(
                 "Mother delegating to {AgentName} for {Capability} with correlation {CorrelationId}",
                 agentName,
                 capability,
-                correlationId);
+                run.RunId);
 
             invokedAgents.Add(agentName);
 
             var response = await agent.HandleAsync(
-                new AgentRequest(capability, originalQuestion, inputs, correlationId, context),
+                new AgentRequest(capability, originalQuestion, inputs, run.RunId, context),
                 cancellationToken);
 
-            activity?.SetTag("brewup.agent.response.success", response.IsSuccessful);
-            activity?.SetTag("brewup.agent.response.summary", response.Summary);
+            var outcome = response.IsSuccessful ? "completed" : "failed";
+            activity?.SetTag("brewup.agent.success", response.IsSuccessful);
+            activity?.SetTag("brewup.outcome", outcome);
             if (!response.IsSuccessful)
-                activity?.SetStatus(ActivityStatusCode.Error, response.Summary);
+                activity?.SetStatus(ActivityStatusCode.Error);
 
             _logger.LogInformation(
-                "Mother received {AgentName} result for {Capability}: {Summary}",
+                "Mother received {AgentName} result for {Capability} with success {AgentSuccess}",
                 response.AgentName,
                 capability,
-                response.Summary);
+                response.IsSuccessful);
+
+            RecordHandoff(agentName, outcome);
 
             return response;
         }
         catch (Exception ex)
         {
-            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.SetTag("brewup.agent.success", false);
+            activity?.SetTag("brewup.outcome", "failed");
+            activity?.SetStatus(ActivityStatusCode.Error);
             activity?.AddException(ex);
+            RecordHandoff(agentName, "failed");
             throw;
         }
     }
@@ -228,20 +286,22 @@ public sealed class MotherCoordinator(
 
     private async Task<ChatResponse> CoordinateKnowledgeOnlyAsync(
         ChatRequest request,
+        AgentRunContext run,
         CancellationToken cancellationToken)
     {
-        using var activity = MotherTelemetry.Source.StartActivity("Agent.KnowledgeAgent.A2A", ActivityKind.Client);
-        activity?.SetTag("brewup.agent.name", KnowledgeAgentName);
+        using var activity = MotherTelemetry.Source.StartActivity(
+            $"invoke_agent {KnowledgeAgentName}",
+            ActivityKind.Client);
+        activity?.SetTag("gen_ai.operation.name", "invoke_agent");
+        activity?.SetTag("gen_ai.agent.name", KnowledgeAgentName);
+        activity?.SetTag("gen_ai.agent.id", GetAgentId(KnowledgeAgentName));
         activity?.SetTag("brewup.agent.transport", "a2a");
-        activity?.SetTag("brewup.conversation.id", request.ConversationId);
+        activity?.SetTag("brewup.agent_run.id", run.RunId);
 
         try
         {
             if (knowledgeAgentA2AClient is null)
                 throw new InvalidOperationException("Knowledge A2A mode is enabled, but no KnowledgeAgent A2A client is registered.");
-
-            var correlationId = Guid.CreateVersion7();
-            activity?.SetTag("brewup.correlation.id", correlationId);
 
             var card = await knowledgeAgentA2AClient.GetAgentCardAsync(cancellationToken);
             activity?.SetTag("brewup.agent.card.name", card.Name);
@@ -252,30 +312,86 @@ public sealed class MotherCoordinator(
             _logger.LogInformation(
                 "Mother discovered KnowledgeAgent {AgentName} with correlation {CorrelationId}",
                 card.Name,
-                correlationId);
+                run.RunId);
 
             _logger.LogInformation(
                 "Mother delegated task to KnowledgeAgent with correlation {CorrelationId}",
-                correlationId);
+                run.RunId);
 
             activity?.AddEvent(new ActivityEvent("a2a.task.submitted"));
 
             var result = await knowledgeAgentA2AClient.SubmitKnowledgeTaskAsync(
                 request.Message,
-                correlationId,
+                run.RunId,
                 cancellationToken);
 
+            var isSuccessful = result.Findings.Count > 0;
+            var outcome = isSuccessful ? "completed" : "partial";
             activity?.SetTag("brewup.knowledge.findings.count", result.Findings.Count);
+            activity?.SetTag("brewup.agent.success", isSuccessful);
+            activity?.SetTag("brewup.outcome", outcome);
+            run.SetOutcome(outcome);
+
+            if (!isSuccessful)
+                activity?.SetStatus(ActivityStatusCode.Error);
+
+            RecordHandoff(KnowledgeAgentName, outcome);
 
             return new ChatResponse(BuildKnowledgeAnswer(result), request.ConversationId);
         }
         catch (Exception ex)
         {
-            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            run.SetOutcome("failed");
+            activity?.SetTag("brewup.agent.success", false);
+            activity?.SetTag("brewup.outcome", run.Outcome);
+            activity?.SetStatus(ActivityStatusCode.Error);
             activity?.AddException(ex);
+            RecordHandoff(KnowledgeAgentName, "failed");
             throw;
         }
     }
+
+    private static void RecordEvaluation(WhatIfWorkflowEvaluation evaluation)
+    {
+        using var activity = MotherTelemetry.Source.StartActivity("evaluation", ActivityKind.Internal);
+        activity?.SetTag("brewup.evaluation.passed", evaluation.Passed);
+        activity?.SetTag(
+            "brewup.evaluation.required_agent_results_obtained",
+            evaluation.RequiredAgentResultsObtained);
+        activity?.SetTag(
+            "brewup.evaluation.requested_products_resolved",
+            evaluation.RequestedProductsResolved);
+        activity?.SetTag(
+            "brewup.evaluation.sales_evidence_available",
+            evaluation.SalesEvidenceAvailable);
+        activity?.SetTag(
+            "brewup.evaluation.warehouse_evidence_available",
+            evaluation.WarehouseEvidenceAvailable);
+        activity?.SetTag(
+            "brewup.evaluation.knowledge_evidence_available",
+            evaluation.KnowledgeEvidenceAvailable);
+    }
+
+    private static void RecordHandoff(string agentName, string outcome)
+    {
+        TagList tags = new()
+        {
+            { "agent", agentName },
+            { "outcome", outcome }
+        };
+
+        MotherTelemetry.AgentHandoffs.Add(1, tags);
+    }
+
+    private static string GetAgentId(string agentName)
+        => agentName switch
+        {
+            MasterDataAgentName => "brewup.masterdata",
+            SalesAgentName => "brewup.sales",
+            WarehouseAgentName => "brewup.warehouse",
+            KnowledgeAgentName => "brewup.knowledge",
+            _ => $"brewup.{agentName.ToLowerInvariant()}"
+        };
 
     private static string BuildKnowledgeAnswer(KnowledgeResult knowledgeResult)
     {

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using BrewUp.Knowledge.Agent.Telemetry;
 using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Shared.Agents;
 using Microsoft.Extensions.Options;
@@ -46,7 +48,7 @@ public sealed class KnowledgeAgentToolInvoker(
         }
     }
 
-    public Task<SearchKnowledgeResult?> SearchKnowledgeBaseAsync(
+    public async Task<SearchKnowledgeResult?> SearchKnowledgeBaseAsync(
         string query,
         string? scope,
         Guid correlationId,
@@ -59,16 +61,50 @@ public sealed class KnowledgeAgentToolInvoker(
             serverName,
             correlationId);
 
-        return mcpToolClient.CallToolAsync<SearchKnowledgeResult>(
-            serverName,
-            "search_knowledge_base",
-            new
-            {
-                query,
-                scope,
-                topK = options.Value.DefaultTopK <= 0 ? 5 : options.Value.DefaultTopK,
-                correlationId
-            },
-            cancellationToken);
+        using var activity = KnowledgeAgentTelemetry.Source.StartActivity(
+            "execute_tool search_knowledge_base",
+            ActivityKind.Client);
+        activity?.SetTag("gen_ai.operation.name", "execute_tool");
+        activity?.SetTag("gen_ai.tool.name", "search_knowledge_base");
+        activity?.SetTag("brewup.agent_run.id", correlationId);
+
+        try
+        {
+            var result = await mcpToolClient.CallToolAsync<SearchKnowledgeResult>(
+                serverName,
+                "search_knowledge_base",
+                new
+                {
+                    query,
+                    scope,
+                    topK = options.Value.DefaultTopK <= 0 ? 5 : options.Value.DefaultTopK,
+                    correlationId
+                },
+                cancellationToken);
+
+            activity?.SetTag("brewup.outcome", "completed");
+            RecordToolCall("completed");
+            return result;
+        }
+        catch (Exception ex)
+        {
+            activity?.SetTag("brewup.outcome", "failed");
+            activity?.SetStatus(ActivityStatusCode.Error);
+            activity?.AddException(ex);
+            RecordToolCall("failed");
+            throw;
+        }
+    }
+
+    private static void RecordToolCall(string outcome)
+    {
+        TagList tags = new()
+        {
+            { "agent", KnowledgeAgentExecutor.AgentName },
+            { "tool", "search_knowledge_base" },
+            { "outcome", outcome }
+        };
+
+        KnowledgeAgentTelemetry.ToolCalls.Add(1, tags);
     }
 }

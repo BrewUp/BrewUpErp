@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using BrewUp.Knowledge.Agent.Telemetry;
 using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Shared.Agents;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -15,6 +17,40 @@ public sealed class KnowledgeAgentExecutor(
         A2ATaskRequest request,
         CancellationToken cancellationToken)
     {
+        using var activity = KnowledgeAgentTelemetry.Source.StartActivity(
+            $"invoke_agent {AgentName}",
+            ActivityKind.Client);
+        activity?.SetTag("gen_ai.operation.name", "invoke_agent");
+        activity?.SetTag("gen_ai.agent.name", AgentName);
+        activity?.SetTag("gen_ai.agent.id", "brewup.knowledge");
+        activity?.SetTag("brewup.agent_run.id", request.CorrelationId);
+
+        try
+        {
+            var response = await ExecuteCoreAsync(request, cancellationToken);
+            var outcome = response.IsSuccessful ? "completed" : "failed";
+            activity?.SetTag("brewup.agent.success", response.IsSuccessful);
+            activity?.SetTag("brewup.outcome", outcome);
+
+            if (!response.IsSuccessful)
+                activity?.SetStatus(ActivityStatusCode.Error);
+
+            return response;
+        }
+        catch (Exception ex)
+        {
+            activity?.SetTag("brewup.agent.success", false);
+            activity?.SetTag("brewup.outcome", "failed");
+            activity?.SetStatus(ActivityStatusCode.Error);
+            activity?.AddException(ex);
+            throw;
+        }
+    }
+
+    private async Task<A2ATaskResponse> ExecuteCoreAsync(
+        A2ATaskRequest request,
+        CancellationToken cancellationToken)
+    {
         IReadOnlyCollection<McpToolMetadata> tools;
         try
         {
@@ -22,6 +58,7 @@ public sealed class KnowledgeAgentExecutor(
         }
         catch (Exception ex)
         {
+            Activity.Current?.AddException(ex);
             _logger.LogError(
                 ex,
                 "KnowledgeAgent could not discover Knowledge MCP tools with correlation {CorrelationId}",
@@ -60,6 +97,7 @@ public sealed class KnowledgeAgentExecutor(
         }
         catch (Exception ex)
         {
+            Activity.Current?.AddException(ex);
             _logger.LogError(
                 ex,
                 "KnowledgeAgent MCP call failed for tool {ToolName} with correlation {CorrelationId}",
@@ -91,9 +129,9 @@ public sealed class KnowledgeAgentExecutor(
             : "BrewUp ERP does not expose documented business knowledge for this request yet.";
 
         _logger.LogInformation(
-            "KnowledgeAgent returned result for correlation {CorrelationId}: {Summary}",
+            "KnowledgeAgent returned result for correlation {CorrelationId} with success {AgentSuccess}",
             request.CorrelationId,
-            summary);
+            isSuccessful);
 
         return new A2ATaskResponse(
             request.TaskId,
