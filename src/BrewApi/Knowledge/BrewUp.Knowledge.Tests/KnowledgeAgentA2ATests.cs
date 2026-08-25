@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using BrewUp.Knowledge.Agent;
+using BrewUp.Knowledge.Agent.Telemetry;
 using BrewUp.Knowledge.Agent.Tools;
 using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Shared.Agents;
@@ -131,6 +133,58 @@ public sealed class KnowledgeAgentA2ATests
         Assert.Empty(mcp.Calls);
     }
 
+    [Fact]
+    public async Task No_findings_is_not_reported_as_a_technical_error()
+    {
+        var activities = new List<Activity>();
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == KnowledgeAgentTelemetry.SourceName,
+            Sample = static (ref ActivityCreationOptions<ActivityContext> _) =>
+                ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStopped = activities.Add
+        };
+        ActivitySource.AddActivityListener(listener);
+
+        var mcp = new RecordingMcpToolClient(
+        [
+            new McpToolMetadata(
+                "search_knowledge_base",
+                "Search BrewUp business knowledge.",
+                null)
+        ],
+        returnFindings: false);
+        var executor = CreateExecutor(mcp);
+
+        var response = await executor.ExecuteAsync(
+            new A2ATaskRequest(
+                "task-no-findings",
+                "What is the reorder policy for an unknown product?",
+                Guid.CreateVersion7(),
+                new Dictionary<string, object?>
+                {
+                    [A2ATaskRequest.ConversationIdMetadataKey] = "conversation-no-findings"
+                }),
+            CancellationToken.None);
+
+        Assert.False(response.IsSuccessful);
+
+        var agentActivity = Assert.Single(activities, activity =>
+            activity.OperationName == "invoke_agent BrewUp Knowledge Agent");
+        Assert.Equal(ActivityKind.Internal, agentActivity.Kind);
+        Assert.NotEqual(ActivityStatusCode.Error, agentActivity.Status);
+        Assert.Equal("completed", agentActivity.GetTagItem("brewup.outcome"));
+        Assert.Equal("conversation-no-findings", agentActivity.GetTagItem("gen_ai.conversation.id"));
+
+        var toolActivity = Assert.Single(activities, activity =>
+            activity.OperationName == "execute_tool search_knowledge_base");
+        Assert.Equal(ActivityKind.Internal, toolActivity.Kind);
+        Assert.NotEqual(ActivityStatusCode.Error, toolActivity.Status);
+        Assert.Equal("datastore", toolActivity.GetTagItem("gen_ai.tool.type"));
+        Assert.Equal("BrewUp Knowledge Agent", toolActivity.GetTagItem("gen_ai.agent.name"));
+        Assert.Equal("conversation-no-findings", toolActivity.GetTagItem("gen_ai.conversation.id"));
+    }
+
     private static KnowledgeAgentExecutor CreateExecutor(RecordingMcpToolClient mcp)
     {
         var invoker = new KnowledgeAgentToolInvoker(
@@ -143,7 +197,8 @@ public sealed class KnowledgeAgentA2ATests
 
     private sealed class RecordingMcpToolClient(
         IReadOnlyCollection<McpToolMetadata>? tools = null,
-        bool throwOnList = false) : IMcpToolClient
+        bool throwOnList = false,
+        bool returnFindings = true) : IMcpToolClient
     {
         private readonly List<McpCall> _calls = [];
         private readonly List<string> _listedServers = [];
@@ -172,19 +227,21 @@ public sealed class KnowledgeAgentA2ATests
             var correlationId = (Guid)arguments.GetType().GetProperty("correlationId")!.GetValue(arguments)!;
             _calls.Add(new McpCall(serverName, toolName, correlationId));
 
-            object? response = new SearchKnowledgeResult(
-            [
-                new KnowledgeSearchResultItem(
-                    Guid.CreateVersion7(),
-                    Guid.CreateVersion7(),
-                    1,
-                    "IPA reorder policy",
-                    "Warehouse",
-                    ["ipa", "reorder"],
-                    "IPA reorder policy: review replenishment when projected stock reaches the threshold.",
-                    0.91,
-                    12)
-            ]);
+            object? response = new SearchKnowledgeResult(returnFindings
+                ?
+                [
+                    new KnowledgeSearchResultItem(
+                        Guid.CreateVersion7(),
+                        Guid.CreateVersion7(),
+                        1,
+                        "IPA reorder policy",
+                        "Warehouse",
+                        ["ipa", "reorder"],
+                        "IPA reorder policy: review replenishment when projected stock reaches the threshold.",
+                        0.91,
+                        12)
+                ]
+                : []);
 
             return Task.FromResult((TResponse?)response);
         }

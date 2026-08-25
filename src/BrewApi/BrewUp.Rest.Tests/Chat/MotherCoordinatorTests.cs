@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.Text.Json;
 using BrewUp.Mother.Facade.Agents;
+using BrewUp.Mother.Facade.Telemetry;
 using BrewUp.Mother.SharedKernel.Chat;
 using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Shared.Agents;
@@ -40,6 +42,49 @@ public sealed class MotherCoordinatorTests
         Assert.DoesNotContain(mcp.Calls, call => call.ServerName == "masterData" && call.ToolName.StartsWith("get_orders", StringComparison.OrdinalIgnoreCase));
         Assert.DoesNotContain(mcp.Calls, call => call.ServerName == "warehouse" && call.ToolName == "search_knowledge_base");
         Assert.DoesNotContain(mcp.Calls, call => call.ServerName == "knowledge" && call.ToolName != "search_knowledge_base");
+    }
+
+    [Fact]
+    public async Task Completed_what_if_remains_completed_when_evaluation_has_insufficient_evidence()
+    {
+        var activities = new List<Activity>();
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = source => source.Name == MotherTelemetry.SourceName,
+            Sample = static (ref ActivityCreationOptions<ActivityContext> _) =>
+                ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStopped = activities.Add
+        };
+        ActivitySource.AddActivityListener(listener);
+
+        var coordinator = new MotherCoordinator(
+            CreateTestAgents(new RecordingMcpToolClient(knowledgeEvidence: false)));
+
+        await coordinator.CoordinateAsync(
+            new ChatRequest("What if someone orders 100 bottles of IPA?", "conversation-insufficient-evidence"),
+            CancellationToken.None);
+
+        var workflowActivity = Assert.Single(activities, activity =>
+            activity.OperationName == "invoke_workflow brewup.what-if");
+        Assert.Equal(ActivityKind.Internal, workflowActivity.Kind);
+        Assert.Equal("completed", workflowActivity.GetTagItem("brewup.outcome"));
+        Assert.Equal(
+            "conversation-insufficient-evidence",
+            workflowActivity.GetTagItem("gen_ai.conversation.id"));
+
+        var evaluationActivity = Assert.Single(activities, activity =>
+            activity.OperationName == "evaluation");
+        Assert.Equal(false, evaluationActivity.GetTagItem("brewup.evaluation.passed"));
+
+        var agentActivities = activities
+            .Where(activity => activity.OperationName.StartsWith("invoke_agent ", StringComparison.Ordinal))
+            .ToArray();
+        Assert.Equal(4, agentActivities.Length);
+        Assert.All(agentActivities, activity =>
+        {
+            Assert.Equal(ActivityKind.Internal, activity.Kind);
+            Assert.NotEqual(ActivityStatusCode.Error, activity.Status);
+        });
     }
 
     [Fact]
@@ -169,6 +214,7 @@ public sealed class MotherCoordinatorTests
         Assert.True(a2aClient.CardDiscovered);
         Assert.Equal("What is the reorder policy for IPA?", a2aClient.LastQuestion);
         Assert.NotEqual(Guid.Empty, a2aClient.LastCorrelationId);
+        Assert.Equal("conversation-a2a", a2aClient.LastConversationId);
         Assert.DoesNotContain(mcp.Calls, call => call.ServerName == "knowledge");
     }
 
@@ -369,6 +415,7 @@ public sealed class MotherCoordinatorTests
         public bool CardDiscovered { get; private set; }
         public string? LastQuestion { get; private set; }
         public Guid LastCorrelationId { get; private set; }
+        public string? LastConversationId { get; private set; }
 
         public Task<AgentCard> GetAgentCardAsync(CancellationToken cancellationToken)
         {
@@ -385,10 +432,12 @@ public sealed class MotherCoordinatorTests
         public Task<KnowledgeResult> SubmitKnowledgeTaskAsync(
             string question,
             Guid correlationId,
+            string? conversationId,
             CancellationToken cancellationToken)
         {
             LastQuestion = question;
             LastCorrelationId = correlationId;
+            LastConversationId = conversationId;
 
             return Task.FromResult(new KnowledgeResult(
             [
@@ -421,7 +470,7 @@ public sealed class MotherCoordinatorTests
         return fallback;
     }
 
-    private sealed class RecordingMcpToolClient : IMcpToolClient
+    private sealed class RecordingMcpToolClient(bool knowledgeEvidence = true) : IMcpToolClient
     {
         private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
         private readonly List<McpCall> _calls = [];
@@ -476,7 +525,9 @@ public sealed class MotherCoordinatorTests
                 ("sales", "get_orders_by_beer") => Array.Empty<object>(),
                 ("warehouse", "get_beer_availability") => GetAvailability(argumentJson.GetProperty("beerId").GetString()!),
                 ("warehouse", "get_reorder_thresholds") => GetThreshold(argumentJson.GetProperty("beerId").GetString()!),
-                ("knowledge", "search_knowledge_base") => GetKnowledgePolicy(),
+                ("knowledge", "search_knowledge_base") => knowledgeEvidence
+                    ? GetKnowledgePolicy()
+                    : new SearchKnowledgeResult([]),
                 _ => default(TResponse)
             };
 

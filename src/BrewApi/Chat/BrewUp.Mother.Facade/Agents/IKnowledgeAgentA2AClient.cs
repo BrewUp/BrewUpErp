@@ -9,5 +9,6 @@ public interface IKnowledgeAgentA2AClient
     Task<KnowledgeResult> SubmitKnowledgeTaskAsync(
         string question,
         Guid correlationId,
+        string? conversationId,
         CancellationToken cancellationToken);
 }

@@ -156,6 +156,8 @@ public sealed class BrewUpChatService(
         using var activity = MotherTelemetry.Source.StartActivity("AgentRun");
         activity?.SetTag("brewup.agent_run.id", run.RunId);
         activity?.SetTag("brewup.route", route);
+        if (!string.IsNullOrWhiteSpace(run.ConversationId))
+            activity?.SetTag("gen_ai.conversation.id", run.ConversationId);
 
         try
         {
@@ -190,6 +192,7 @@ public sealed class BrewUpChatService(
         catch (Exception ex)
         {
             run.SetOutcome("failed");
+            activity?.SetTag("error.type", ex.GetType().FullName);
             activity?.SetStatus(ActivityStatusCode.Error);
             activity?.AddException(ex);
             logger.LogError(ex, "Agent run failed for conversation {ConversationId}.", request.ConversationId);
