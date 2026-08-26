@@ -34,4 +34,13 @@
         <InternalsVisibleTo Include="BrewUp.Rest.Tests" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Prompts\Agent.md">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Prompts\MotherErrorResponse.md">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

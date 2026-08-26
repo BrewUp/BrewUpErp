@@ -26,6 +26,9 @@ public sealed class MotherCoordinator(
     private const string WhatIfRoute = "what-if";
     private const string KnowledgeA2ARoute = "knowledge-a2a";
     private const string WhatIfWorkflowName = "brewup.what-if";
+    
+    private static readonly string MotherErrorResponsePath =
+        Path.Combine(AppContext.BaseDirectory, "Prompts", "MotherErrorResponse.md");
 
     private static readonly Regex DemandPattern = new(
         @"(?<quantity>\d+(?:[.,]\d+)?)\s*(?:bottles?|bottle|pz|pieces?)\s+(?:of\s+)?(?<beer>[a-zA-Z][a-zA-Z0-9\s'-]*?)(?=\s+(?:and|,)|\?|$)",
@@ -37,6 +40,16 @@ public sealed class MotherCoordinator(
     private readonly MotherA2AOptions _a2AOptions = a2AOptions ?? new MotherA2AOptions();
     private readonly ILogger<MotherCoordinator> _logger = logger ?? NullLogger<MotherCoordinator>.Instance;
 
+    private static string LoadMotherErrorResponse()
+    {
+        if (!File.Exists(MotherErrorResponsePath))
+            throw new FileNotFoundException(
+                $"Mother error response file '{MotherErrorResponsePath}' was not found.",
+                MotherErrorResponsePath);
+
+        return File.ReadAllText(MotherErrorResponsePath);
+    }
+    
     public IReadOnlyCollection<AgentCard> InspectAgentCards()
         => _agentCardProviders
             .Select(provider => provider.GetAgentCard())
@@ -133,7 +146,7 @@ public sealed class MotherCoordinator(
                 run.SetOutcome("partial");
                 activity?.SetTag("brewup.outcome", run.Outcome);
                 return new ChatResponse(
-                    "BrewUp ERP does not expose the requested product or beer information yet.",
+                    LoadMotherErrorResponse(),
                     request.ConversationId);
             }
 
