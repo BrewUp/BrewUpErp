@@ -30,6 +30,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="BrewUp.Mcp.IntegrationTests" />
         <InternalsVisibleTo Include="BrewUp.Rest.Tests" />
     </ItemGroup>
 

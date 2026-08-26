@@ -1,18 +1,24 @@
-﻿using System.Net.Http.Json;
-using System.Text.Json;
-using BrewUp.Shared.CustomTypes;
+﻿using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using ModelContextProtocol;
+using ModelContextProtocol.Client;
+using ModelContextProtocol.Protocol;
 
 namespace BrewUp.Shared.Agents;
 
 internal sealed class McpToolClient(
     IHttpClientFactory httpClientFactory,
     IConfiguration configuration,
-    ILogger<McpToolClient> logger) 
-    : IMcpToolClient
+    ILoggerFactory loggerFactory)
+    : IMcpToolClient, IAsyncDisposable
 {
     private readonly Dictionary<string, string> _servers = LoadServers(configuration);
+    private readonly Dictionary<string, McpClient> _clients = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, SemaphoreSlim> _clientLocks = new(StringComparer.OrdinalIgnoreCase);
+    private readonly List<McpClient> _retiredClients = [];
+    private readonly Lock _stateLock = new();
+    private readonly ILogger<McpToolClient> _logger = loggerFactory.CreateLogger<McpToolClient>();
 
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -22,224 +28,232 @@ internal sealed class McpToolClient(
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (!_servers.TryGetValue(serverName, out var serverUrl))
-            throw new InvalidOperationException($"MCP server '{serverName}' is not configured.");
+        var client = await GetClientAsync(serverName, cancellationToken).ConfigureAwait(false);
 
-        var client = httpClientFactory.CreateClient("mcp");
-
-        var request = new
-        {
-            jsonrpc = "2.0",
-            id = Guid.NewGuid().ToString("N"),
-            method = "tools/list",
-            @params = new { }
-        };
-
-        logger.LogInformation(
+        _logger.LogInformation(
             "Listing MCP tools from server {ServerName}",
             serverName);
 
-        using var response = await client.PostAsJsonAsync(
-            serverUrl,
-            request,
-            JsonOptions,
-            cancellationToken);
-
-        var raw = await response.Content.ReadAsStringAsync(cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
+        IList<McpClientTool> tools;
+        try
         {
-            logger.LogError(
-                "MCP tools/list failed. Server: {ServerName}, Status: {StatusCode}, Body: {Body}",
-                serverName,
-                response.StatusCode,
-                raw);
-
-            throw new InvalidOperationException(
-                $"MCP tools/list failed for server '{serverName}' with status {(int)response.StatusCode}.");
+            tools = await client.ListToolsAsync(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch
+        {
+            RetireClient(serverName, client);
+            throw;
         }
 
-        var envelope = JsonSerializer.Deserialize<McpResponseEnvelope>(
-            ExtractJsonPayload(raw),
-            JsonOptions);
+        var metadata = tools
+            .Select(tool => new McpToolMetadata(
+                tool.Name,
+                tool.Description,
+                tool.JsonSchema.Deserialize<JsonElement>(JsonOptions)))
+            .ToArray();
 
-        if (envelope?.Error is not null)
-        {
-            logger.LogError(
-                "MCP tools/list returned error. Server: {ServerName}, Error: {Error}",
-                serverName,
-                envelope.Error.Message);
-
-            throw new InvalidOperationException(
-                $"MCP tools/list returned an error for server '{serverName}': {envelope.Error.Message}");
-        }
-
-        if (envelope?.Result is null)
-            return [];
-
-        var tools = ExtractToolMetadata(envelope.Result.Value);
-
-        logger.LogInformation(
+        _logger.LogInformation(
             "MCP server {ServerName} exposed tools: {Tools}",
             serverName,
-            string.Join(", ", tools.Select(tool => tool.Name)));
+            string.Join(", ", metadata.Select(tool => tool.Name)));
 
-        return tools;
+        return metadata;
     }
     
     public async Task<TResponse?> CallToolAsync<TResponse>(string serverName, string toolName, object arguments,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        
-        if (!_servers.TryGetValue(serverName, out var serverUrl))
-            throw new InvalidOperationException($"MCP server '{serverName}' is not configured.");
 
-        var client = httpClientFactory.CreateClient("mcp");
+        var client = await GetClientAsync(serverName, cancellationToken).ConfigureAwait(false);
+        var toolArguments = ToArguments(arguments);
 
-        var request = new
-        {
-            jsonrpc = "2.0",
-            id = Guid.NewGuid().ToString("N"),
-            method = "tools/call",
-            @params = new
-            {
-                name = toolName,
-                arguments
-            }
-        };
-
-        logger.LogInformation(
+        _logger.LogInformation(
             "Calling MCP tool {ServerName}.{ToolName}",
             serverName,
             toolName);
 
-        using var response = await client.PostAsJsonAsync(
-            serverUrl,
-            request,
-            JsonOptions,
-            cancellationToken);
-
-        var raw = await response.Content.ReadAsStringAsync(cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
+        CallToolResult result;
+        try
         {
-            logger.LogError(
-                "MCP call failed. Server: {ServerName}, Tool: {ToolName}, Status: {StatusCode}, Body: {Body}",
-                serverName,
-                toolName,
-                response.StatusCode,
-                raw);
-
-            return default;
+            result = await client.CallToolAsync(
+                    toolName,
+                    toolArguments,
+                    cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch
+        {
+            RetireClient(serverName, client);
+            throw;
         }
 
-        var envelope = JsonSerializer.Deserialize<McpResponseEnvelope>(
-            ExtractJsonPayload(raw),
-            JsonOptions);
+        if (result.IsError is true)
+            throw new McpException(
+                $"MCP tool '{serverName}.{toolName}' returned an error: {GetTextContent(result)}");
 
-        if (envelope?.Error is null)
-            return envelope?.Result is null
-                ? default
-                : ExtractToolResult<TResponse>(envelope.Result.Value);
-        
-        logger.LogError(
-            "MCP returned error. Server: {ServerName}, Tool: {ToolName}, Error: {Error}",
-            serverName,
-            toolName,
-            envelope.Error.Message);
-
-        return default;
+        return ExtractToolResult<TResponse>(result);
     }
-    
-    private static TResponse ExtractToolResult<TResponse>(JsonElement result)
+
+    private async Task<McpClient> GetClientAsync(string serverName, CancellationToken cancellationToken)
     {
-        if (result.TryGetProperty("structuredContent", out var structuredContent))
+        if (!_servers.TryGetValue(serverName, out var serverUrl))
+            throw new InvalidOperationException($"MCP server '{serverName}' is not configured.");
+
+        var clientLock = GetClientLock(serverName);
+        await clientLock.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
         {
-            return structuredContent.Deserialize<TResponse>(JsonOptions)!;
+            if (TryGetActiveClient(serverName, out var existingClient))
+                return existingClient;
+
+            var client = await McpClient.CreateAsync(
+                    new HttpClientTransport(
+                        new HttpClientTransportOptions
+                        {
+                            Endpoint = new Uri(serverUrl),
+                            Name = serverName
+                        },
+                        httpClientFactory.CreateClient("mcp"),
+                        loggerFactory),
+                    new McpClientOptions
+                    {
+                        ClientInfo = new Implementation
+                        {
+                            Name = $"BrewUp.{serverName}",
+                            Version = "1.0.0"
+                        },
+                        InitializationTimeout = TimeSpan.FromSeconds(60)
+                    },
+                    loggerFactory,
+                    cancellationToken)
+                .ConfigureAwait(false);
+
+            lock (_stateLock)
+                _clients[serverName] = client;
+
+            return client;
         }
-
-        if (result.TryGetProperty("content", out var content) &&
-            content.ValueKind == JsonValueKind.Array &&
-            content.GetArrayLength() > 0)
+        finally
         {
-            var first = content[0];
+            clientLock.Release();
+        }
+    }
 
-            if (first.TryGetProperty("text", out var textElement))
+    private SemaphoreSlim GetClientLock(string serverName)
+    {
+        lock (_stateLock)
+        {
+            if (_clientLocks.TryGetValue(serverName, out var clientLock))
+                return clientLock;
+
+            clientLock = new SemaphoreSlim(1, 1);
+            _clientLocks.Add(serverName, clientLock);
+            return clientLock;
+        }
+    }
+
+    private bool TryGetActiveClient(string serverName, out McpClient client)
+    {
+        lock (_stateLock)
+        {
+            if (_clients.TryGetValue(serverName, out client!) && !client.Completion.IsCompleted)
+                return true;
+
+            if (client is not null)
             {
-                var text = textElement.GetString();
-
-                if (typeof(TResponse) == typeof(string))
-                    return (TResponse)(object)(text ?? string.Empty);
-
-                if (!string.IsNullOrWhiteSpace(text) &&
-                    LooksLikeJson(text))
-                {
-                    return JsonSerializer.Deserialize<TResponse>(
-                        text,
-                        JsonOptions)!;
-                }
-
-                throw new InvalidOperationException(
-                    $"MCP tool returned plain text, but {typeof(TResponse).Name} was expected. Text starts with: {text?[..Math.Min(text.Length, 80)]}");
+                _clients.Remove(serverName);
+                _retiredClients.Add(client);
             }
+
+            client = null!;
+            return false;
         }
-
-        return result.Deserialize<TResponse>(JsonOptions)!;
     }
 
-    private static IReadOnlyCollection<McpToolMetadata> ExtractToolMetadata(JsonElement result)
+    private void RetireClient(string serverName, McpClient client)
     {
-        if (!result.TryGetProperty("tools", out var toolsElement)
-            || toolsElement.ValueKind != JsonValueKind.Array)
-            return [];
+        lock (_stateLock)
+        {
+            if (!_clients.TryGetValue(serverName, out var activeClient)
+                || !ReferenceEquals(activeClient, client))
+                return;
 
-        return toolsElement
-            .EnumerateArray()
-            .Select(tool =>
-            {
-                var name = tool.TryGetProperty("name", out var nameElement)
-                    ? nameElement.GetString()
-                    : null;
-
-                if (string.IsNullOrWhiteSpace(name))
-                    return null;
-
-                var description = tool.TryGetProperty("description", out var descriptionElement)
-                    ? descriptionElement.GetString()
-                    : null;
-
-                JsonElement? inputSchema = tool.TryGetProperty("inputSchema", out var inputSchemaElement)
-                    ? inputSchemaElement.Clone()
-                    : null;
-
-                return new McpToolMetadata(name, description, inputSchema);
-            })
-            .OfType<McpToolMetadata>()
-            .ToArray();
+            _clients.Remove(serverName);
+            _retiredClients.Add(client);
+        }
     }
-    
+
+    private static IReadOnlyDictionary<string, object?> ToArguments(object arguments)
+    {
+        var element = JsonSerializer.SerializeToElement(arguments, JsonOptions);
+        if (element.ValueKind != JsonValueKind.Object)
+            throw new ArgumentException("MCP tool arguments must serialize to a JSON object.", nameof(arguments));
+
+        return element.EnumerateObject()
+            .ToDictionary(
+                property => property.Name,
+                property => (object?)property.Value.Clone(),
+                StringComparer.Ordinal);
+    }
+
+    private static TResponse? ExtractToolResult<TResponse>(CallToolResult result)
+    {
+        if (result.StructuredContent is { } structuredContent)
+            return structuredContent.Deserialize<TResponse>(JsonOptions);
+
+        var text = GetTextContent(result);
+        if (typeof(TResponse) == typeof(string))
+            return (TResponse)(object)text;
+
+        if (!string.IsNullOrWhiteSpace(text) && LooksLikeJson(text))
+            return JsonSerializer.Deserialize<TResponse>(text, JsonOptions);
+
+        if (string.IsNullOrWhiteSpace(text))
+            return default;
+
+        throw new InvalidOperationException(
+            $"MCP tool returned plain text, but {typeof(TResponse).Name} was expected. Text starts with: {text[..Math.Min(text.Length, 80)]}");
+    }
+
+    private static string GetTextContent(CallToolResult result)
+        => string.Join(
+            Environment.NewLine,
+            result.Content.OfType<TextContentBlock>().Select(content => content.Text));
+
     private static bool LooksLikeJson(string value)
     {
         var trimmed = value.TrimStart();
         return trimmed.StartsWith("{") || trimmed.StartsWith("[") || trimmed.StartsWith("\"");
     }
 
-    private static string ExtractJsonPayload(string raw)
+    public async ValueTask DisposeAsync()
     {
-        // MCP HTTP often responds as server-sent events:
-        // event: message
-        // data: { ...json... }
-        if (!raw.StartsWith("event:", StringComparison.OrdinalIgnoreCase))
-            return raw;
+        McpClient[] clients;
+        SemaphoreSlim[] clientLocks;
+        lock (_stateLock)
+        {
+            clients = _clients.Values.Concat(_retiredClients).Distinct().ToArray();
+            clientLocks = _clientLocks.Values.ToArray();
+            _clients.Clear();
+            _retiredClients.Clear();
+            _clientLocks.Clear();
+        }
 
-        var dataLine = raw
-            .Split('\n')
-            .FirstOrDefault(line => line.StartsWith("data:", StringComparison.OrdinalIgnoreCase));
+        foreach (var client in clients)
+            await client.DisposeAsync().ConfigureAwait(false);
 
-        return dataLine is null 
-            ? raw 
-            : dataLine["data:".Length..].Trim();
+        foreach (var clientLock in clientLocks)
+            clientLock.Dispose();
     }
 
     private static Dictionary<string, string> LoadServers(IConfiguration configuration)

@@ -380,3 +380,4 @@ mobile/**/appsettings.json
 .env
 SetBrewUpEnvironment.ps1
 .tokensave
+.carriers

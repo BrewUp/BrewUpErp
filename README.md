@@ -140,7 +140,12 @@ The .NET MAUI mobile solution lives under `src/BrewApp/mobile/`:
 
 ![The four BrewUp MCP servers and their tools](docs/images/brewup-mcp-servers.svg)
 
-Every MCP server is a small ASP.NET Core app that:
+Every MCP server is a small ASP.NET Core app built on the official MCP C# SDK 2.x and aligned with
+the MCP `2026-07-28` protocol. BrewUp deliberately uses discovery-first negotiation and stateless
+Streamable HTTP: each request is self-describing and normal operation does not depend on an
+`Mcp-Session-Id` or transport-level session state.
+
+Each server:
 
 - registers a **stateless** HTTP MCP transport and maps it at `/mcp` (`MapMcp("/mcp")`);
 - exposes one `[McpServerToolType]` class whose `[McpServerTool]` methods delegate to a thin façade over
@@ -148,6 +153,11 @@ Every MCP server is a small ASP.NET Core app that:
 - calls `AddServiceDefaults()` so it takes part in Aspire telemetry, health checks and resilience;
 - exposes `/health` (and `/alive` in Development);
 - ships as its own container image.
+
+Statelessness is an architectural choice rather than an incidental SDK default. BrewUp tools query
+bounded-context read models and do not need cross-request transport state. Protocol negotiation,
+per-request MCP metadata and fallback to older MCP peers are handled by the SDK; BrewUp does not
+implement custom compatibility protocol code.
 
 **MasterData MCP** — `brewup.masterdata.mcpserver`
 
@@ -248,6 +258,9 @@ Supporting details worth knowing:
 
 - `McpToolsProvider` keeps one long‑lived `McpClient` per server, caches the merged tool catalog and
   refreshes it every 5 minutes; a server that is down is logged and skipped instead of failing the request.
+  Clients use MCP 2.x discovery first and leave protocol downgrade negotiation to the official SDK.
+- The standalone Knowledge Agent uses the same SDK-managed discovery and invocation path while preserving
+  its A2A boundary and the `execute_tool search_knowledge_base` semantic span.
 - `FoundryGuardedChatClient` applies the `BrewUp:FoundryLimits` budget (concurrency, requests/minute,
   queue length, max output tokens, max function‑calling iterations) so a small Foundry deployment
   cannot be overrun.
@@ -256,6 +269,9 @@ Supporting details worth knowing:
 - The run has its own `brewup.agent_run.id`, separate from the technical `TraceId` and the user
   `ConversationId`. The same run identifier is reused as the A2A correlation ID instead of creating
   unrelated identifiers at each layer.
+
+This migration intentionally does not enable MCP Tasks, MCP Apps, `subscriptions/listen`, sampling,
+elicitation or an authentication/OAuth redesign. Those capabilities remain separate future increments.
 
 ---
 

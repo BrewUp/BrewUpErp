@@ -83,7 +83,13 @@
     <Project Path="BrewUp.Rest.Tests/BrewUp.Rest.Tests.csproj" />
     <Project Path="BrewUp.Rest/BrewUp.Rest.csproj" />
   </Folder>
+  <Folder Name="/Chat/" />
+  <Folder Name="/Knowledge/" />
+  <Folder Name="/MasterData/" />
+  <Folder Name="/Sales/" />
   <Folder Name="/Solution Items/">
     <File Path="compose.yaml" />
   </Folder>
+  <Folder Name="/Warehouse/" />
+  <Project Path="BrewUp.Mcp.IntegrationTests/BrewUp.Mcp.IntegrationTests.csproj" />
 </Solution>

@@ -11,20 +11,43 @@ namespace BrewUp.Mother.Facade.Mcp;
 /// lifetime of the application and refreshes the tool catalog periodically
 /// to recover from transient MCP server failures.
 /// </summary>
-public sealed class McpToolsProvider(
-    McpServerOptions options,
-    IHttpClientFactory httpClientFactory,
-    ILoggerFactory loggerFactory)
-    : IMcpToolsProvider, IAsyncDisposable
+public sealed class McpToolsProvider : IMcpToolsProvider, IAsyncDisposable
 {
     private static readonly TimeSpan RefreshInterval = TimeSpan.FromMinutes(5);
 
-    private readonly ILogger<McpToolsProvider> _logger = loggerFactory.CreateLogger<McpToolsProvider>();
+    private readonly McpServerOptions _options;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILoggerFactory _loggerFactory;
+    private readonly TimeProvider _timeProvider;
+    private readonly ILogger<McpToolsProvider> _logger;
     private readonly SemaphoreSlim _gate = new(1, 1);
 
-    private List<McpClient> _clients = [];
+    private readonly Dictionary<string, McpClient> _clients = new(StringComparer.Ordinal);
+    private readonly List<McpClient> _retiredClients = [];
     private IReadOnlyList<AITool> _tools = [];
     private DateTimeOffset _lastRefreshUtc = DateTimeOffset.MinValue;
+    private bool _hasRefreshed;
+
+    public McpToolsProvider(
+        McpServerOptions options,
+        IHttpClientFactory httpClientFactory,
+        ILoggerFactory loggerFactory)
+        : this(options, httpClientFactory, loggerFactory, TimeProvider.System)
+    {
+    }
+
+    internal McpToolsProvider(
+        McpServerOptions options,
+        IHttpClientFactory httpClientFactory,
+        ILoggerFactory loggerFactory,
+        TimeProvider timeProvider)
+    {
+        _options = options;
+        _httpClientFactory = httpClientFactory;
+        _loggerFactory = loggerFactory;
+        _timeProvider = timeProvider;
+        _logger = loggerFactory.CreateLogger<McpToolsProvider>();
+    }
 
     public async Task<IReadOnlyList<AITool>> GetToolsAsync(CancellationToken cancellationToken)
     {
@@ -37,17 +60,14 @@ public sealed class McpToolsProvider(
             if (IsFresh())
                 return _tools;
 
-            await DisposeClientsAsync().ConfigureAwait(false);
-
             var endpoints = new (string Name, string Url)[]
             {
-                ("MasterData", options.MasterDataUrl),
-                ("Sales", options.SalesUrl),
-                ("Warehouse", options.WarehouseUrl),
-                ("Knowledge", options.KnowledgeUrl)
+                ("MasterData", _options.MasterDataUrl),
+                ("Sales", _options.SalesUrl),
+                ("Warehouse", _options.WarehouseUrl),
+                ("Knowledge", _options.KnowledgeUrl)
             };
 
-            var newClients = new List<McpClient>(endpoints.Length);
             var newTools = new List<AITool>();
 
             foreach (var (name, url) in endpoints)
@@ -60,27 +80,31 @@ public sealed class McpToolsProvider(
 
                 try
                 {
-                    var client = await CreateClientAsync(name, url, cancellationToken)
-                        .ConfigureAwait(false);
+                    var client = await GetOrCreateClientAsync(name, url, cancellationToken).ConfigureAwait(false);
                     var tools = await client.ListToolsAsync(cancellationToken: cancellationToken)
                         .ConfigureAwait(false);
 
-                    newClients.Add(client);
                     newTools.AddRange(tools);
 
                     _logger.LogInformation("MCP {Name} ready with {Count} tools.", name, tools.Count);
                 }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    throw;
+                }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex,
-                        "Failed to initialize MCP client {Name} at {Url}. Tools from this server will be unavailable until the next refresh.",
+                        "Failed to discover MCP tools from {Name} at {Url}. Tools from this server will be unavailable until the next refresh.",
                         name, url);
+
+                    RetireClient(name);
                 }
             }
 
-            _clients = newClients;
             _tools = newTools;
-            _lastRefreshUtc = DateTimeOffset.UtcNow;
+            _lastRefreshUtc = _timeProvider.GetUtcNow();
+            _hasRefreshed = true;
 
             return _tools;
         }
@@ -91,58 +115,95 @@ public sealed class McpToolsProvider(
     }
 
     private bool IsFresh()
-        => _tools.Count > 0 && DateTimeOffset.UtcNow - _lastRefreshUtc < RefreshInterval;
+        => _hasRefreshed && _timeProvider.GetUtcNow() - _lastRefreshUtc < RefreshInterval;
 
-    private Task<McpClient> CreateClientAsync(string name, string url, CancellationToken cancellationToken)
-        => McpClient.CreateAsync(
+    private async Task<McpClient> GetOrCreateClientAsync(
+        string name,
+        string url,
+        CancellationToken cancellationToken)
+    {
+        if (_clients.TryGetValue(name, out var client) && !client.Completion.IsCompleted)
+            return client;
+
+        if (client is not null)
+            RetireClient(name, client);
+
+        client = await McpClient.CreateAsync(
             new HttpClientTransport(
                 new HttpClientTransportOptions
                 {
                     Endpoint = new Uri(url),
                     Name = name
                 },
-                httpClientFactory.CreateClient("mcp"),
-                loggerFactory),
+                _httpClientFactory.CreateClient("mcp"),
+                _loggerFactory),
             new McpClientOptions
             {
-                // Tune MCP client options here if needed, e.g. to adjust retry policies or timeouts.
+                // ProtocolVersion intentionally remains unset so SDK 2.x discovers modern
+                // peers first and automatically negotiates down with legacy peers.
                 InitializationTimeout = TimeSpan.FromSeconds(60),
-                ClientInfo = new Implementation { Name = name, Version = "1.0.0" },
-                // Attach the handler
-                Handlers = new McpClientHandlers
-                {
-                    NotificationHandlers =
-                    [
-                        new KeyValuePair<string, Func<JsonRpcNotification, CancellationToken, ValueTask>>(
-                            "notifications/tools/list_changed",
-                            async (_, ct) =>
-                            {
-                                ct.ThrowIfCancellationRequested();
-                                
-                                // Handle the notification here
-                                await Task.CompletedTask;
-                            })
-                    ]
-                }
+                ClientInfo = new Implementation { Name = $"BrewUp.Mother.{name}", Version = "1.0.0" }
             },
-            loggerFactory: loggerFactory,
-            cancellationToken: cancellationToken);
+            loggerFactory: _loggerFactory,
+            cancellationToken: cancellationToken).ConfigureAwait(false);
 
-    private async Task DisposeClientsAsync()
+        _clients.Add(name, client);
+        return client;
+    }
+
+    private void RetireClient(string name)
     {
-        foreach (var client in _clients)
-        {
-            try { await client.DisposeAsync().ConfigureAwait(false); }
-            catch (Exception ex) { _logger.LogDebug(ex, "Error disposing MCP client."); }
-        }
-        _clients.Clear();
+        if (!_clients.Remove(name, out var client))
+            return;
+
+        _retiredClients.Add(client);
+    }
+
+    private void RetireClient(string name, McpClient client)
+    {
+        if (_clients.TryGetValue(name, out var activeClient)
+            && ReferenceEquals(activeClient, client))
+            _clients.Remove(name);
+
+        _retiredClients.Add(client);
     }
 
     public async ValueTask DisposeAsync()
     {
-        await DisposeClientsAsync()
-            .ConfigureAwait(false);
-        _gate.Dispose();
+        await _gate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            foreach (var (name, client) in _clients)
+            {
+                try
+                {
+                    await client.DisposeAsync().ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error disposing MCP client {Name}.", name);
+                }
+            }
+
+            foreach (var client in _retiredClients.Distinct())
+            {
+                try
+                {
+                    await client.DisposeAsync().ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error disposing retired MCP client.");
+                }
+            }
+
+            _clients.Clear();
+            _retiredClients.Clear();
+        }
+        finally
+        {
+            _gate.Release();
+            _gate.Dispose();
+        }
     }
 }
-
