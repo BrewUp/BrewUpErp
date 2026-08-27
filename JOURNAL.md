@@ -3,7 +3,35 @@ title: BrewUpErp Journal
 description: Diario delle sessioni di lavoro sul progetto BrewUpErp
 ---
 
-## [2026-08-27] - Avvio completo ambiente BrewUpErp
+## [2026-08-27] - Test E2E dello stack: fix pipeline eventi, currency birre e ordini
+
+**Attività:**
+- Verificato che tutto lo stack fosse già attivo (docker backing services, 5 MCP/agent, API :6094, React :5173)
+- Diagnostico e risolto il blocco del giro E2E: `POST /v1/sales` restituiva 201 ma l'ordine non compariva mai nel read model
+- Ripristinata la pipeline eventi: passaggio dal message bus Azure Service Bus (non raggiungibile) al RabbitMQ locale, riavvio API
+- Corretto il read model delle birre: il DTO `Beer` ora salva `PriceCurrency` (prima `ToJson()` hardcodava `string.Empty`), aggiornati `Beer.cs`, `BeerHelper.cs` e il form React `CreateOrderForm` (default currency EUR)
+- Azzerata la `LastEventPosition` in MongoDB (era a commit `81524399`, molto oltre l'head reale di KurrentDB `23709`): il replay ha riproiettato tutti i read model
+- Test browser E2E automatizzato (Puppeteer): 13/14 check pass, creazione ordine dal form UI verificata via API
+- Scritto il report `E2Etest.md` (root repo) per la discussione con Alberto Acerbis
+- Committato il fix currency (`0e4f5f2`) e aperta la PR **#5** (`feat/e2e-fixes` → `main`)
+
+**Decisioni:**
+- Passaggio a RabbitMQ locale (`UseRMQ: true`, `UseAzureServiceBus: false` in `appsettings.Development.json`) perché Azure Service Bus falliva con `TryAgain (ServiceCommunicationProblem)` nonostante il TCP fosse raggiungibile. Impatto: file git-ignored, solo ambiente locale
+- Reset della `LastEventPosition` a `(0,0)` invece di impostarla all'head corrente: replay completo e consistente di tutto l'event store locale. Impatto: una tantum, idempotente (gli handler read model fanno upsert)
+- PR creata con l'account `jesuswasrasta`
+
+**Appreso:**
+- In Muflone il read model è alimentato da `EventDispatcher` (IHostedService) che si sottoscrive a KurrentDB `$all` dalla posizione persistita (`IEventStorePositionRepository` su MongoDB, db `BrewUp`, collection `LastEventPosition`): se la posizione salvata è oltre l'head reale (event store ricreato o diverso), il dispatcher resta in attesa e nessun evento raggiunge il bus
+- L'errore console SignalR `The connection was stopped during negotiation` è un artefatto di React StrictMode (double-mount): la seconda connessione si stabilisce regolarmente (badge dashboard "Live")
+- L'errore saga `AggregateNotFoundException (SalesOrderSaga)` su ogni `SalesOrderPlaced` è pre-esistente: il read model Sales pubblica l'evento all'avvio dell'ordine, ma la saga nasce solo via `POST /v1/sagas` con correlationId casuale non allineato
+
+**Da ricordare:**
+- API riavviata con `nohup`, log su `/tmp/opencode/brewup-rest.log`
+- `E2Etest.md` non è committato (valutare se includerlo nella PR)
+- Problemi pre-esistenti non toccati: saga che non completa il ciclo, errori tsc/lint nella feature Chat, arch test MasterData fallisce (assembly McpServer non in output), totali dashboard corrotti nel read model storico
+- Lista sales senza sort esplicito: gli ordini nuovi compaiono in fondo alla paginazione
+
+---
 
 **Attività:**
 - Avviati i servizi di supporto Docker (KurrentDB, MongoDB sagas/sales, RabbitMQ) con `docker compose -f docker/docker-compose.yml up -d`
