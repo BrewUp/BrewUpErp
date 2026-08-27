@@ -47,6 +47,7 @@ service at the Aspire dashboard over OTLP.
 ```
 src/
 ├── BrewApi/          # Backend API, domain, MCP servers, Knowledge agent, Aspire AppHost
+├── BrewReact/        # React (Vite + TypeScript) web front-end
 ├── BrewSpa/          # Blazor web front-end
 └── BrewApp/          # .NET MAUI mobile app
 BrewDocs/             # Bruno API contracts & example payloads
@@ -110,6 +111,12 @@ The Blazor front‑end solution (`src/BrewSpa/BrewSpa.slnx`) mirrors the API's b
 | `Dashboards/` | `BrewSpa.Dashboards.ApplicationServices`, `.Facade`, `.Tests` |
 | `MasterData/` | `BrewSpa.MasterData.Application`, `.Facade` |
 | `Sales/` | `BrewSpa.Sales.Application`, `.Facade` |
+
+### BrewReact
+
+The React (Vite + TypeScript) front‑end lives in `src/BrewReact/` and is organized in `features/` and
+`shared/` folders. It is the newer, actively developed web front‑end (BrewSpa is kept as a Blazor
+counterpart). It proxies `/v1/*` and `/hubs/*` to the API; see [Web front‑ends](#6-web-front-ends-and-mobile-app).
 
 ### BrewApp
 
@@ -415,17 +422,29 @@ opt-in; `OpenTelemetryChatClient.EnableSensitiveData` is not enabled globally.
 
 - **.NET 10 SDK**
 - **Docker Desktop** — for backing services and for the MCP / agent images
+- **Node.js** (LTS) — for the React frontend (`BrewReact`)
 - **Aspire CLI** — optional, only if you prefer `aspire run` over `dotnet run` on the AppHost
   (see the [Aspire docs](https://learn.microsoft.com/dotnet/aspire/) for the current install command)
 - A recent IDE: Visual Studio 2022+, JetBrains Rider, or VS Code with C# Dev Kit
 
 Optional: **Bruno** for the contracts in `BrewDocs/`, and the Azure CLI for the Bicep deployment.
 
+> **Platforms.** Commands below come in two flavours — **PowerShell / `.bat`** (Windows) and **bash** (macOS / Linux).
+> Pick the one matching your shell; they are equivalent.
+
 ### 1. Start the backing services
+
+**Windows (PowerShell):**
 
 ```powershell
 cd docker
 .\run-docker-compose.bat
+```
+
+**macOS / Linux (bash):**
+
+```bash
+cd docker && docker compose up -d
 ```
 
 | Service | Container | Host port(s) |
@@ -442,9 +461,18 @@ them build from the **`src/BrewApi` directory as context**, because they restore
 
 Create the environment file the containers read, then build every image in one go:
 
+**Windows (PowerShell):**
+
 ```powershell
 Copy-Item infra\Docker\env.example src\BrewApi\.env      # then fill in the values
 docker compose -f infra\Docker\mcp-docker-compose.yml --project-directory src\BrewApi build
+```
+
+**macOS / Linux (bash):**
+
+```bash
+cp infra/Docker/env.example src/BrewApi/.env             # then fill in the values
+docker compose -f infra/Docker/mcp-docker-compose.yml --project-directory src/BrewApi build
 ```
 
 `--project-directory src\BrewApi` is what makes the relative `context: .` and `env_file: .env` inside the
@@ -462,9 +490,18 @@ This produces exactly the image names the Aspire AppHost and the Bicep deploymen
 
 To build a single image instead:
 
+**Windows (PowerShell):**
+
 ```powershell
 docker build -t brewup.sales.mcpserver:latest `
   -f Sales\BrewUp.Sales.McpServer\Dockerfile src\BrewApi
+```
+
+**macOS / Linux (bash):**
+
+```bash
+docker build -t brewup.sales.mcpserver:latest \
+  -f Sales/BrewUp.Sales.McpServer/Dockerfile src/BrewApi
 ```
 
 ### 3. Run everything with Aspire
@@ -484,6 +521,8 @@ dotnet user-secrets set "Parameters:azure-openai-api-key" "<...>"
 
 Then start the AppHost, either from `src/BrewApi`:
 
+**Windows (PowerShell):**
+
 ```powershell
 aspire run
 ```
@@ -494,20 +533,45 @@ or directly:
 dotnet run --project src\BrewApi\BrewOrchestrator.Host\BrewOrchestrator.Host.csproj
 ```
 
+**macOS / Linux (bash):**
+
+```bash
+cd src/BrewApi && aspire run
+# or directly:
+dotnet run --project src/BrewApi/BrewOrchestrator.Host/BrewOrchestrator.Host.csproj
+```
+
 The dashboard link is printed in the console; from there you get every resource's state, logs, traces
 and metrics, including the MCP containers and the A2A hop.
 
 ### 4. Or run the MCP servers and agent with Compose
 
+**Windows (PowerShell):**
+
 ```powershell
 docker compose -f infra\Docker\mcp-docker-compose.yml --project-directory src\BrewApi up -d
+```
+
+**macOS / Linux (bash):**
+
+```bash
+docker compose -f infra/Docker/mcp-docker-compose.yml --project-directory src/BrewApi up -d
 ```
 
 There is also a **scaled‑out** variant that puts Traefik in front of N Knowledge MCP replicas —
 useful for showing that a stateless MCP server load‑balances:
 
+**Windows (PowerShell):**
+
 ```powershell
 docker compose -f infra\Docker\mcp-docker-compose-scalable.yml --project-directory src\BrewApi `
+  up -d --build --scale knowledge-mcp=3
+```
+
+**macOS / Linux (bash):**
+
+```bash
+docker compose -f infra/Docker/mcp-docker-compose-scalable.yml --project-directory src/BrewApi \
   up -d --build --scale knowledge-mcp=3
 ```
 
@@ -516,10 +580,21 @@ The MCP endpoint then moves to the gateway (`http://localhost:8081/mcp`), with t
 
 ### 5. Or run projects individually
 
+**Windows (PowerShell):**
+
 ```powershell
 cd src\BrewApi
 dotnet run --project BrewUp.Rest\BrewUp.Rest.csproj
 ```
+
+**macOS / Linux (bash):**
+
+```bash
+cd src/BrewApi
+dotnet run --project BrewUp.Rest/BrewUp.Rest.csproj
+```
+
+API docs (Scalar UI): **http://localhost:6094/scalar**
 
 The repository root also has convenience scripts: `RunSalesMcpServer.bat`,
 `RunWarehouseMcpServer.bat`, `RunMasterDataMcpServer.bat`, `RunKnowledgeMcpServer.bat`,
@@ -534,21 +609,96 @@ Note that `dotnet run` uses each project's `launchSettings.json` port, **not** t
 | MasterData MCP | `8082` | `5007` |
 | Warehouse MCP | `8083` | `5279` |
 | Sales MCP | `8084` | `5229` |
-| `BrewUp.Rest` | assigned by Aspire | `5094` / `6094`, HTTPS `7289` |
+| `BrewUp.Rest` | assigned by Aspire | `6094` (profile `http`) · `5094` HTTP / `7289` HTTPS (profile `https`) |
 | `BrewSpa` | — | `5156`, HTTPS `7131` |
+| `BrewReact` | — | `5173` (Vite dev server) |
 
 When you run the servers with `dotnet run`, point `BrewUp:McpServers:*` and
 `BrewUp:Mother:A2A:KnowledgeAgentUrl` at the launchSettings ports instead of the container ones.
 
-### 6. Web front‑end and mobile app
+> **Config note.** `appsettings.Development.json` is git-ignored. Make sure it exists in
+> `src/BrewApi/BrewUp.Rest/` — copy the repo-root one if you have it available, otherwise the API runs
+> on the base `appsettings.json`, whose connection strings are placeholders:
+>
+> ```bash
+> cp /repo-root/appsettings.Development.json src/BrewApi/BrewUp.Rest/appsettings.Development.json
+> ```
+
+### 6. Web front-ends and mobile app
+
+**Blazor (BrewSpa):**
+
+**Windows (PowerShell):**
 
 ```powershell
 cd src\BrewSpa\BrewSpa
 dotnet run
 ```
 
-For the MAUI app, open `src/BrewApp/mobile/src` in Visual Studio 2022+ or Rider, pick a target
+**macOS / Linux (bash):**
+
+```bash
+cd src/BrewSpa/BrewSpa
+dotnet run
+```
+
+**React (BrewReact):**
+
+```bash
+cd src/BrewReact
+npm install   # first time only
+npm run dev
+```
+
+URL: **http://localhost:5173** — proxies `/v1/*` and `/hubs/*` to `http://localhost:6094`.
+
+**Mobile (BrewApp):** open `src/BrewApp/mobile/src` in Visual Studio 2022+ or Rider, pick a target
 (Android / iOS / Windows) and run from the IDE.
+
+### 7. Smoke test the API
+
+`curl` works on every platform:
+
+```bash
+# List customers
+curl http://localhost:6094/v1/masterdata/customers
+
+# List beers
+curl http://localhost:6094/v1/masterdata/beers
+
+# List sales orders
+curl http://localhost:6094/v1/sales
+
+# Create a customer
+curl -X POST http://localhost:6094/v1/masterdata/customers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customerId": "'$(uuidgen | tr A-Z a-z)'",
+    "ragioneSociale": "My Customer",
+    "partitaIva": "IT01234567890",
+    "consumerLevel": "Gold",
+    "indirizzo": {
+      "via": "Via Roma", "numeroCivico": "1", "citta": "Milano",
+      "provincia": "MI", "cap": "20100", "nazione": "ITA"
+    },
+    "budgetLimit": 10000
+  }'
+```
+
+On Windows without `uuidgen`, use a fixed GUID or `[guid]::NewGuid()` instead.
+
+### API endpoints at a glance
+
+| Path | Module |
+|---|---|
+| `/v1/masterdata/*` | Customers, suppliers, beers, warehouse |
+| `/v1/sales/*` | Sales orders |
+| `/v1/purchases/*` | Purchases |
+| `/v1/warehouse/*` | Warehouse |
+| `/v1/dashboards/*` | Dashboards |
+| `/v1/sagas/*` | Sagas |
+| `/chat/*` | AI chat |
+| `/v1/knowledge/*` | Knowledge documents, search, ingest |
 
 ---
 
@@ -634,9 +784,29 @@ exact commands and the `.env`‑key → Bicep‑parameter mapping.
 | `BrewSpa/Dashboards/BrewSpa.Dashboards.Tests` | Blazor dashboards |
 | `BrewApp/mobile/tests/` | Mobile unit / integration |
 
+**Windows (PowerShell):**
+
 ```powershell
 cd src\BrewApi
 dotnet test
+```
+
+**macOS / Linux (bash):**
+
+```bash
+# All backend tests
+dotnet test src/BrewApi
+
+# Single module
+dotnet test src/BrewApi/Sales/BrewUp.Sales.Tests
+
+# Architecture tests only
+dotnet test src/BrewApi --filter "FullyQualifiedName~Architecture"
+
+# React tests / lint / build
+cd src/BrewReact && npm run test:run   # vitest single run
+cd src/BrewReact && npm run lint       # eslint . (flat config)
+cd src/BrewReact && npm run build      # tsc -b && vite build
 ```
 
 ---
