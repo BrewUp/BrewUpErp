@@ -1,4 +1,5 @@
 using BrewUp.Mother.Facade.Telemetry;
+using BrewUp.Knowledge.Core.Wiki;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -48,6 +49,7 @@ public class TelemetryModule : IModule
                     .SetResourceBuilder(resourceBuilder)
                     .AddSource(MotherTelemetry.SourceName)
                     .AddSource(ChatSourceName)
+                    .AddSource(KnowledgeWikiTelemetry.SourceName)
                     .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddSqlClientInstrumentation();

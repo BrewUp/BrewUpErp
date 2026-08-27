@@ -1,5 +1,6 @@
-namespace BrewUp.Knowledge.Facade.Governance;
+using BrewUp.Knowledge.SharedKernel.Wiki;
 
 public sealed record ReindexKnowledgeDocumentResult(
     Guid DocumentId,
-    int ChunkCount);
+    int ChunkCount,
+    WikiProcessingStatus WikiStatus = WikiProcessingStatus.Disabled);

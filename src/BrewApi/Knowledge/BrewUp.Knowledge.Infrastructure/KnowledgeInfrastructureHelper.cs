@@ -4,6 +4,7 @@ using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
 using BrewUp.Knowledge.Infrastructure.Ingestion;
 using BrewUp.Knowledge.Infrastructure.Repositories;
+using BrewUp.Knowledge.Infrastructure.Wiki;
 using BrewUp.Knowledge.SharedKernel.Configuration;
 using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Knowledge.SharedKernel.Embeddings;
@@ -18,6 +19,12 @@ public static class KnowledgeInfrastructureHelper
         this IServiceCollection services,
         IConfiguration? configuration = null)
     {
+        var wikiOptions = configuration?
+            .GetSection(WikiOptions.SectionName)
+            .Get<WikiOptions>()
+            ?? new WikiOptions();
+        services.AddSingleton(wikiOptions);
+
         services.AddSingleton<IKnowledgeTextExtractor, PlainTextExtractor>();
         services.AddSingleton<IKnowledgeTextExtractor, MarkdownTextExtractor>();
         services.AddSingleton<IKnowledgeTextExtractor, PdfTextExtractor>();
@@ -37,6 +44,9 @@ public static class KnowledgeInfrastructureHelper
             services.AddSingleton<InMemoryKnowledgeVectorStore>();
             services.AddSingleton<IKnowledgeVectorStore>(
                 provider => provider.GetRequiredService<InMemoryKnowledgeVectorStore>());
+            services.AddSingleton<InMemoryWikiRepository>();
+            services.AddSingleton<IWikiRepository>(
+                provider => provider.GetRequiredService<InMemoryWikiRepository>());
         }
         else
         {
@@ -64,6 +74,7 @@ public static class KnowledgeInfrastructureHelper
             services.AddSingleton<IKnowledgeChunkWriter>(
                 provider => provider.GetRequiredService<SqlServerKnowledgeChunkRepository>());
             RegisterConfiguredVectorStore(services, configuration);
+            services.AddSingleton<IWikiRepository, SqlServerWikiRepository>();
         }
 
         var azureOptions = configuration?
@@ -82,13 +93,47 @@ public static class KnowledgeInfrastructureHelper
             services.AddSingleton<IEmbeddingGenerator, FakeEmbeddingGenerator>();
         }
 
+        RegisterWikiAnalyzer(services, configuration, wikiOptions);
+
         return services;
+    }
+
+    private static void RegisterWikiAnalyzer(
+        IServiceCollection services,
+        IConfiguration? configuration,
+        WikiOptions wikiOptions)
+    {
+        var analyzerOptions = configuration?
+            .GetSection(AzureOpenAiWikiOptions.SectionName)
+            .Get<AzureOpenAiWikiOptions>();
+        analyzerOptions ??= configuration?
+            .GetSection("AzureOpenAI")
+            .Get<AzureOpenAiWikiOptions>();
+
+        if (wikiOptions.Enabled &&
+            analyzerOptions is not null &&
+            !string.IsNullOrWhiteSpace(analyzerOptions.Endpoint) &&
+            !string.IsNullOrWhiteSpace(analyzerOptions.DeploymentName))
+        {
+            services.AddSingleton(analyzerOptions);
+            services.AddSingleton<AzureOpenAiWikiAnalyzer>();
+            services.AddSingleton<IWikiAnalyzer, AzureOpenAiWikiAnalyzerAdapter>();
+            return;
+        }
+
+        services.AddSingleton<IWikiAnalyzer, DisabledWikiAnalyzer>();
     }
     
     public static IServiceCollection AddInfrastructureForMcp(
         this IServiceCollection services,
         IConfiguration? configuration = null)
     {
+        var wikiOptions = configuration!
+                              .GetSection(WikiOptions.SectionName)
+                              .Get<WikiOptions>()
+                          ?? new WikiOptions();
+        services.AddSingleton(wikiOptions);
+
         var vectorStoreOptions = configuration!
                                      .GetSection(SqlServerKnowledgeVectorStoreOptions.SectionName)
                                      .Get<SqlServerKnowledgeVectorStoreOptions>()
@@ -104,6 +149,7 @@ public static class KnowledgeInfrastructureHelper
         services.AddSingleton<SqlServerKnowledgeChunkRepository>();
         services.AddSingleton<IKnowledgeChunkRepository>(
             provider => provider.GetRequiredService<SqlServerKnowledgeChunkRepository>());
+        services.AddSingleton<IWikiRepository, SqlServerWikiRepository>();
 
         if (azureOptions is not null &&
             !string.IsNullOrWhiteSpace(azureOptions.Endpoint) &&

@@ -79,7 +79,7 @@ The backend solution is `src/BrewApi/BrewUp.slnx`.
 | `MasterData/` | Beer catalog, customers, suppliers, warehouses (also has `.Entities`) | ✅ `BrewUp.MasterData.McpServer` |
 | `Sales/` | Sales orders and related workflows | ✅ `BrewUp.Sales.McpServer` |
 | `Warehouse/` | Warehouse and stock management (also has `.Entities`) | ✅ `BrewUp.Warehouse.McpServer` |
-| `Knowledge/` | Document ingestion, chunking, embeddings and RAG search (has `.Core` in place of `.Domain`) | ✅ `BrewUp.Knowledge.McpServer` + `BrewUp.Knowledge.Agent` |
+| `Knowledge/` | Document ingestion, RAG search, and an evidence-backed synthesized Wiki (has `.Core` in place of `.Domain`) | ✅ `BrewUp.Knowledge.McpServer` + `BrewUp.Knowledge.Agent` |
 | `Purchases/` | Purchase orders | — |
 | `Dashboards/` | Cross‑context dashboard aggregations (also has `.Entities`) | — |
 | `Sagas/` | Long‑running process managers / sagas | — |
@@ -196,8 +196,11 @@ implement custom compatibility protocol code.
 | Tool | Description |
 |---|---|
 | `search_knowledge_base` | RAG search over ingested documents. Parameters: `query`, optional `scope` (`General`, `Sales`, `Warehouse`, `MasterData`, `Production`), `topK` (default 5, capped at 20) |
+| `query_wiki` | Semantic search over synthesized Wiki pages. Returns derived knowledge rather than operational ERP state |
+| `get_wiki_page` | Current page content, claims, links, and unresolved issues by stable key or title |
+| `get_wiki_page_evidence` | Claim-level source chunks for a page, including evidence availability |
 
-### Knowledge module — ingestion and RAG
+### Knowledge module — ingestion, RAG, and synthesized Wiki
 
 The Knowledge context is the read side that the Knowledge MCP server queries. It is written from
 `BrewUp.Rest` through `/v1/knowledge`:
@@ -212,13 +215,35 @@ The Knowledge context is the read side that the Knowledge MCP server queries. It
 | `GET /v1/knowledge/documents/{id}/chunks` | Inspect the chunks produced for a document |
 | `POST /v1/knowledge/documents/{id}/reindex` | Re‑chunk and re‑embed |
 | `DELETE /v1/knowledge/documents/{id}` | Delete a document and its chunks |
+| `POST /v1/knowledge/wiki/query` | Search current synthesized Wiki pages |
+| `GET /v1/knowledge/wiki/pages/{key}` | Get a page with its claims, links, and unresolved issues |
+| `GET /v1/knowledge/wiki/pages/{pageId}/evidence` | Get claim-level provenance for the current revision |
+| `GET /v1/knowledge/documents/{id}/wiki-job` | Inspect asynchronous Wiki synthesis status |
 
-Pipeline: extract text → semantic chunking (`SemanticChunkingStrategy`) → embeddings → vector store.
+The durable RAG path remains:
+
+```
+extract text → semantic chunking → chunk embeddings → vector store
+```
+
+When `Knowledge:Wiki:Enabled` is true, successful ingestion additionally enqueues a durable Wiki job.
+A hosted worker asks Azure OpenAI for strict structured page, claim, link, and issue proposals, validates
+every source chunk and page reference, generates page embeddings, and commits the complete analysis in
+one transaction. A synthesis failure is retried and reported by the job endpoint, but never rolls back a
+successful RAG ingestion.
+
+Wiki pages are derived, comparatively stable interpretations of documents. They are not authoritative
+operational state: live inventory, orders, and other ERP facts must still come from their owning module.
+Every current claim points to the exact document chunks that support it. Deleting or reindexing a source
+marks its old evidence unavailable while retaining page revisions and provenance identities; successful
+reindexing queues a fresh synthesis.
 
 | Concern | Options |
 |---|---|
 | Vector store (`Knowledge:VectorStore`) | `SqlServer` (default) or `AzureAiSearch`; an in‑memory store is used when no configuration is supplied (tests) |
 | Embeddings | Azure OpenAI (`BrewUp:Embeddings`) when endpoint + deployment are set, otherwise a deterministic `FakeEmbeddingGenerator` so the pipeline still runs offline |
+| Wiki synthesis (`Knowledge:Wiki`) | Disabled by default. Configure `Enabled`, `PollIntervalSeconds`, `LeaseDurationSeconds`, `CandidateLimit`, `MaximumAttempts`, `MaximumPagesPerAnalysis`, `MaximumClaimsPerPage`, and `MaximumContentLength` |
+| Wiki model | Uses `BrewUp:AzureOpenAI` (or the existing top-level `AzureOpenAI` fallback): `Endpoint`, `DeploymentName`, and either `ApiKey` or managed identity settings |
 
 ### Knowledge Agent — A2A
 
@@ -303,6 +328,7 @@ Telemetry, end to end:
 | `TelemetryModule` (`BrewUp.Rest`) | Registers the `BrewUp.Mother.Coordinator` and `BrewUp.Chat` activity sources, the `BrewUp.Agent` meter and SqlClient instrumentation; console exporter in Development |
 | `MotherTelemetry` | `AgentRun`, `invoke_workflow`, `invoke_agent` and `evaluation` spans, plus agent run, duration and handoff metrics |
 | `KnowledgeAgentTelemetry` | Internal Knowledge Agent execution and `execute_tool search_knowledge_base` spans, plus tool-call metrics |
+| `BrewUp.Knowledge.Wiki` | `knowledge.wiki.analysis` spans with job, attempt, page/link/issue counts, outcome, and error type |
 | `BrewUp.Chat` | Existing Microsoft.Extensions.AI model and function-calling instrumentation |
 
 The semantic spans complement rather than replace the existing distributed trace. A what-if request is

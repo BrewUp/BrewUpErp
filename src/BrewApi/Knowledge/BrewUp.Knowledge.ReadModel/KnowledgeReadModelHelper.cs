@@ -9,6 +9,10 @@ public static class KnowledgeReadModelHelper
     {
         services.AddScoped<GetKnowledgeDocumentChunksHandler>();
         services.AddScoped<SearchKnowledgeHandler>();
+        services.AddScoped<QueryWikiHandler>();
+        services.AddScoped<GetWikiPageHandler>();
+        services.AddScoped<GetWikiPageEvidenceHandler>();
+        services.AddScoped<GetWikiProcessingJobHandler>();
 
         return services;
     }

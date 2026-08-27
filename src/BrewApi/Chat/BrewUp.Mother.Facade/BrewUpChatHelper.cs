@@ -152,15 +152,6 @@ public static class BrewUpChatHelper
                 .UseOpenTelemetry(
                     sourceName: "BrewUp.Chat")
                 .Build(sp);
-            
-            // return azureClient
-            //     .GetChatClient(options.DeploymentName)
-            //     .AsIChatClient()
-            //     .AsBuilder()
-            //     .UseFunctionInvocation()
-            //     .UseLogging()
-            //     .UseOpenTelemetry(sourceName: "BrewUp.Chat")
-            //     .Build(sp);
         });
 
         services.AddScoped<BrewUpChatService>();

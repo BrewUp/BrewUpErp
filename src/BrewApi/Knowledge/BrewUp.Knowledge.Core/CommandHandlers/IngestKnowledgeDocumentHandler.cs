@@ -2,11 +2,15 @@ using BrewUp.Knowledge.Core.Chunking;
 using BrewUp.Knowledge.Core.Documents;
 using BrewUp.Knowledge.Facade.Ingestion;
 using BrewUp.Knowledge.Infrastructure.Ingestion;
+using BrewUp.Knowledge.Infrastructure.Wiki;
 using BrewUp.Knowledge.SharedKernel.CustomTypes;
 using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Knowledge.SharedKernel.Embeddings;
 using BrewUp.Knowledge.SharedKernel.Exceptions;
 using BrewUp.Knowledge.SharedKernel.Messages.Commands;
+using BrewUp.Knowledge.SharedKernel.Wiki;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace BrewUp.Knowledge.Core.CommandHandlers;
 
@@ -16,8 +20,13 @@ public sealed class IngestKnowledgeDocumentHandler(
     IKnowledgeDocumentRepository documentRepository,
     IKnowledgeChunkWriter chunkWriter,
     IKnowledgeVectorStore vectorStore,
-    IEnumerable<IKnowledgeTextExtractor> textExtractors)
+    IEnumerable<IKnowledgeTextExtractor> textExtractors,
+    IWikiRepository wikiRepository,
+    ILogger<IngestKnowledgeDocumentHandler>? logger = null)
 {
+    private readonly ILogger<IngestKnowledgeDocumentHandler> _logger =
+        logger ?? NullLogger<IngestKnowledgeDocumentHandler>.Instance;
+
     public async Task<IngestKnowledgeDocumentResult> HandleAsync(
         IngestKnowledgeDocument command,
         CancellationToken cancellationToken)
@@ -51,7 +60,21 @@ public sealed class IngestKnowledgeDocumentHandler(
             await vectorStore.StoreAsync(chunk, embedding, cancellationToken);
         }
 
-        return new IngestKnowledgeDocumentResult(document.Id, chunks.Count);
+        WikiProcessingStatus wikiStatus;
+        try
+        {
+            wikiStatus = await wikiRepository.EnqueueAsync(document.Id, cancellationToken);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(
+                exception,
+                "RAG ingestion completed but the Wiki job could not be enqueued for document {DocumentId}",
+                document.Id);
+            wikiStatus = WikiProcessingStatus.Failed;
+        }
+
+        return new IngestKnowledgeDocumentResult(document.Id, chunks.Count, wikiStatus);
     }
 
     public async Task<IngestKnowledgeDocumentResult> HandleAsync(

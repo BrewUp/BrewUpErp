@@ -1,5 +1,6 @@
 using BrewUp.Knowledge.Core.Chunking;
 using BrewUp.Knowledge.Infrastructure.Ingestion;
+using BrewUp.Knowledge.Infrastructure.Wiki;
 using BrewUp.Knowledge.SharedKernel.Embeddings;
 
 namespace BrewUp.Knowledge.Facade.Governance;
@@ -10,7 +11,8 @@ public sealed class ReindexKnowledgeDocumentHandler(
     IKnowledgeDocumentRepository documentRepository,
     IKnowledgeChunkRepository chunkRepository,
     IKnowledgeChunkWriter chunkWriter,
-    IKnowledgeVectorStore vectorStore)
+    IKnowledgeVectorStore vectorStore,
+    IWikiRepository wikiRepository)
 {
     public async Task<ReindexKnowledgeDocumentResult?> HandleAsync(
         Guid documentId,
@@ -23,6 +25,7 @@ public sealed class ReindexKnowledgeDocumentHandler(
         if (document is null)
             return null;
 
+        await wikiRepository.MarkEvidenceUnavailableAsync(documentId, cancellationToken);
         await vectorStore.DeleteByDocumentIdAsync(documentId, cancellationToken);
         await chunkRepository.DeleteByDocumentIdAsync(documentId, cancellationToken);
 
@@ -37,6 +40,7 @@ public sealed class ReindexKnowledgeDocumentHandler(
             await vectorStore.StoreAsync(chunk, embedding, cancellationToken);
         }
 
-        return new ReindexKnowledgeDocumentResult(documentId, chunks.Count);
+        var wikiStatus = await wikiRepository.EnqueueAsync(documentId, cancellationToken);
+        return new ReindexKnowledgeDocumentResult(documentId, chunks.Count, wikiStatus);
     }
 }

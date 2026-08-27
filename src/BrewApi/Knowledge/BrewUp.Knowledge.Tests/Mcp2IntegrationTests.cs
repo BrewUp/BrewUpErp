@@ -4,6 +4,7 @@ using BrewUp.Knowledge.Agent.Tools;
 using BrewUp.Knowledge.McpServer;
 using BrewUp.Knowledge.McpServer.Tools;
 using BrewUp.Knowledge.SharedKernel.Documents;
+using BrewUp.Knowledge.SharedKernel.Wiki;
 using BrewUp.Shared;
 using BrewUp.Shared.Agents;
 using Microsoft.AspNetCore.Builder;
@@ -43,8 +44,12 @@ public sealed class Mcp2IntegrationTests
             NullLoggerFactory.Instance);
 
         var tools = await client.ListToolsAsync();
-        var tool = Assert.Single(tools);
-        Assert.Equal("search_knowledge_base", tool.Name);
+        Assert.Equal(4, tools.Count);
+        Assert.Contains(tools, tool => tool.Name == "search_knowledge_base");
+        Assert.Contains(tools, tool => tool.Name == "query_wiki");
+        Assert.Contains(tools, tool => tool.Name == "get_wiki_page");
+        Assert.Contains(tools, tool => tool.Name == "get_wiki_page_evidence");
+        var tool = Assert.Single(tools, candidate => candidate.Name == "search_knowledge_base");
 
         var result = await client.CallToolAsync(
             tool.Name,
@@ -57,6 +62,28 @@ public sealed class Mcp2IntegrationTests
 
         Assert.NotEqual(true, result.IsError);
         Assert.NotEmpty(result.Content);
+
+        var wikiQuery = await client.CallToolAsync(
+            "query_wiki",
+            new Dictionary<string, object?>
+            {
+                ["query"] = "refund policy",
+                ["scope"] = "Sales",
+                ["topK"] = 3
+            });
+        var wikiPage = await client.CallToolAsync(
+            "get_wiki_page",
+            new Dictionary<string, object?> { ["key"] = "refund-policy" });
+        var wikiEvidence = await client.CallToolAsync(
+            "get_wiki_page_evidence",
+            new Dictionary<string, object?>
+            {
+                ["pageId"] = Guid.Parse("01991e7d-9ab4-7b88-a3cd-52df26d3cd2c")
+            });
+
+        Assert.NotEqual(true, wikiQuery.IsError);
+        Assert.NotEqual(true, wikiPage.IsError);
+        Assert.NotEqual(true, wikiEvidence.IsError);
         Assert.False(recordingHandler.SawSessionHeader);
         Assert.Contains("server/discover", recordingHandler.Methods);
         Assert.Contains("tools/list", recordingHandler.Methods);
@@ -196,6 +223,21 @@ public sealed class Mcp2IntegrationTests
 
             return Task.FromResult(result);
         }
+
+        public Task<object> QueryWikiAsync(
+            QueryWikiRequest request,
+            CancellationToken cancellationToken)
+            => Task.FromResult<object>(new WikiSearchResult([]));
+
+        public Task<object?> GetWikiPageAsync(
+            string key,
+            CancellationToken cancellationToken)
+            => Task.FromResult<object?>(null);
+
+        public Task<object?> GetWikiPageEvidenceAsync(
+            Guid pageId,
+            CancellationToken cancellationToken)
+            => Task.FromResult<object?>(null);
     }
 
     private sealed class RecordingHandler(HttpMessageHandler innerHandler) : DelegatingHandler(innerHandler)

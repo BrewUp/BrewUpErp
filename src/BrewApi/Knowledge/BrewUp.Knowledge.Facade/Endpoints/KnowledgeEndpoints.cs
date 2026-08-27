@@ -6,6 +6,7 @@ using BrewUp.Knowledge.ReadModel.QueryHandlers;
 using BrewUp.Knowledge.SharedKernel.Documents;
 using BrewUp.Knowledge.SharedKernel.Enums;
 using BrewUp.Knowledge.SharedKernel.Messages.Commands;
+using BrewUp.Knowledge.SharedKernel.Wiki;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -86,6 +87,31 @@ public static class KnowledgeEndpoints
             .WithDescription(
                 "Regenerates chunks and embeddings from the persisted document content.")
             .WithName("ReindexKnowledgeDocument");
+
+        group.MapPost("/wiki/query", HandleQueryWiki)
+            .Produces<WikiSearchResult>()
+            .ProducesValidationProblem()
+            .WithSummary("Search synthesized Wiki knowledge")
+            .WithDescription("Searches derived Wiki pages, not raw document chunks or operational ERP state.")
+            .WithName("QueryKnowledgeWiki");
+
+        group.MapGet("/wiki/pages/{key}", HandleGetWikiPage)
+            .Produces<WikiPageResult>()
+            .Produces(StatusCodes.Status404NotFound)
+            .WithSummary("Get a Wiki page")
+            .WithName("GetKnowledgeWikiPage");
+
+        group.MapGet("/wiki/pages/{pageId:guid}/evidence", HandleGetWikiPageEvidence)
+            .Produces<WikiPageEvidenceResult>()
+            .Produces(StatusCodes.Status404NotFound)
+            .WithSummary("Get the evidence supporting a Wiki page")
+            .WithName("GetKnowledgeWikiPageEvidence");
+
+        group.MapGet("/documents/{documentId:guid}/wiki-job", HandleGetWikiProcessingJob)
+            .Produces<WikiProcessingJobResult>()
+            .Produces(StatusCodes.Status404NotFound)
+            .WithSummary("Get Wiki synthesis status for a document")
+            .WithName("GetKnowledgeWikiProcessingJob");
 
         return app;
     }
@@ -194,6 +220,51 @@ public static class KnowledgeEndpoints
     private static async Task<IResult> HandleReindexKnowledgeDocument(
         Guid documentId,
         ReindexKnowledgeDocumentHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(documentId, cancellationToken);
+        return result is null ? Results.NotFound() : Results.Ok(result);
+    }
+
+    private static async Task<IResult> HandleQueryWiki(
+        QueryWiki query,
+        QueryWikiHandler handler,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            return Results.Ok(await handler.HandleAsync(query, cancellationToken));
+        }
+        catch (ArgumentException exception)
+        {
+            return Results.ValidationProblem(new Dictionary<string, string[]>
+            {
+                [exception.ParamName ?? "request"] = [exception.Message]
+            });
+        }
+    }
+
+    private static async Task<IResult> HandleGetWikiPage(
+        string key,
+        GetWikiPageHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(key, cancellationToken);
+        return result is null ? Results.NotFound() : Results.Ok(result);
+    }
+
+    private static async Task<IResult> HandleGetWikiPageEvidence(
+        Guid pageId,
+        GetWikiPageEvidenceHandler handler,
+        CancellationToken cancellationToken)
+    {
+        var result = await handler.HandleAsync(pageId, cancellationToken);
+        return result is null ? Results.NotFound() : Results.Ok(result);
+    }
+
+    private static async Task<IResult> HandleGetWikiProcessingJob(
+        Guid documentId,
+        GetWikiProcessingJobHandler handler,
         CancellationToken cancellationToken)
     {
         var result = await handler.HandleAsync(documentId, cancellationToken);

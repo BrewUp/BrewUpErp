@@ -5,6 +5,7 @@ using BrewUp.Knowledge.Core.CommandHandlers;
 using BrewUp.Knowledge.Facade.Agents;
 using BrewUp.Knowledge.Facade.Evaluation;
 using BrewUp.Knowledge.Facade.Governance;
+using BrewUp.Knowledge.Facade.Wiki;
 using BrewUp.Knowledge.Infrastructure;
 using BrewUp.Knowledge.ReadModel;
 using BrewUp.Knowledge.ReadModel.QueryHandlers;
@@ -48,6 +49,7 @@ public static class KnowledgeFacadeHelper
         services.AddScoped<DeleteKnowledgeDocumentHandler>();
         services.AddScoped<ReindexKnowledgeDocumentHandler>();
         services.AddScoped<KnowledgeRetrievalEvaluator>();
+        services.AddHostedService<WikiSynthesisWorker>();
 
         services.AddCore();
         services.AddInfrastructure(configuration);
