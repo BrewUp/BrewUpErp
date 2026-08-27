@@ -76,7 +76,7 @@ dotnet run --project src/BrewApi/BrewOrchestrator.Host/BrewOrchestrator.Host.csp
 
 - `.github/AGENTS.md` — brief architecture principles (modular monolith, bounded context rules)
 - `.github/bounded-contexts/` — detailed definitions per context (language, ownership, events, invariants)
-- `.github/skills/` — reusable skill files for arch-tests, C#, .NET, modular architecture, RabbitMQ
+- `.github/skills/` — **single source of truth** for skill files (arch-tests, C#, .NET, modular architecture, RabbitMQ, journal). Consumed natively by GitHub Copilot; opencode loads them via symlinks in `.opencode/skills/*` → `../../.github/skills/*` (no copies, same files).
 
 Load a skill with `skill` tool when a task matches its description.
 
