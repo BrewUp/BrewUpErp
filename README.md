@@ -245,6 +245,9 @@ reindexing queues a fresh synthesis.
 | Wiki synthesis (`Knowledge:Wiki`) | Disabled by default. Configure `Enabled`, `PollIntervalSeconds`, `LeaseDurationSeconds`, `CandidateLimit`, `MaximumAttempts`, `MaximumPagesPerAnalysis`, `MaximumClaimsPerPage`, and `MaximumContentLength` |
 | Wiki model | Uses `BrewUp:AzureOpenAI` (or the existing top-level `AzureOpenAI` fallback): `Endpoint`, `DeploymentName`, and either `ApiKey` or managed identity settings |
 
+For manual SQL Server provisioning, run [`infra/SqlServer/CreateKnowledgeWikiSchema.sql`](infra/SqlServer/CreateKnowledgeWikiSchema.sql)
+against the Knowledge database after matching `@WikiEmbeddingDimensions` to the configured embedding dimensions.
+
 ### Knowledge Agent — A2A
 
 ![A knowledge question end to end](docs/images/brewup-knowledge-agent-a2a.svg)
