@@ -384,3 +384,5 @@ SetBrewUpEnvironment.ps1
 TODO.md
 # Playwright CLI cache
 .playwright-cli/
+# Local scratch folder
+tmp/
