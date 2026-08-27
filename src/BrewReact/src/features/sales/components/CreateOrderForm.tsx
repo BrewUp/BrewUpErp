@@ -73,7 +73,7 @@ export function CreateOrderForm({ onSuccess, onCancel }: CreateOrderFormProps) {
             beerId: value,
             beerName: beer?.beerName ?? '',
             priceValue: beer ? String(beer.price.value) : '',
-            currency: beer?.price.currency ?? '',
+            currency: beer?.price.currency || 'EUR',
           }
         }
         return { ...r, [field]: value }

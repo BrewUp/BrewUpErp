@@ -12,12 +12,12 @@ internal static class BeerHelper
         internal BeerCreated ToBeerCreated() => 
             new (new BeerId(beer.Id), new BeerName(beer.BeerName),
                 new BeerStyle(beer.BeerStyle), new AlcoholByVolume(beer.AlcoholByVolume),
-                new Packaging(beer.Packaging), new Price(beer.Price, "EUR"), beer.IsActive);
+                new Packaging(beer.Packaging), new Price(beer.Price, beer.PriceCurrency), beer.IsActive);
 
         internal BeerUpdated ToBeerUpdated() => 
             new (new BeerId(beer.Id), new BeerName(beer.BeerName),
                 new BeerStyle(beer.BeerStyle), new AlcoholByVolume(beer.AlcoholByVolume),
-                new Packaging(beer.Packaging), new Price(beer.Price, "EUR"), beer.IsActive);
+                new Packaging(beer.Packaging), new Price(beer.Price, beer.PriceCurrency), beer.IsActive);
 
         internal BeerDeleted ToBeerDeleted() => 
             new (new BeerId(beer.Id));

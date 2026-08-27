@@ -12,6 +12,7 @@ public class Beer : DtoBase
     public decimal AlcoholByVolume { get; set; }
     public string Packaging { get; set; } = string.Empty;
     public decimal Price { get; set; }
+    public string PriceCurrency { get; set; } = "EUR";
     public bool IsActive { get; set; }
     
     protected  Beer()
@@ -19,9 +20,9 @@ public class Beer : DtoBase
 
     public static Beer Create(BeerId beerId, BeerName beerName, BeerStyle beerStyle, AlcoholByVolume alcoholByVolume,
         Packaging packaging, Price price, bool isActive) => new(beerId.Value, beerName.Value, beerStyle.Value,
-        alcoholByVolume.Value, packaging.Value, price.Value, isActive);
+        alcoholByVolume.Value, packaging.Value, price.Value, price.Currency, isActive);
     
-    private Beer(string beerId, string beerName, string beerStyle, decimal alcoholByVolume, string packaging, decimal price, bool isActive)
+    private Beer(string beerId, string beerName, string beerStyle, decimal alcoholByVolume, string packaging, decimal price, string priceCurrency, bool isActive)
     {
         Id = beerId;
         BeerName = beerName;
@@ -29,6 +30,7 @@ public class Beer : DtoBase
         AlcoholByVolume = alcoholByVolume;
         Packaging = packaging;
         Price = price;
+        PriceCurrency = priceCurrency;
         IsActive = isActive;
     }
 
@@ -36,7 +38,11 @@ public class Beer : DtoBase
     public void UpdateBeerStyle(BeerStyle beerStyle) => BeerStyle = beerStyle.Value;
     public void UpdateAlcoholByVolume(AlcoholByVolume alcoholByVolume) => AlcoholByVolume = alcoholByVolume.Value;
     public void UpdatePackaging(Packaging packaging) => Packaging = packaging.Value;
-    public void UpdatePrice(Price price) => Price = price.Value;
+    public void UpdatePrice(Price price)
+    {
+        Price = price.Value;
+        PriceCurrency = price.Currency;
+    }
     public void UpdateIsActive(bool isActive) => IsActive = isActive;
     
     public BeerJson ToJson() => new()
@@ -46,7 +52,7 @@ public class Beer : DtoBase
         BeerStyle = BeerStyle,
         AlcoholByVolume = AlcoholByVolume,
         Packaging = Packaging,
-        Price = new Price(Price, string.Empty),
+        Price = new Price(Price, PriceCurrency),
         IsActive = IsActive
     };
 }
