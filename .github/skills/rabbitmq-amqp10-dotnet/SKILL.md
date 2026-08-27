@@ -1,5 +1,5 @@
 ---
-name: rabbitmq-amqp10-rabbitmq-dotnet
+name: rabbitmq-amqp10-dotnet
 description: Use when building or reviewing .NET code that talks to RabbitMQ over AMQP 1.0 with the RabbitMQ.AMQP.Client library. Applies to connection setup, topology management, publishing, consuming, settlement, recovery, RPC, streams, and RabbitMQ-specific AMQP 1.0 address patterns.
 ---
 

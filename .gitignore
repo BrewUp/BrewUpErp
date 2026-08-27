@@ -380,3 +380,9 @@ mobile/**/appsettings.json
 .env
 SetBrewUpEnvironment.ps1
 .tokensave
+# Personal scratch notes
+TODO.md
+# Playwright CLI cache
+.playwright-cli/
+# Local scratch folder
+tmp/
