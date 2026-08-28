@@ -58,15 +58,15 @@ public sealed class SqlServerKnowledgeChunkRepository(
             SELECT
                 Id,
                 DocumentId,
-                Sequence,
+                CONVERT(INT, Sequence) AS Sequence,
                 KnowledgeContent,
-                TokenCount,
+                CONVERT(INT, TokenCount) AS TokenCount,
                 Scope,
                 Title,
                 Tags
             FROM [dbo].[KnowledgeChunks]
             WHERE DocumentId = @documentId
-            ORDER BY Sequence, Id;
+            ORDER BY CONVERT(INT, Sequence), Id;
             """;
 
         await using var command = new SqlCommand(commandText, connection);

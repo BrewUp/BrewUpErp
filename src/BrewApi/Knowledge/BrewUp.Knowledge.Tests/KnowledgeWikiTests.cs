@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using BrewUp.Knowledge.Core;
 using BrewUp.Knowledge.Core.CommandHandlers;
 using BrewUp.Knowledge.Core.Documents;
@@ -24,6 +25,70 @@ namespace BrewUp.Knowledge.Tests;
 
 public sealed class KnowledgeWikiTests
 {
+    [Fact]
+    public void Wiki_analysis_parser_treats_an_empty_existing_page_id_as_a_new_page()
+    {
+        var chunkId = Guid.NewGuid();
+        using var document = JsonDocument.Parse(
+            $$"""
+              {
+                "pages": [
+                  {
+                    "existingPageId": "",
+                    "key": "ipa",
+                    "title": "IPA",
+                    "pageType": "DomainConcept",
+                    "content": "IPA is a hop-forward beer style.",
+                    "scope": "Production",
+                    "claims": [
+                      {
+                        "key": "hop-forward",
+                        "content": "IPA is hop-forward.",
+                        "evidenceChunkIds": ["{{chunkId}}"]
+                      }
+                    ]
+                  }
+                ],
+                "links": [],
+                "issues": []
+              }
+              """);
+
+        var result = AzureOpenAiWikiAnalyzer.ParseResult(document.RootElement);
+
+        Assert.Null(Assert.Single(result.Pages).ExistingPageId);
+        Assert.Equal(chunkId, Assert.Single(Assert.Single(result.Pages).Claims).EvidenceChunkIds.Single());
+    }
+
+    [Fact]
+    public void Wiki_analysis_parser_reports_a_non_guid_existing_page_id()
+    {
+        using var document = JsonDocument.Parse(
+            """
+            {
+              "pages": [
+                {
+                  "existingPageId": "ipa",
+                  "key": "ipa",
+                  "title": "IPA",
+                  "pageType": "DomainConcept",
+                  "content": "IPA is a hop-forward beer style.",
+                  "scope": "Production",
+                  "claims": []
+                }
+              ],
+              "links": [],
+              "issues": []
+            }
+            """);
+
+        var exception = Assert.Throws<JsonException>(
+            () => AzureOpenAiWikiAnalyzer.ParseResult(document.RootElement));
+
+        Assert.Contains("existingPageId", exception.Message);
+        Assert.Contains("ipa", exception.Message);
+    }
+
     [Fact]
     public async Task Ingested_documents_incrementally_create_and_enrich_traceable_pages()
     {
@@ -269,6 +334,70 @@ public sealed class KnowledgeWikiTests
 
         Assert.Throws<InvalidOperationException>(() => validator.Validate(unknownEvidence, context));
         Assert.Throws<InvalidOperationException>(() => validator.Validate(brokenLink, context));
+    }
+
+    [Fact]
+    public void Validator_allows_stable_inventory_reorder_policy()
+    {
+        var context = CreateAnalysisContext();
+        var validator = new WikiAnalysisValidator(new WikiOptions { Enabled = true });
+        var analysis = SinglePageAnalysis(context, "Inventory reorder policy");
+        var page = analysis.Pages.Single() with
+        {
+            Content =
+                "The inventory reorder policy starts replenishment when current stock falls below the reorder threshold.",
+            Claims =
+            [
+                analysis.Pages.Single().Claims.Single() with
+                {
+                    Content = "Replenishment starts when stock on hand reaches the reorder threshold."
+                }
+            ]
+        };
+
+        var result = validator.Validate(
+            analysis with { Pages = [page] },
+            context);
+
+        Assert.Single(result.Pages);
+    }
+
+    [Theory]
+    [InlineData("Current stock is 42 units.")]
+    [InlineData("There are 5 open sales orders.")]
+    [InlineData("Currently available: 18 units.")]
+    [InlineData("Live inventory = 27.")]
+    public void Validator_rejects_concrete_operational_state(string content)
+    {
+        var context = CreateAnalysisContext();
+        var validator = new WikiAnalysisValidator(new WikiOptions { Enabled = true });
+        var analysis = SinglePageAnalysis(context, "Inventory status");
+        var page = analysis.Pages.Single() with { Content = content };
+
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => validator.Validate(analysis with { Pages = [page] }, context));
+
+        Assert.Contains("operational ERP state", exception.Message);
+    }
+
+    [Fact]
+    public void Validator_rejects_concrete_operational_state_in_claims()
+    {
+        var context = CreateAnalysisContext();
+        var validator = new WikiAnalysisValidator(new WikiOptions { Enabled = true });
+        var analysis = SinglePageAnalysis(context, "Inventory status");
+        var page = analysis.Pages.Single();
+        var claim = page.Claims.Single() with { Content = "Stock on hand equals 12 units." };
+
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => validator.Validate(
+                analysis with
+                {
+                    Pages = [page with { Claims = [claim] }]
+                },
+                context));
+
+        Assert.Contains("operational ERP state", exception.Message);
     }
 
     private static async Task ProcessNextAsync(ServiceProvider provider)

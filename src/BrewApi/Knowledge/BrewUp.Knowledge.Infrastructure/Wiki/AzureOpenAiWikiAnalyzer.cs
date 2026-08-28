@@ -22,7 +22,10 @@ internal sealed class AzureOpenAiWikiAnalyzer
               "items": {
                 "type": "object",
                 "properties": {
-                  "existingPageId": { "type": ["string", "null"] },
+                  "existingPageId": {
+                    "type": ["string", "null"],
+                    "description": "The exact ID of a supplied existing page, or null for a new page. Never use an empty string, page key, or title."
+                  },
                   "key": { "type": "string" },
                   "title": { "type": "string" },
                   "pageType": { "type": "string" },
@@ -40,7 +43,10 @@ internal sealed class AzureOpenAiWikiAnalyzer
                         "content": { "type": "string" },
                         "evidenceChunkIds": {
                           "type": "array",
-                          "items": { "type": "string" }
+                          "items": {
+                            "type": "string",
+                            "description": "The exact GUID ID of a chunk supplied in this request."
+                          }
                         }
                       },
                       "required": ["key", "content", "evidenceChunkIds"],
@@ -150,9 +156,11 @@ internal sealed class AzureOpenAiWikiAnalyzer
                 You maintain BrewUp's derived LLM Wiki. Extract comparatively stable domain concepts,
                 procedures, policies, terminology, relationships, and constraints. Never persist current
                 operational ERP state such as stock quantities or open-order counts. Reuse an existing page
-                by returning its existingPageId and key when it represents the same concept. Every claim must
-                cite one or more chunk IDs supplied in this request. Record contradictions as issues instead
-                of silently replacing previous knowledge. Return only the requested structured result.
+                by returning its exact existingPageId and key when it represents the same concept. Set
+                existingPageId to null for every new page; never return an empty string, page key, or title
+                in that field. Every claim must cite one or more exact chunk IDs supplied in this request.
+                Record contradictions as issues instead of silently replacing previous knowledge. Return
+                only the requested structured result.
                 """),
             new UserChatMessage(JsonSerializer.Serialize(source))
         ];
@@ -177,13 +185,11 @@ internal sealed class AzureOpenAiWikiAnalyzer
         return ParseResult(document.RootElement);
     }
 
-    private static WikiAnalysisResult ParseResult(JsonElement root)
+    internal static WikiAnalysisResult ParseResult(JsonElement root)
     {
         var pages = root.GetProperty("pages").EnumerateArray().Select(page =>
             new WikiPageProposal(
-                page.GetProperty("existingPageId").ValueKind == JsonValueKind.String
-                    ? page.GetProperty("existingPageId").GetGuid()
-                    : null,
+                ParseOptionalGuid(page.GetProperty("existingPageId"), "existingPageId"),
                 page.GetProperty("key").GetString() ?? string.Empty,
                 page.GetProperty("title").GetString() ?? string.Empty,
                 page.GetProperty("pageType").GetString() ?? string.Empty,
@@ -194,7 +200,7 @@ internal sealed class AzureOpenAiWikiAnalyzer
                         claim.GetProperty("key").GetString() ?? string.Empty,
                         claim.GetProperty("content").GetString() ?? string.Empty,
                         claim.GetProperty("evidenceChunkIds").EnumerateArray()
-                            .Select(item => item.GetGuid())
+                            .Select(item => ParseRequiredGuid(item, "evidenceChunkIds"))
                             .ToArray()))
                     .ToArray()))
             .ToArray();
@@ -216,6 +222,33 @@ internal sealed class AzureOpenAiWikiAnalyzer
             .ToArray();
         return new WikiAnalysisResult(pages, links, issues);
     }
+
+    private static Guid? ParseOptionalGuid(JsonElement element, string propertyName)
+    {
+        if (element.ValueKind == JsonValueKind.Null)
+            return null;
+
+        var value = element.GetString();
+        if (string.IsNullOrWhiteSpace(value))
+            return null;
+
+        return Guid.TryParse(value, out var id)
+            ? id
+            : throw new JsonException(
+                $"Wiki analysis property '{propertyName}' must be a GUID or null, but was '{value}'.");
+    }
+
+    private static Guid ParseRequiredGuid(JsonElement element, string propertyName)
+    {
+        var value = element.ValueKind == JsonValueKind.String
+            ? element.GetString()
+            : null;
+
+        return Guid.TryParse(value, out var id)
+            ? id
+            : throw new JsonException(
+                $"Wiki analysis property '{propertyName}' must contain GUID values, but found '{element}'.");
+    }
 }
 
 internal sealed class AzureOpenAiWikiAnalyzerAdapter(
@@ -226,4 +259,3 @@ internal sealed class AzureOpenAiWikiAnalyzerAdapter(
         CancellationToken cancellationToken)
         => analyzer.AnalyzeAsync(context, cancellationToken);
 }
-

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using BrewUp.Knowledge.SharedKernel.Configuration;
 using BrewUp.Knowledge.SharedKernel.Wiki;
 
@@ -5,13 +6,18 @@ namespace BrewUp.Knowledge.Core.Wiki;
 
 public sealed class WikiAnalysisValidator(WikiOptions options)
 {
-    private static readonly string[] OperationalStatePhrases =
+    private static readonly Regex[] OperationalStatePatterns =
     [
-        "current stock",
-        "stock on hand",
-        "open sales orders",
-        "currently available",
-        "live inventory"
+        CreateOperationalStatePattern(
+            @"\b(?:current stock|stock on hand)\s+(?:is|equals|stands at|totals?)\s+\d+(?:[.,]\d+)?\b"),
+        CreateOperationalStatePattern(
+            @"\b(?:there (?:is|are)\s+)?\d+\s+open sales orders\b"),
+        CreateOperationalStatePattern(
+            @"\bopen sales orders\s+(?:is|are|equal|total)\s+\d+\b"),
+        CreateOperationalStatePattern(
+            @"\bcurrently available\s*[:=]\s*\d+(?:[.,]\d+)?\b"),
+        CreateOperationalStatePattern(
+            @"\blive inventory\s*[:=]\s*\d+(?:[.,]\d+)?\b")
     ];
 
     public WikiAnalysisResult Validate(
@@ -78,6 +84,10 @@ public sealed class WikiAnalysisValidator(WikiOptions options)
                 if (string.IsNullOrWhiteSpace(claim.Content))
                     throw new InvalidOperationException(
                         $"Wiki claim '{claimKey}' requires content.");
+
+                if (ContainsOperationalState(claim.Content))
+                    throw new InvalidOperationException(
+                        $"Wiki claim '{claimKey}' contains operational ERP state.");
 
                 if (claim.EvidenceChunkIds.Count == 0 ||
                     claim.EvidenceChunkIds.Any(chunkId => !validChunkIds.Contains(chunkId)))
@@ -148,7 +158,8 @@ public sealed class WikiAnalysisValidator(WikiOptions options)
     }
 
     private static bool ContainsOperationalState(string content)
-        => OperationalStatePhrases.Any(
-            phrase => content.Contains(phrase, StringComparison.OrdinalIgnoreCase));
-}
+        => OperationalStatePatterns.Any(pattern => pattern.IsMatch(content));
 
+    private static Regex CreateOperationalStatePattern(string pattern)
+        => new(pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+}

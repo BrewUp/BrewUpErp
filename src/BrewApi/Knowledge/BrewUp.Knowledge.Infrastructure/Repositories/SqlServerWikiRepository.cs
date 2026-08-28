@@ -481,7 +481,7 @@ public sealed class SqlServerWikiRepository(
                 evidence.AttachedAt,
                 claim.ClaimContent,
                 document.Title,
-                chunk.Sequence,
+                CONVERT(INT, chunk.Sequence) AS ChunkSequence,
                 chunk.KnowledgeContent
             FROM [dbo].[KnowledgeWikiEvidence] evidence
             INNER JOIN [dbo].[KnowledgeWikiClaims] claim ON claim.Id = evidence.ClaimId
@@ -493,7 +493,7 @@ public sealed class SqlServerWikiRepository(
             LEFT JOIN [dbo].[KnowledgeDocuments] document ON document.Id = evidence.DocumentId
             LEFT JOIN [dbo].[KnowledgeChunks] chunk ON chunk.Id = evidence.ChunkId
             WHERE evidence.PageId = @pageId
-            ORDER BY claim.Sequence, chunk.Sequence, evidence.Id;
+            ORDER BY claim.Sequence, CONVERT(INT, chunk.Sequence), evidence.Id;
             """;
         await using var command = new SqlCommand(commandText, connection);
         command.Parameters.Add("@pageId", SqlDbType.UniqueIdentifier).Value = pageId;
