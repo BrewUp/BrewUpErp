@@ -91,6 +91,7 @@ public sealed class SqlServerWikiRepository(
             SELECT @inserted;
             """;
         await using var command = new SqlCommand(commandText, connection);
+        
         return (int)(await command.ExecuteScalarAsync(cancellationToken) ?? 0);
     }
 
@@ -144,6 +145,7 @@ public sealed class SqlServerWikiRepository(
         command.Parameters.Add("@leaseDurationSeconds", SqlDbType.Int).Value =
             Math.Max(1, wikiOptions.LeaseDurationSeconds);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        
         return await reader.ReadAsync(cancellationToken) ? ReadJob(reader) : null;
     }
 
@@ -300,16 +302,16 @@ public sealed class SqlServerWikiRepository(
                     }
                 }
 
-                if (pageEmbeddings.TryGetValue(proposal.Key, out var embedding))
-                {
-                    ValidateDimensions(embedding);
-                    await UpsertEmbeddingAsync(
-                        connection,
-                        transaction,
-                        page,
-                        embedding,
-                        cancellationToken);
-                }
+                if (!pageEmbeddings.TryGetValue(proposal.Key, out var embedding)) 
+                    continue;
+                
+                ValidateDimensions(embedding);
+                await UpsertEmbeddingAsync(
+                    connection,
+                    transaction,
+                    page,
+                    embedding,
+                    cancellationToken);
             }
 
             foreach (var proposal in analysis.Links)
@@ -444,6 +446,7 @@ public sealed class SqlServerWikiRepository(
         await using var command = new SqlCommand(commandText, connection);
         command.Parameters.Add("@documentId", SqlDbType.UniqueIdentifier).Value = documentId;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        
         return await reader.ReadAsync(cancellationToken) ? ReadJob(reader) : null;
     }
 
@@ -460,6 +463,7 @@ public sealed class SqlServerWikiRepository(
         var claims = await ReadClaimsAsync(connection, page.Id, page.CurrentRevision, cancellationToken);
         var links = await ReadLinksAsync(connection, page.Id, cancellationToken);
         var issues = await ReadIssuesAsync(connection, page.Id, cancellationToken);
+        
         return new WikiPageResult(page, claims, links, issues);
     }
 
@@ -571,6 +575,7 @@ public sealed class SqlServerWikiRepository(
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add((ReadPage(reader), reader.GetDouble(9)));
+        
         return result;
     }
 
@@ -590,6 +595,7 @@ public sealed class SqlServerWikiRepository(
 
         var connection = new SqlConnection(options.ConnectionString);
         await connection.OpenAsync(cancellationToken);
+        
         return connection;
     }
 
@@ -619,6 +625,7 @@ public sealed class SqlServerWikiRepository(
             transaction);
         command.Parameters.Add("@id", SqlDbType.UniqueIdentifier).Value = job.Id;
         command.Parameters.Add("@leasedAt", SqlDbType.DateTime2).Value = job.UpdatedAt;
+        
         return (int)(await command.ExecuteScalarAsync(cancellationToken) ?? 0) == 1;
     }
 
@@ -644,6 +651,7 @@ public sealed class SqlServerWikiRepository(
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             claims.Add(reader.GetString(0));
+        
         return claims;
     }
 
@@ -1059,6 +1067,7 @@ public sealed class SqlServerWikiRepository(
             transaction);
         command.Parameters.Add("@revisionId", SqlDbType.UniqueIdentifier).Value = revisionId;
         command.Parameters.Add("@claimKey", SqlDbType.NVarChar, 300).Value = claimKey;
+        
         return await command.ExecuteScalarAsync(cancellationToken) as Guid?;
     }
 
@@ -1077,6 +1086,7 @@ public sealed class SqlServerWikiRepository(
             connection);
         command.Parameters.Add("@key", SqlDbType.NVarChar, 300).Value = key;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        
         return await reader.ReadAsync(cancellationToken) ? ReadPage(reader) : null;
     }
 
@@ -1119,6 +1129,7 @@ public sealed class SqlServerWikiRepository(
                 reader.GetString(2),
                 reader.GetString(3),
                 reader.GetInt32(4)));
+        
         return result;
     }
 
@@ -1146,6 +1157,7 @@ public sealed class SqlServerWikiRepository(
                 reader.GetString(3),
                 reader.GetGuid(4),
                 reader.GetDateTime(5)));
+        
         return result;
     }
 
@@ -1177,6 +1189,7 @@ public sealed class SqlServerWikiRepository(
                 reader.GetGuid(6),
                 reader.GetDateTime(7),
                 reader.IsDBNull(8) ? null : reader.GetDateTime(8)));
+        
         return result;
     }
 
