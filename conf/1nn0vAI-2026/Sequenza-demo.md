@@ -1,9 +1,9 @@
-# BrewUpErp - Analisi branch e sequenza demo
+# BrewUpErp: sequenza demo
 
-Documento di lavoro per il talk (InnovAI). Descrive cosa contengono davvero i branch,
+Documento di lavoro per il talk (1nn0vAI). Descrive cosa contengono davvero i branch,
 la sequenza reale dei commit e i tag proposti per la demo. Generato il 2026-09-24.
 
-Riferimenti: slide `tmp/1nn0vAI_MCP-A2A.pdf` (convertite con docling).
+Riferimenti: slide `1nn0vAI_MCP-A2A.pdf` in questa cartella.
 
 ---
 
@@ -139,12 +139,17 @@ git tag -a demo/08-final origin/feature/mcp-2 -m "Demo 08: LLM Wiki con provenan
 
 ---
 
-## 7. Punti da decidere insieme
+## 7. Stato delle decisioni
 
-1. Ordine: la timeline dei commit dice `MCP -> orchestratore -> RAG` (con A2A dopo il RAG).
-   Le slide invece mettono RAG e Wiki prima di A2A e coordinazione Mother. Scegliere quale
-   delle due vince, o adeguare le slide.
-2. Intro: `bcfc74c` (DDD puro, ideale) oppure `DDD` (snapshot pulito ma con MCP gia' presenti).
-3. Granularita': tenere separati `demo/02-mcp-per-bc` e `demo/03-orchestrator` (a poche ore
-   di distanza) oppure unirli.
-4. Eventuale tag intermedio per Aspire (`feature/a2a`) o saltarlo.
+- **Ordine del racconto: deciso.** Il deck segue la timeline dei commit:
+  `MCP -> per-BC -> Mother -> RAG -> A2A -> Aspire -> observability -> Wiki`. La scaletta
+  (`Scaletta-InnovAI.md`) è rimasta sull'ordine precedente (Knowledge prima, Mother in fondo):
+  va riallineata a questo.
+- **Intro: da chiudere.** Il deck non ha un checkout per l'intro, quindi non la vincola.
+  Restano le due opzioni: `bcfc74c` (DDD puro, ideale) oppure il branch `DDD` (snapshot con
+  gli MCP già presenti).
+- **Granularità dei tag: decisa.** Il deck tratta per-BC e Mother come slide separate, quindi
+  `demo/02-mcp-per-bc` e `demo/03-orchestrator` restano separati.
+- **Aspire: incluso come opzionale.** Il deck ha la slide breve "Il sistema cresce", quindi il
+  tag `demo/06-aspire` resta.
+- **Tag: da creare.** I comandi della sezione 6 non sono ancora stati eseguiti.

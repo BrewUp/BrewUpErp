@@ -44,9 +44,9 @@ http://localhost:8799/?print-pdf
 ## Export verso altri formati
 
 Il sorgente `slides.md` è Markdown quasi-standard (CommonMark + separatori `---`), quindi si può
-riusare con **Marp** o **Slidev** cambiando solo il renderer. Vedi `../Analisi branch e sequenza demo.md`.
+riusare con **Marp** o **Slidev** cambiando solo il renderer. Vedi `../Sequenza-demo.md`.
 
 ## Riferimenti demo
 
 Ogni slide operativa ha una nota con il commit/branch da fare checkout durante il talk.
-Sequenza completa dei tag in `../Analisi branch e sequenza demo.md`.
+Sequenza completa dei tag in `../Sequenza-demo.md`.

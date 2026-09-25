@@ -53,7 +53,7 @@ Il talk dura 50 minuti. La scaletta blocca i tempi e i contenuti per ogni blocco
 
 La scaletta completa, con i contenuti estesi di ogni blocco, sta in `Scaletta-InnovAI.md`.
 
-Il talk alterna racconto e demo. La demo non è una sola: ogni problema ha il suo checkout. La sequenza di checkout e i tag da creare sono in `Analisi branch e sequenza demo.md`.
+Il talk alterna racconto e demo. La demo non è una sola: ogni problema ha il suo checkout. La sequenza di checkout e i tag da creare sono in `Sequenza-demo.md`.
 
 ## I ruoli
 
@@ -115,16 +115,15 @@ Il file `1nn0vAI_MCP-A2A.pdf` in questa cartella è l'export del deck. Il sorgen
 ## Materiale correlato
 
 - `Scaletta-InnovAI.md`: la scaletta completa dei 50 minuti, blocco per blocco.
-- `Analisi branch e sequenza demo.md`: cosa contengono davvero i branch, la cronologia dei commit e i tag della demo.
+- `Sequenza-demo.md`: cosa contengono davvero i branch, la cronologia dei commit e i tag della demo.
 - `1nn0vAI_MCP-A2A.pdf`: l'export PDF delle slide.
 
-## Punti aperti
+## Stato delle decisioni
 
-Prima del talk dobbiamo chiudere qualche decisione, elencata in fondo a `Analisi branch e sequenza demo.md`:
+Quasi tutto è deciso; il dettaglio sta in `Sequenza-demo.md`.
 
-- quale ordine vince tra la timeline dei commit e l'ordine delle slide;
-- se fare l'intro su `bcfc74c` (DDD puro) o sul branch `DDD`;
-- se tenere separati i tag `demo/02-mcp-per-bc` e `demo/03-orchestrator`;
-- se usare il tag Aspire (`feature/a2a`) o saltarlo.
+- L'ordine del racconto segue la timeline dei commit (il deck è già allineato); la scaletta va riallineata allo stesso ordine.
+- `demo/02-mcp-per-bc` e `demo/03-orchestrator` restano separati.
+- Aspire resta come slide breve opzionale, con il tag `demo/06-aspire`.
 
-I tag della demo sono proposti ma non ancora creati.
+Resta da chiudere solo l'intro: `bcfc74c` (DDD puro) oppure il branch `DDD` (snapshot con gli MCP già presenti). I tag della demo sono proposti ma non ancora creati.
