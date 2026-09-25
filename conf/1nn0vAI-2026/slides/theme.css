@@ -28,7 +28,8 @@
 /* Section slides: the title background must cover the 16:9 slide box.
    Reveal never builds its .slide-background layer for sections injected
    asynchronously by the markdown plugin, so index.html toggles .is-lead. */
-.reveal .slides.is-lead { background-image: url('assets/bg-title.png'); }
+.reveal .slides.is-lead,
+.reveal .slides:has(> section.present.lead) { background-image: url('assets/bg-title.png'); }
 
 .reveal {
   font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
