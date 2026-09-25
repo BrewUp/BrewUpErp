@@ -1,6 +1,6 @@
 # 1nn0vAI 2026 · Da MCP tools a Distributed Intelligence
 
-Questa cartella raccoglie il materiale del talk che portiamo a **1nn0vAI 2026** (Pordenone, Aula S3). Lo teniamo io, Ferdinando Santacroce, con Alberto Acerbis. Il repository di riferimento è `github.com/BrewUp/BrewUpErp`.
+Questa cartella raccoglie il materiale del talk che presentiamo a **1nn0vAI 2026** (Pordenone, Aula S3). Il talk è di **Alberto Acerbis**, ideatore e autore della soluzione BrewUp; con lui sale sul palco Ferdinando Santacroce, che lo affianca nella conduzione. Il repository di riferimento è `github.com/BrewUp/BrewUpErp`.
 
 Sito della conferenza: https://www.1nn0vai.it/
 
@@ -8,7 +8,7 @@ In programma il titolo è "Dall'MCP ai Sistemi Multi-Agente: progettare organizz
 
 ## Obiettivo
 
-Il talk non spiega come si usa MCP o A2A. Racconta sei problemi che abbiamo incontrato davvero mentre costruivamo il layer AI dell'ERP BrewUp, e la decisione che abbiamo preso per ognuno.
+Il talk non spiega come si usa MCP o A2A. Racconta sei problemi che Alberto ha incontrato davvero costruendo il layer AI dell'ERP BrewUp, e la decisione presa per ognuno.
 
 La tesi è una sola:
 
@@ -57,9 +57,9 @@ Il talk alterna racconto e demo. La demo non è una sola: ogni problema ha il su
 
 ## I ruoli
 
-**Ferdinando (Nando) Santacroce** apre il talk e ne tiene il filo. Introduce il laboratorio e la promessa, lancia la domanda che apre tutto, e cura il rapporto col pubblico. Interviene nei momenti segnati nella scaletta con le domande scomode: è il contraltare di Alberto. Nella demo finale legge la domanda del what-if e commenta mentre gira, senza toccare il mouse. Chiude il talk tornando all'immagine iniziale e alla tesi.
+**Alberto Acerbis** è l'ideatore e l'autore della soluzione. La conosce fin nei dettagli ed è il protagonista del talk: tiene la slide della tesi, spiega l'architettura, guida ed esegue la demo, risponde alle domande tecniche e chiude ogni risposta riagganciando la scaletta. A lui vanno i meriti della soluzione e della presentazione.
 
-**Alberto Acerbis** è la voce tecnica. Tiene la slide della tesi, spiega l'architettura, guida ed esegue la demo. Risponde alle domande tecniche e chiude ogni risposta riagganciando la scaletta.
+**Ferdinando (Nando) Santacroce** lo affianca nella conduzione. È una spalla: conosce la soluzione e i contenuti, ma non è il protagonista. Apre il talk e cura il rapporto col pubblico, interviene nei momenti segnati nella scaletta con qualche domanda, legge la domanda del what-if durante la demo finale e aiuta a chiudere. Il merito resta di Alberto.
 
 Da concordare prima di salire: chi tiene il mouse e chi parla durante la demo, e il segnale per passarsi la parola. Il segnale è guardarsi, non toccare il microfono.
 
