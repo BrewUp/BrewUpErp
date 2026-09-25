@@ -51,9 +51,9 @@ Il talk dura 50 minuti. La scaletta blocca i tempi e i contenuti per ogni blocco
 | 39–49 | Show me the system | Codice finale, demo end-to-end e trace |
 | 49–50 | Conclusione | Progettare il flusso dell'intelligenza |
 
-La scaletta completa, con i contenuti estesi di ogni blocco, sta in `Scaletta-InnovAI.md`.
+Il copione completo, con i contenuti estesi di ogni blocco, sta in `Copione.md`.
 
-Il talk alterna racconto e demo. La demo non è una sola: ogni problema ha il suo checkout. La sequenza di checkout e i tag da creare sono in `Sequenza-demo.md`.
+Il talk alterna racconto e demo. La demo non è una sola: ogni problema ha il suo checkout. La sequenza di checkout e i tag da creare sono in `Copione.md`.
 
 ## I ruoli
 
@@ -114,13 +114,12 @@ Il file `1nn0vAI_MCP-A2A.pdf` in questa cartella è l'export del deck. Il sorgen
 
 ## Materiale correlato
 
-- `Scaletta-InnovAI.md`: la scaletta completa dei 50 minuti, blocco per blocco.
-- `Sequenza-demo.md`: cosa contengono davvero i branch, la cronologia dei commit e i tag della demo.
+- `Copione.md`: il copione del talk, blocco per blocco, con demo, branch, commit e tag.
 - `1nn0vAI_MCP-A2A.pdf`: l'export PDF delle slide.
 
 ## Stato delle decisioni
 
-Quasi tutto è deciso; il dettaglio sta in `Sequenza-demo.md`.
+Quasi tutto è deciso; il dettaglio sta in `Copione.md`.
 
 - L'ordine del racconto segue la timeline dei commit (il deck è già allineato); la scaletta va riallineata allo stesso ordine.
 - `demo/02-mcp-per-bc` e `demo/03-orchestrator` restano separati.
