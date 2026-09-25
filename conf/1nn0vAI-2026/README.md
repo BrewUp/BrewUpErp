@@ -2,6 +2,8 @@
 
 Questa cartella raccoglie il materiale del talk che portiamo a **1nn0vAI 2026** (Pordenone, Aula S3). Lo teniamo io, Ferdinando Santacroce, con Alberto Acerbis. Il repository di riferimento è `github.com/BrewUp/BrewUpErp`.
 
+Sito della conferenza: https://www.1nn0vai.it/
+
 In programma il titolo è "Dall'MCP ai Sistemi Multi-Agente: progettare organizzazioni digitali con l'AI". Il deck che proiettiamo si intitola invece "Da MCP tools a Distributed Intelligence": è lo stesso talk, con un taglio più da sala.
 
 ## Obiettivo
