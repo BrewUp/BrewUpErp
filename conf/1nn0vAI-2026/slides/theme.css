@@ -1,0 +1,239 @@
+:root {
+  --bg: #ffffff;
+  --bg-soft: #eef4fa;
+  --panel: #f4f8fc;
+  --fg: #1b2a3a;
+  --muted: #5a6b7d;
+  --accent: #2980b9;
+  --accent-dark: #1f5f8b;
+  --accent-soft: #e6f0f8;
+  --yellow: #f4d21f;
+  --line: #d5e1ec;
+  --radius: 12px;
+}
+
+/* Sponsor background (white with blue sponsor bar at the bottom).
+   Anchored to the 16:9 slide box, not to the browser window: the window can
+   have any aspect ratio and `cover` would crop the logos at the edges. */
+.reveal-viewport { background-color: var(--bg); }
+.reveal .slides {
+  background-color: var(--bg);
+  background-image: url('assets/bg-content.png');
+  background-size: 100% 100%;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+}
+.reveal .slide-background { background-color: transparent; }
+
+/* Section slides: the title background must cover the 16:9 slide box.
+   Reveal never builds its .slide-background layer for sections injected
+   asynchronously by the markdown plugin, so index.html toggles .is-lead. */
+.reveal .slides.is-lead { background-image: url('assets/bg-title.png'); }
+
+.reveal {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-weight: 400;
+  color: var(--fg);
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--fg);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  text-transform: none;
+  margin: 0 0 0.55em 0;
+}
+
+.reveal h1 { font-size: 3.6em; }
+.reveal h2 { font-size: 2.75em; }
+.reveal h3 { font-size: 1.6em; color: var(--accent-dark); font-weight: 700; }
+
+.reveal p,
+.reveal li {
+  font-size: 1.38em;
+  line-height: 1.45;
+  color: var(--fg);
+}
+
+.reveal strong { color: var(--accent-dark); font-weight: 800; }
+.reveal em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+.reveal a { color: var(--accent-dark); text-decoration: none; border-bottom: 2px solid var(--accent); }
+
+.reveal ul,
+.reveal ol { display: inline-block; text-align: left; margin-left: 0; }
+.reveal ul li::marker { color: var(--accent); }
+.reveal ol li::marker { color: var(--accent); font-weight: 800; }
+.reveal li + li { margin-top: 0.3em; }
+
+/* Subtitle under titles */
+.reveal .subtitle {
+  font-size: 1.45em;
+  color: var(--muted);
+  font-weight: 400;
+  margin-top: -0.2em;
+}
+
+/* Small caption / commit reference */
+.reveal .ref {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82em;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+  margin-top: 0.8em;
+}
+.reveal .ref code { background: var(--accent-soft); color: var(--accent-dark); padding: 2px 7px; border-radius: 6px; }
+
+/* Vertical rhythm: side margins so nothing touches the edge,
+   bottom padding to stay clear of the sponsor bar (bar is ~8.5% of 720).
+   border-box is required: Reveal sizes sections with width:100%, so without it
+   the horizontal padding would add to the slide width and push content out. */
+.reveal .slides > section {
+  box-sizing: border-box;
+  padding: 24px 46px 72px;
+}
+
+/* Section divider slides (blue background image).
+   The top padding reserves the area occupied by the Inn0vAI logo baked into
+   the background, so the title never lands on top of it. */
+.reveal section.lead { color: #fff; padding-top: 190px; }
+/* Keep lead paragraphs on two balanced lines instead of one edge-to-edge line */
+.reveal section.lead p { max-width: 1040px; margin-left: auto; margin-right: auto; }
+.reveal section.lead h1,
+.reveal section.lead h2 { color: #fff; font-size: 3.4em; }
+.reveal section.lead h3 { color: #eaf3fa; }
+.reveal section.lead p,
+.reveal section.lead li { color: #eaf3fa; font-size: 1.35em; }
+.reveal section.lead strong { color: var(--yellow); }
+.reveal section.lead .subtitle { color: #cfe2f2; }
+.reveal section.lead .ref { color: #bcd6ea; }
+.reveal section.lead .ref code { background: rgba(255,255,255,0.16); color: #fff; }
+.reveal section.lead .flow .arrow { color: #fff; }
+.reveal section.lead .flow .node { background: rgba(255,255,255,0.95); border-color: rgba(255,255,255,0.6); color: var(--fg); }
+.reveal section.lead .flow .node.accent { background: var(--yellow); border-color: var(--yellow); color: #1b2a3a; }
+.reveal section.lead .flow .node.know { background: #e6f5f2; border-color: #2a9d8f; color: #1f7a6f; }
+.reveal section.lead .callout { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.4); color: #fff; }
+
+/* Cards / panels */
+.reveal .cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 22px;
+  margin-top: 0.9em;
+}
+.reveal .card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 6px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 24px 26px;
+  text-align: left;
+}
+.reveal .card h4 { margin: 0 0 10px 0; font-size: 1.3em; color: var(--accent-dark); }
+.reveal .card p { margin: 0; font-size: 1.05em; color: var(--muted); line-height: 1.45; }
+
+/* Roadmap line on the "mappa del talk" slide */
+.reveal .map {
+  font-size: 1.5em;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin-top: 0.4em;
+}
+.reveal section.lead .map { color: #fff; font-size: 1.6em; }
+
+/* Architecture flow: boxes and arrows — read from the back of the room */
+.reveal .flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0.9em 0;
+}
+.reveal .flow .node {
+  background: var(--panel);
+  border: 3px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 26px;
+  font-size: 1.05em;
+  font-weight: 700;
+  color: var(--fg);
+  white-space: nowrap;
+}
+.reveal .flow .arrow { color: var(--accent); font-size: 1.6em; font-weight: 700; }
+.reveal .flow .node.accent { border-color: var(--accent); color: var(--accent-dark); background: var(--accent-soft); }
+.reveal .flow .node.know { border-color: #2a9d8f; color: #1f7a6f; background: #e6f5f2; }
+
+/* Callout */
+.reveal .callout {
+  background: var(--accent-soft);
+  border: 1px solid #c3dcef;
+  border-left: 6px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 22px 28px;
+  margin-top: 0.9em;
+  font-size: 1.12em;
+}
+
+/* Big statement / question.
+   These are the engagement triggers: they must dominate the slide and read
+   from the back of the room. They are also Nando's cue to step in. */
+.reveal .big-statement { font-size: 1.85em; font-weight: 700; }
+.reveal .q {
+  font-size: 2.35em;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--accent-dark);
+  text-align: center;
+  background: var(--accent-soft);
+  border-left: 8px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  padding: 20px 30px;
+  margin: 1em auto 0;
+  max-width: 21em;
+}
+.reveal section.lead .q {
+  color: #fff;
+  background: rgba(255,255,255,0.14);
+  border-left-color: #fff;
+}
+
+/* Code */
+.reveal pre {
+  width: 100%;
+  font-size: 0.82em;
+  box-shadow: none;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.reveal pre code {
+  font-family: 'JetBrains Mono', monospace;
+  padding: 20px;
+  background: #f7fafc;
+  color: #14303f;
+  max-height: 480px;
+}
+
+/* Table */
+.reveal table { font-size: 0.95em; border-collapse: collapse; }
+.reveal table th { color: var(--accent-dark); border-bottom: 2px solid var(--line); }
+.reveal table td { border-bottom: 1px solid var(--line); }
+
+/* Slide number + progress: keep the counter above the sponsor bar */
+.reveal .slide-number {
+  background: transparent;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  bottom: 74px;
+}
+.reveal .progress span { background: var(--accent); }
+
+/* Fragments */
+.reveal .fragment { transition: all .25s ease; }
+.reveal .fragment.highlight-blue.visible { color: var(--accent-dark); }
