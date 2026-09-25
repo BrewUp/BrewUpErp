@@ -1,4 +1,4 @@
-<!-- .slide: class="lead" data-background-image="assets/bg-title.png" data-background-size="cover" data-background-color="#2980b9" -->
+<!-- .slide: class="lead" -->
 
 # Da MCP tools a **Distributed Intelligence**
 
@@ -114,7 +114,7 @@ Note: Questo è l'assunto chiave del talk. La distribuzione dell'intelligenza no
 
 ---
 
-<!-- .slide: class="lead" data-background-image="assets/bg-title.png" data-background-size="cover" data-background-color="#2980b9" -->
+<!-- .slide: class="lead" -->
 
 ## Creare un agente **è facile**.
 
@@ -127,7 +127,7 @@ Note: Slide di rottura. Serve a spostare l'attenzione dalla spettacolarità dell
 
 ---
 
-<!-- .slide: class="lead" data-background-image="assets/bg-title.png" data-background-size="cover" data-background-color="#2980b9" -->
+<!-- .slide: class="lead" -->
 
 ## La mappa del talk
 
@@ -392,7 +392,7 @@ Note: Chiarire i due protocolli complementari: MCP è verticale (agente→capaci
 
 ---
 
-<!-- .slide: class="lead" data-background-image="assets/bg-title.png" data-background-size="cover" data-background-color="#2980b9" -->
+<!-- .slide: class="lead" -->
 
 ## Il sistema cresce
 
@@ -534,7 +534,7 @@ Note: Slide di sintesi dell'architettura. Qui si vede la tesi realizzata: l'inte
 
 ---
 
-<!-- .slide: class="lead" data-background-image="assets/bg-title.png" data-background-size="cover" data-background-color="#2980b9" -->
+<!-- .slide: class="lead" -->
 
 ## Show me the system
 
@@ -562,7 +562,7 @@ Alla fine apri tu il trace: «Quale delle quattro risposte vi ha sorpreso?».
 
 ---
 
-<!-- .slide: class="lead" data-background-image="assets/bg-title.png" data-background-size="cover" data-background-color="#2980b9" -->
+<!-- .slide: class="lead" -->
 
 # Grazie
 
