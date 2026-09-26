@@ -13,18 +13,18 @@ Le slide stanno in `slides/` e si avviano come spiegato in `slides/README.md`.
 
 | Tempo | Blocco | Idea centrale | Demo |
 | ---: | --- | --- | --- |
-| 0–4 | Apertura: tesi, laboratorio, quattro contesti | Progettare come fluisce l'intelligenza | branch `DDD` |
-| 4–9 | Esperimento 1: diamo all'AI accesso all'ERP | MCP come superficie delle capability | `2877dfa` |
-| 9–14 | Il Tool Catalog diventa un monolite | Un MCP Server per Bounded Context | `39ada0d` |
-| 14–19 | Esperimento 2: chi coordina i contesti | Mother delega, non sa tutto | `a889eb6` |
-| 19–24 | Il dominio non vive tutto nel database | Knowledge Context + RAG | `mother-with-mcp-and-rag` |
+| 0–4 | Apertura: tesi, laboratorio, quattro contesti | Progettare come fluisce l'intelligenza | `demo/00-ddd-base` |
+| 4–9 | Esperimento 1: diamo all'AI accesso all'ERP | MCP come superficie delle capability | `demo/01-mcp-monolith` |
+| 9–14 | Il Tool Catalog diventa un monolite | Un MCP Server per Bounded Context | `demo/02-mcp-per-bc` |
+| 14–19 | Esperimento 2: chi coordina i contesti | Mother delega, non sa tutto | `demo/03-orchestrator` |
+| 19–24 | Il dominio non vive tutto nel database | Knowledge Context + RAG | `demo/04-rag` |
 | 24–29 | Retrieval non significa conoscenza | Dal RAG alla LLM Wiki | — |
-| 29–34 | Un tool non è un agente | Knowledge Agent, MCP vs A2A | `a2a-no-framework` |
-| 34–36 | Il sistema cresce | Aspire + A2A su HTTP | `feature/a2a` (opzionale) |
-| 36–39 | "Ha funzionato" non è abbastanza | Observability tecnica e semantica | `main` |
-| 39–43 | LLM Wiki con provenance | Conoscenza derivata con le fonti | `feature/mcp-2` |
-| 43–44 | Evaluation | Misurare la qualità, non solo l'esito | `feature/mcp-2` |
-| 44–49 | Show me the system | Demo end-to-end e trace | sistema finale |
+| 29–34 | Un tool non è un agente | Knowledge Agent, MCP vs A2A | `demo/05-a2a` |
+| 34–36 | Il sistema cresce | Aspire + A2A su HTTP | `demo/06-aspire` (opzionale) |
+| 36–39 | "Ha funzionato" non è abbastanza | Observability tecnica e semantica | `demo/07-observability` |
+| 39–43 | LLM Wiki con provenance | Conoscenza derivata con le fonti | `demo/08-llm-wiki` |
+| 43–44 | Evaluation | Misurare la qualità, non solo l'esito | `demo/09-evaluation` |
+| 44–49 | Show me the system | Demo end-to-end e trace | `demo/09-evaluation` |
 | 49–50 | Conclusione | Progettare il flusso dell'intelligenza | — |
 
 I dettagli dei branch, dei commit e dei tag stanno nelle appendici.
@@ -58,7 +58,7 @@ E la domanda che apre la sessione:
 
 > **Quando un agente smette di essere un agente e diventa un monolite con un LLM davanti?**
 
-**Demo (branch `DDD`)**: introduzione concettuale al DDD e alla struttura dell'ERP. Mostrare modular monolith, bounded context, CQRS ed eventi, e i quattro contesti ancora senza AI. Serve a fissare che i confini esistono prima dell'intelligenza.
+**Demo (checkout `demo/00-ddd-base`)**: introduzione concettuale al DDD e alla struttura dell'ERP. Mostrare modular monolith, bounded context, CQRS ed eventi, e i quattro contesti ancora senza AI. Serve a fissare che i confini esistono prima dell'intelligenza.
 
 ### Testo integrale apertura (Nando, da dire a memoria)
 
@@ -94,7 +94,7 @@ Il punto è:
 
 E per qualche minuto sembra davvero che il problema sia risolto.
 
-**Demo (checkout `2877dfa`)**: mostrare il McpServer unico e il Tool Catalog. È il punto di partenza: semplice e funzionante.
+**Demo (checkout `demo/01-mcp-monolith`)**: mostrare il McpServer unico e il Tool Catalog. È il punto di partenza: semplice e funzionante.
 
 ---
 
@@ -125,7 +125,7 @@ La frase centrale:
 
 È probabilmente uno dei messaggi principali dell'intero talk.
 
-**Demo (checkout `39ada0d`)**: mostrare i tre McpServer separati. L'AI eredita gli stessi confini del dominio: nessuna condivisione di DB o servizi, solo messaggi espliciti.
+**Demo (checkout `demo/02-mcp-per-bc`)**: mostrare i tre McpServer separati. L'AI eredita gli stessi confini del dominio: nessuna condivisione di DB o servizi, solo messaggi espliciti.
 
 ---
 
@@ -170,7 +170,7 @@ non stiamo più distribuendo soltanto software.
 
 Stiamo distribuendo **conoscenza e reasoning**.
 
-**Demo (checkout `a889eb6`)**: presentare il what-if come collaborazione tra contesti. La coordinazione è esplicita e tracciabile, non emergente.
+**Demo (checkout `demo/03-orchestrator`)**: presentare il what-if come collaborazione tra contesti. La coordinazione è esplicita e tracciabile, non emergente.
 
 ---
 
@@ -206,7 +206,7 @@ Il punto architetturale importante è che anche questa conoscenza viene classifi
 
 Quindi persino la documentazione continua a rispettare i confini del dominio.
 
-**Demo (checkout `mother-with-mcp-and-rag`)**: qui nasce il Knowledge Context. Mostrare RAG con confini di dominio, non un indice unico su tutto.
+**Demo (checkout `demo/04-rag`)**: qui nasce il Knowledge Context. Mostrare RAG con confini di dominio, non un indice unico su tutto.
 
 ---
 
@@ -263,7 +263,7 @@ La distinzione concettuale che userei è:
 
 Non come definizione normativa, ma come modello mentale per l'architettura.
 
-**Demo (checkout `a2a-no-framework`)**: qui A2A è implementato a mano per capire il protocollo. Il framework arriva dopo, quando il concetto è chiaro.
+**Demo (checkout `demo/05-a2a`)**: qui A2A è implementato a mano per capire il protocollo. Il framework arriva dopo, quando il concetto è chiaro.
 
 ---
 
@@ -275,7 +275,7 @@ Il sistema diventa distribuito davvero: processi separati, comunicazione esplici
 
 Il protocollo stesso si evolve: l'aggiornamento a **MCP 2.0** arriva dopo, insieme alla parte finale del sistema. Nell'ordine narrativo resta un aggiornamento, non un nuovo passo.
 
-**Demo (checkout `feature/a2a`, opzionale)**: `HttpKnowledgeAgentA2aClient`, `BrewOrchestrator.Host`.
+**Demo (checkout `demo/06-aspire`, opzionale)**: `HttpKnowledgeAgentA2aClient`, `BrewOrchestrator.Host`.
 
 ---
 
@@ -315,7 +315,7 @@ Qui entrano:
 
 Non state più osservando solo servizi. State osservando **decisioni e collaborazione**.
 
-**Demo (checkout `main`)**: mostrare il trace. Non solo i tempi, ma chi ha parlato con chi, quale capability è stata usata, quale handoff è avvenuto, con quale esito.
+**Demo (checkout `demo/07-observability`)**: mostrare il trace. Non solo i tempi, ma chi ha parlato con chi, quale capability è stata usata, quale handoff è avvenuto, con quale esito.
 
 ---
 
@@ -347,7 +347,7 @@ Perché una Wiki e non solo RAG:
 
 > Una risposta senza fonte è un'opinione.
 
-**Demo (checkout `feature/mcp-2`)**: mostrare i quattro tool. Differenza chiave: ogni pagina wiki porta con sé l'evidenza delle fonti da cui è derivata.
+**Demo (checkout `demo/08-llm-wiki`)**: mostrare i quattro tool. Differenza chiave: ogni pagina wiki porta con sé l'evidenza delle fonti da cui è derivata.
 
 ---
 
@@ -516,32 +516,35 @@ E chiuderei con la tesi dell'abstract:
 
 ## Appendice B — Cronologia reale dei commit
 
-| # | Commit | Data | Stato |
-|---|---|---|---|
-| 0 | `bcfc74c` | 14/05 | DDD puro, nessun MCP ne' Chat |
-| 1 | `2877dfa` | 15/05 | un solo MCP server (`AI/BrewUp.AI.McpServer`) + Chat = Esperimento 1, Tool Catalog monolite |
-| - | `597054f`..`0962ada` | 15-17/05 | MCP server per BC (Sales, Warehouse, MasterData) |
-| - | `cc321d8` / `41e6886` | 17/05 | Mother come coordinatore agenti |
-| - | `e218ece`..`6fc0f10` | 27/05-01/06 | Chat con autodiscover dei tool MCP multi-server |
-| 2 | `39ada0d` | 03/06 | monolite rimosso, MCP per BC, Chat -> Mother con `McpToolsProvider` |
-| 3 | `a889eb6` | 03/06 | agent-based coordination: `MotherCoordinator` + agenti per BC |
-| 4 | `1cb2f33` | 04/06 | orchestratore stabile, senza Knowledge |
-| 5 | `44bb9f4` | 16/06 | RAG / Knowledge Context (= `mother-with-mcp-and-rag`) |
-| 6 | `4e7520d` | 17/06 | agenti/AgentCard nei moduli, A2A senza framework (= `a2a-no-framework`, tip `194fad6`) |
-| 7 | `a6abcb9` | 23/07 | Aspire + A2A HTTP + Azure ServiceBus (= `feature/a2a`) |
-| 8 | `e0312d1` | 25/08 | Microsoft.Agents.AI + React + observability (= `main`) |
-| 9 | `a72e012` | 28/08 | LLM Wiki con provenance (= `feature/mcp-2`) = finale |
+| # | Commit | Data | Tag | Stato |
+|---|---|---|---|---|
+| 0 | `bcfc74c` | 14/05 | `demo/00-ddd-base` | DDD puro, nessun MCP ne' Chat |
+| 1 | `2877dfa` | 15/05 | `demo/01-mcp-monolith` | un solo MCP server (`AI/BrewUp.AI.McpServer`) + Chat = Esperimento 1, Tool Catalog monolite |
+| - | `597054f`..`0962ada` | 15-17/05 | — | MCP server per BC (Sales, Warehouse, MasterData) |
+| - | `cc321d8` / `41e6886` | 17/05 | — | Mother come coordinatore agenti |
+| - | `e218ece`..`6fc0f10` | 27/05-01/06 | — | Chat con autodiscover dei tool MCP multi-server |
+| 2 | `39ada0d` | 03/06 | `demo/02-mcp-per-bc` | monolite rimosso, MCP per BC, Chat -> Mother con `McpToolsProvider` |
+| 3 | `a889eb6` | 03/06 | `demo/03-orchestrator` | agent-based coordination: `MotherCoordinator` + agenti per BC |
+| 4 | `1cb2f33` | 04/06 | — | orchestratore stabile, senza Knowledge |
+| 5 | `324be2f` | 12/06 | `demo/04-rag` | RAG / Knowledge Context ("RAG completed"; branch `mother-with-mcp-and-rag`, tip `44bb9f4`) |
+| 6 | `4e7520d` | 17/06 | `demo/05-a2a` (tip `194fad6`) | agenti/AgentCard nei moduli, A2A senza framework (= branch `a2a-no-framework`) |
+| 7 | `a6abcb9` | 23/07 | `demo/06-aspire` | Aspire + A2A HTTP + Azure ServiceBus (= `feature/a2a`) |
+| 8 | `88ba7ae` | 25/08 | `demo/07-observability` | telemetria semantica (= `main`, tip `e0312d1`: Microsoft.Agents.AI + React) |
+| 9 | `3e3e2f9` | 27/08 | `demo/08-llm-wiki` | LLM Wiki con provenance (= `feature/mcp-2`, tip `a72e012`) |
+| 10 | `a72e012` | 28/08 | `demo/09-evaluation` | evaluation + finale (= `feature/mcp-2`, ultimo commit) |
+
+I tag puntano al commit specifico che introduce la feature, non al tip del branch. Fanno eccezione `demo/05-a2a` (tip `194fad6`) e `demo/06-aspire` (tip `a6abcb9`).
 
 ---
 
 ## Appendice C — Ordine reale dei branch
 
 ```
-base ... 1cb2f33 ... mother-with-mcp-and-rag --+-- a2a-no-framework (ramo laterale)
-                                               |
-                                               +-- feature/a2a -- main -- feature/mcp-2
+base ... 1cb2f33 ... [demo/04-rag] --+-- [demo/05-a2a] (ramo laterale)
+                                     |
+                                     +-- [demo/06-aspire] -- [demo/07-observability] -- [demo/08-llm-wiki | demo/09-evaluation]
 
-DDD = ramo staccato da 1cb2f33 con l'AI layer rimosso
+demo/00-ddd-base = ramo DDD staccato da 1cb2f33 con l'AI layer rimosso
 ```
 
 Relazioni verificate con `git rev-list --left-only --count`:
@@ -558,18 +561,32 @@ Branch più vecchi, non in mainline: `feature/aspire` (15/05), `feature/chat-wit
 
 ## Appendice D — Tag della demo
 
-Non ancora creati.
+Tag annotati creati e pushati su `origin` (`git push origin 'refs/tags/demo/*'`). I tag puntano al commit specifico che introduce la feature, non al tip del branch (eccezioni: `demo/05-a2a` e `demo/06-aspire`).
+
+| Tag | Commit | Contenuto |
+|---|---|---|
+| `demo/00-ddd-base` | `bcfc74c` | base DDD, nessun MCP/AI |
+| `demo/01-mcp-monolith` | `2877dfa` | un solo MCP server + Chat (Esperimento 1) |
+| `demo/02-mcp-per-bc` | `39ada0d` | monolite rimosso, MCP per Bounded Context |
+| `demo/03-orchestrator` | `a889eb6` | Mother + agenti (agent-based coordination) |
+| `demo/04-rag` | `324be2f` | Knowledge Context / RAG ("RAG completed") |
+| `demo/05-a2a` | `194fad6` | A2A senza framework (tip `a2a-no-framework`) |
+| `demo/06-aspire` | `a6abcb9` | Aspire + A2A HTTP + ServiceBus (tip `feature/a2a`) |
+| `demo/07-observability` | `88ba7ae` | telemetria semantica (observability) |
+| `demo/08-llm-wiki` | `3e3e2f9` | LLM Wiki con provenance |
+| `demo/09-evaluation` | `a72e012` | evaluation + finale (ultimo commit di `feature/mcp-2`) |
 
 ```bash
-git tag -a demo/00-ddd-base   bcfc74c -m "Demo 00: base DDD, nessun MCP/AI"
-git tag -a demo/01-mcp-monolith 2877dfa -m "Demo 01: un solo MCP server + Chat (Esperimento 1)"
-git tag -a demo/02-mcp-per-bc 39ada0d -m "Demo 02: monolite rimosso, MCP per Bounded Context"
-git tag -a demo/03-orchestrator a889eb6 -m "Demo 03: Mother + agenti (agent-based coordination)"
-git tag -a demo/04-rag  origin/mother-with-mcp-and-rag -m "Demo 04: Knowledge Context / RAG"
-git tag -a demo/05-a2a  origin/a2a-no-framework -m "Demo 05: A2A senza framework"
-git tag -a demo/06-aspire origin/feature/a2a -m "Demo 06: Aspire + A2A HTTP + ServiceBus"
-git tag -a demo/07-observability origin/main -m "Demo 07: Microsoft Agents.AI + observability + React"
-git tag -a demo/08-final origin/feature/mcp-2 -m "Demo 08: LLM Wiki con provenance (finale)"
+git tag -a demo/00-ddd-base      bcfc74c -m "Demo 00: base DDD, nessun MCP/AI"
+git tag -a demo/01-mcp-monolith  2877dfa -m "Demo 01: un solo MCP server + Chat (Esperimento 1)"
+git tag -a demo/02-mcp-per-bc    39ada0d -m "Demo 02: monolite rimosso, MCP per Bounded Context"
+git tag -a demo/03-orchestrator  a889eb6 -m "Demo 03: Mother + agenti (agent-based coordination)"
+git tag -a demo/04-rag           324be2f -m "Demo 04: Knowledge Context / RAG"
+git tag -a demo/05-a2a           194fad6 -m "Demo 05: A2A senza framework"
+git tag -a demo/06-aspire        a6abcb9 -m "Demo 06: Aspire + A2A HTTP + ServiceBus"
+git tag -a demo/07-observability 88ba7ae -m "Demo 07: telemetria semantica (observability)"
+git tag -a demo/08-llm-wiki      3e3e2f9 -m "Demo 08: LLM Wiki con provenance"
+git tag -a demo/09-evaluation    a72e012 -m "Demo 09: evaluation + finale"
 ```
 
 ---
@@ -577,7 +594,7 @@ git tag -a demo/08-final origin/feature/mcp-2 -m "Demo 08: LLM Wiki con provenan
 ## Appendice E — Stato delle decisioni
 
 - **Ordine del racconto: deciso.** Segue la timeline dei commit e il deck.
-- **Intro: decisa.** Concetti generali del DDD, con checkout del branch `DDD`.
+- **Intro: decisa.** Concetti generali del DDD, con checkout di `demo/00-ddd-base`.
 - **Granularità dei tag: decisa.** `demo/02-mcp-per-bc` e `demo/03-orchestrator` restano separati.
 - **Aspire: incluso come opzionale.** Slide breve, tag `demo/06-aspire`.
-- **Tag: da creare.** Vedi Appendice D.
+- **Tag: creati e pushati.** Set `demo/00`..`demo/09`. Vedi Appendice D.

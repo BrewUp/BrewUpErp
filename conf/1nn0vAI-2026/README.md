@@ -53,7 +53,7 @@ Il talk dura 50 minuti. La scaletta blocca i tempi e i contenuti per ogni blocco
 
 Il copione completo, con i contenuti estesi di ogni blocco, sta in `Copione.md`.
 
-Il talk alterna racconto e demo. La demo non è una sola: ogni problema ha il suo checkout. La sequenza di checkout e i tag da creare sono in `Copione.md`.
+Il talk alterna racconto e demo. La demo non è una sola: ogni problema ha il suo checkout. La sequenza di checkout e i tag (`demo/00`..`demo/09`) sono in `Copione.md`.
 
 ## I ruoli
 
