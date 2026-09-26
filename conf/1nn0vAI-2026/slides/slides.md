@@ -152,7 +152,7 @@ Un solo **MCP Server** che espone un catalogo di tool: le capacità dell'ERP res
 <li class="fragment">Si parte dal caso più semplice: rispondere a domande sui dati</li>
 </ul>
 
-<p class="ref">commit <code>2877dfa</code> — "Add Chat and MCP"</p>
+<p class="ref">commit <code>2877dfa</code> — "Add Chat and MCP" · <code>.../AI/BrewUp.AI.McpServer/Tools/BrewUpMcpTools.cs:9</code></p>
 
 Note: DEMO checkout 2877dfa. Mostrare il McpServer unico e il tool catalog. È il punto di partenza: semplice e funzionante.
 
@@ -199,7 +199,7 @@ Due regole per non fallire: fai la domanda, aspetta tre secondi in silenzio, poi
 
 Il catalogo torna a coincidere con i confini del **dominio**.
 
-<p class="ref">commit <code>39ada0d</code> — monolite rimosso, un MCP per contesto</p>
+<p class="ref">commit <code>39ada0d</code> — monolite rimosso, un MCP per contesto · <code>.../MasterData/BrewUp.MasterData.McpServer/Tools/MasterDataTools.cs:7</code></p>
 
 Note: DEMO checkout 39ada0d. Mostrare i tre McpServer separati. Messaggio: l'AI eredita gli stessi confini del dominio. Nessuna condivisione di DB o servizi, solo messaggi espliciti.
 
@@ -252,7 +252,7 @@ Note: Sottolineare l'ownership: ogni tool ha un proprietario chiaro. Questo abil
 
 Un coordinatore che **delega**, non un super-agente che sa tutto.
 
-<p class="ref">commit <code>a889eb6</code> — "Introduce agent-based coordination for what-if analysis"</p>
+<p class="ref">commit <code>a889eb6</code> — "Introduce agent-based coordination for what-if analysis" · <code>.../Mother.Facade/Agents/MotherCoordinator.cs:63</code></p>
 
 Note: DEMO checkout a889eb6. Presentare il what-if come collaborazione tra contesti. La coordinazione è esplicita e tracciabile, non emergente.
 
@@ -305,7 +305,7 @@ Contratti, procedure, PDF, wiki operative: conoscenza che non sta in una tabella
 <div class="card"><h4>Retrieval</h4><p>Vector store: InMemory, SQL Server, Azure AI Search</p></div>
 </div>
 
-<p class="ref">commit <code>44bb9f4</code> — primo step RAG · tool <code>search_knowledge_base</code></p>
+<p class="ref">commit <code>324be2f</code> — "RAG completed" · tool <code>search_knowledge_base</code> · <code>.../Knowledge.McpServer/Tools/KnowledgeTools.cs:10</code></p>
 
 Note: DEMO checkout mother-with-mcp-and-rag. Qui nasce il Knowledge Context. RAG con confini di dominio, non un indice unico su tutto.
 
@@ -362,7 +362,7 @@ Note: Ponte concettuale verso l'LLM Wiki. Far atterrare il problema prima della 
 
 Il **Knowledge Agent**: dal tool al collaboratore.
 
-<p class="ref">commit <code>a2a-no-framework</code> — A2A senza framework</p>
+<p class="ref">commit <code>a2a-no-framework</code> — A2A senza framework · <code>.../BrewUp.Shared/Agents/AgentCard.cs:3</code> · <code>.../Knowledge.Facade/Agents/KnowledgeAgentCardProvider.cs:7</code></p>
 
 Note: DEMO checkout a2a-no-framework. Sottolineare: qui A2A è implementato a mano per capire il protocollo. Il framework arriverà dopo, quando il concetto è chiaro.
 
@@ -402,7 +402,7 @@ Orchestrazione e trasporto: **Aspire** + A2A su HTTP + Service Bus.
 Il protocollo stesso si evolve: l'aggiornamento a <b>MCP 2.0</b> arriva dopo, insieme alla parte finale del sistema. Nell'ordine narrativo resta un <b>aggiornamento</b>, non un nuovo passo.
 </div>
 
-<p class="ref"><code>a2a-no-framework</code> → <code>feature/a2a</code> → MCP 2.0 (<code>1694b58</code>, <code>feature/mcp-2</code>)</p>
+<p class="ref"><code>a2a-no-framework</code> → <code>feature/a2a</code> → MCP 2.0 (<code>1694b58</code>, <code>feature/mcp-2</code>) · <code>.../Mother.Facade/Mcp/McpToolsProvider.cs:52</code> · <code>.../BrewUp.Shared/Agents/McpToolClient.cs:25</code></p>
 
 Note: Slide breve e opzionale. Serve a mostrare che il sistema diventa distribuito davvero: processi separati, comunicazione esplicita, orchestrazione dei servizi. Se qualcuno chiede della versione di MCP: l'introduzione è di maggio (2877dfa), l'update a 2.0 è di agosto (1694b58), quasi alla fine.
 
@@ -423,7 +423,7 @@ Note: Slide breve e opzionale. Serve a mostrare che il sistema diventa distribui
 
 <p class="q">Apriamo il trace.</p>
 
-<p class="ref">commit <code>e0312d1</code> — telemetria semantica nel sistema finale</p>
+<p class="ref">commit <code>88ba7ae</code> — telemetria semantica nel sistema finale · <code>.../Mother.Facade/Telemetry/MotherTelemetry.cs:28</code></p>
 
 Note: DEMO checkout main. Mostrare il trace: non solo i tempi, ma chi ha parlato con chi, quale capability è stata usata, quale handoff è avvenuto, con quale esito.
 
@@ -460,7 +460,7 @@ Documenti → Wiki generata → risposta con **riferimenti alla fonte**.
 <span class="node know">get_wiki_page_evidence</span>
 </div>
 
-<p class="ref">commit <code>a72e012</code> — il finale · KnowledgeTools</p>
+<p class="ref">commit <code>3e3e2f9</code> — il finale · KnowledgeTools · <code>.../Knowledge.McpServer/Tools/KnowledgeTools.cs:35,36</code></p>
 
 Note: DEMO checkout feature/mcp-2. Mostrare i quattro tool del Knowledge. Differenza chiave: ogni pagina wiki porta con sé l'evidenza delle fonti da cui è derivata.
 
@@ -502,6 +502,8 @@ Non basta che il sistema risponda: deve rispondere **bene**.
 <div class="callout">
 L'osservabilità dice <b>cosa</b> ha fatto il sistema. L'evaluation dice se <b>era sufficiente</b>.
 </div>
+
+<p class="ref"><code>.../Knowledge.Facade/Evaluation/KnowledgeRetrievalEvaluator.cs:10</code> · <code>.../Mother.Facade/Agents/WhatIfWorkflowEvaluator.cs:45</code></p>
 
 Note: Portare il discorso su come sappiamo che il sistema è migliorato. L'evaluation chiude il ciclo con l'osservabilità.
 
