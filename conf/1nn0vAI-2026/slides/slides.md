@@ -43,9 +43,9 @@ Alberto, la tesi del talk in una frase."
 
 ## La **tesi**
 
-<p class="big-statement">Progettare un sistema AI-native non significa aggiungere agenti a un'applicazione.</p>
+<p class="big-statement">Progettare un sistema AI-native <br> non significa aggiungere agenti a un'applicazione.</p>
 
-<p class="q">Significa progettare come l'intelligenza fluisce nell'organizzazione.</p>
+<p class="q">Significa progettare <br> come l'intelligenza fluisce nell'organizzazione.</p>
 
 <ul>
 <li class="fragment">Dove vive la conoscenza?</li>
@@ -108,7 +108,7 @@ Note: Sottolineare: i confini esistono già prima dell'AI. Il sistema non è gre
 </div>
 </div>
 
-<p class="q">Nessun contesto "sa tutto". È il vincolo, non il problema.</p>
+<p class="q">Nessun contesto "sa tutto". <br> È il vincolo, non il problema.</p>
 
 Note: Questo è l'assunto chiave del talk. La distribuzione dell'intelligenza non è un ripiego: è la conseguenza naturale dei confini di dominio.
 
@@ -133,8 +133,6 @@ Note: Slide di rottura. Serve a spostare l'attenzione dalla spettacolarità dell
 
 <p class="map">MCP → confini → conoscenza → agenti → coordinazione → osservabilità</p>
 
-<p class="ref">Seguiremo l'ordine reale in cui le cose sono state costruite nel repository.</p>
-
 Note: Mostrare che la sequenza è quella della storia di sviluppo, non quella di una presentazione a posteriori. Rende onesto il racconto e utile il paragone con i commit.
 
 ---
@@ -149,7 +147,7 @@ Un solo **MCP Server** che espone un catalogo di tool: le capacità dell'ERP res
 
 <ul>
 <li class="fragment">Un server, tanti tool, tante responsabilità</li>
-<li class="fragment">Si parte dal caso più semplice: rispondere a domande sui dati</li>
+<li class="fragment">Si parte dal caso più semplice: <br> rispondere a domande sui dati</li>
 </ul>
 
 <p class="ref">commit <code>2877dfa</code> — "Add Chat and MCP" · <code>.../AI/BrewUp.AI.McpServer/Tools/BrewUpMcpTools.cs:9</code></p>
@@ -167,7 +165,7 @@ Note: DEMO checkout 2877dfa. Mostrare il McpServer unico e il tool catalog. È i
 <li class="fragment">Un cambiamento in Sales tocca il server che espone tutto</li>
 </ul>
 
-<p class="q">Abbiamo ricreato in AI il monolite che il DDD ci aveva fatto evitare.</p>
+<p class="q">Abbiamo ricreato in AI il monolite <br> che il DDD ci aveva fatto evitare.</p>
 
 Note: Il problema non è tecnico ma di confini. Far vedere il catalogo cresciuto: è la stessa lezione del monolite, applicata all'AI.
 
@@ -282,7 +280,7 @@ Se Alberto risponde bene, chiedi il seguito: «E quando quel prompt sbaglia, di 
 <span class="node">vincoli e procedure</span>
 </div>
 
-<p class="q">Nessun agente risponde da solo: il risultato è una composizione.</p>
+<p class="q">Nessun agente risponde da solo: <br> il risultato è una composizione.</p>
 
 Note: Questo è il cuore dimostrativo. Mostrare che ogni contesto contribuisce con la propria autorità e che la risposta finale nasce dalla somma dei contributi, non da un unico modello onnisciente.
 
