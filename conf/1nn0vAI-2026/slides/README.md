@@ -48,5 +48,5 @@ riusare con **Marp** o **Slidev** cambiando solo il renderer. Vedi `../Copione.m
 
 ## Riferimenti demo
 
-Ogni slide operativa ha una nota con il commit/branch da fare checkout durante il talk.
+Ogni slide operativa ha una nota con il tag `demo/NN-*` da fare checkout durante il talk.
 Sequenza completa dei tag in `../Copione.md`.
