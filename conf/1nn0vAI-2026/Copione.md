@@ -60,6 +60,20 @@ E la domanda che apre la sessione:
 
 **Demo (branch `DDD`)**: introduzione concettuale al DDD e alla struttura dell'ERP. Mostrare modular monolith, bounded context, CQRS ed eventi, e i quattro contesti ancora senza AI. Serve a fissare che i confini esistono prima dell'intelligenza.
 
+### Testo integrale apertura (Nando, da dire a memoria)
+
+"Siamo Ferdinando Santacroce e Alberto Acerbis.
+
+BrewUp è un ERP costruito con i vincoli del mondo reale: bounded context, CQRS, comunicazione a eventi. L'intelligenza artificiale è arrivata dopo, e noi abbiamo deciso di metterla dentro.
+
+Non vi raccontiamo come si usa MCP o A2A. Vi raccontiamo sei problemi che li abbiamo incontrati davvero, e la decisione che abbiamo preso per ognuno.
+
+La domanda da cui partiamo è semplice: quando un agente smette di essere un agente e diventa un monolite con un LLM davanti?
+
+A noi è successo al primo tentativo.
+
+Alberto, la tesi del talk in una frase."
+
 ---
 
 ## 4–9 — Esperimento 1: diamo all'AI accesso all'ERP

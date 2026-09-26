@@ -6,38 +6,12 @@
 
 <p class="ref">Ferdinando Santacroce · Alberto Acerbis<br>InnovAI 2026 · <code>github.com/BrewUp/BrewUpErp</code></p>
 
-Note: **Intervento Nando (0:00-1:00)** — Nando tiene questa slide. Non leggere: imparare i cinque passaggi, poi guardare il pubblico. Cinque secondi di silenzio dopo la domanda.
-
-**1. Presentarsi.** "Siamo Ferdinando Santacroce e Alberto Acerbis."
-
-**2. Il laboratorio.** "BrewUp è un ERP costruito con i vincoli del mondo reale: bounded context, CQRS, comunicazione a eventi. L'intelligenza artificiale è arrivata dopo, e noi abbiamo deciso di metterla dentro."
-
-**3. La promessa.** "Non vi raccontiamo come si usa MCP o A2A. Vi raccontiamo sei problemi che li abbiamo incontrati davvero, e la decisione che abbiamo preso per ognuno."
-
-**4. La domanda.** "Quando un agente smette di essere un agente e diventa un monolite con un LLM davanti?" Poi la spinta: "A noi è successo al primo tentativo."
-
-**5. Il passaggio di mano.** Guardare Alberto e cedergli la parola: "Alberto, la tesi del talk in una frase." Lui prende la slide "La tesi" e prosegue da lì.
-
-Testo integrale, da imparare a memoria:
-
-"Siamo Ferdinando Santacroce e Alberto Acerbis.
-
-BrewUp è un ERP costruito con i vincoli del mondo reale: bounded context, CQRS, comunicazione a eventi. L'intelligenza artificiale è arrivata dopo, e noi abbiamo deciso di metterla dentro.
-
-Non vi raccontiamo come si usa MCP o A2A. Vi raccontiamo sei problemi che li abbiamo incontrati davvero, e la decisione che abbiamo preso per ognuno.
-
-La domanda da cui partiamo è semplice: quando un agente smette di essere un agente e diventa un monolite con un LLM davanti?
-
-A noi è successo al primo tentativo.
-
-Alberto, la tesi del talk in una frase."
-
-**Prima di salire, da concordare con Alberto**
-
-- chi tiene il mouse e chi parla durante la demo
-- il segnale per passarsi la parola: guardare il pubblico, non toccare il microfono
-- tu non interrompi mai durante il codice; lui chiude ogni risposta agganciando la scaletta
-- il pubblico parla con te, non con Alberto: sei tu il contraltare
+Note: [Nando 0:00-1:00] Apertura.
+- Laboratorio: ERP coi vincoli del mondo reale (BC, CQRS, eventi); l'AI è arrivata dopo e l'abbiamo messa dentro.
+- Promessa: 6 problemi incontrati davvero + 1 decisione per ognuno.
+- Domanda: «Quando un agente smette di essere un agente e diventa un monolite con un LLM davanti?» → «A noi è successo al primo tentativo.»
+- Handoff: «Alberto, la tesi del talk in una frase.» (lui prende "La tesi")
+Da concordare con Alberto: chi tiene il mouse; segnale di passaggio = guardare il pubblico; Nando non interrompe sul codice; il pubblico parla con Nando.
 
 ---
 
@@ -54,7 +28,7 @@ Alberto, la tesi del talk in una frase."
 <li class="fragment">Come sappiamo che ha funzionato davvero?</li>
 </ul>
 
-Note: Le quattro domande sono la spina dorsale. Ogni esperimento che segue risponde a una di esse. Tenerle visibili come filo conduttore.
+Note: Le 4 domande sono la spina dorsale: ogni esperimento risponde a una. Tenerle come filo conduttore.
 
 ---
 
@@ -83,7 +57,7 @@ Un ERP didattico costruito con i vincoli del mondo reale: confini espliciti, nie
 
 <p class="ref">Quattro contesti: <b>MasterData</b> · <b>Sales</b> · <b>Warehouse</b> · <b>Knowledge</b></p>
 
-Note: Sottolineare: i confini esistono già prima dell'AI. Il sistema non è greenfield pensato per gli agenti: è un ERP con le sue regole. Questo è il punto: l'AI deve rispettare ciò che esiste.
+Note: I confini esistono PRIMA dell'AI. Non è greenfield per agenti: è un ERP con le sue regole, e l'AI deve rispettarle.
 
 ---
 
@@ -110,7 +84,7 @@ Note: Sottolineare: i confini esistono già prima dell'AI. Il sistema non è gre
 
 <p class="q">Nessun contesto "sa tutto". <br> È il vincolo, non il problema.</p>
 
-Note: Questo è l'assunto chiave del talk. La distribuzione dell'intelligenza non è un ripiego: è la conseguenza naturale dei confini di dominio.
+Note: Assunto chiave: la distribuzione dell'intelligenza non è un ripiego, è la conseguenza naturale dei confini di dominio.
 
 ---
 
@@ -123,7 +97,7 @@ Note: Questo è l'assunto chiave del talk. La distribuzione dell'intelligenza no
 Le demo mostrano agenti che funzionano.
 La differenza non è nella demo: è in **dove vive la conoscenza**, **chi decide** e **chi coordina**.
 
-Note: Slide di rottura. Serve a spostare l'attenzione dalla spettacolarità della demo alla qualità della progettazione.
+Note: Rottura: dalla spettacolarità della demo alla qualità della progettazione.
 
 ---
 
@@ -133,7 +107,7 @@ Note: Slide di rottura. Serve a spostare l'attenzione dalla spettacolarità dell
 
 <p class="map">MCP → confini → conoscenza → agenti → coordinazione → osservabilità</p>
 
-Note: Mostrare che la sequenza è quella della storia di sviluppo, non quella di una presentazione a posteriori. Rende onesto il racconto e utile il paragone con i commit.
+Note: La sequenza è la storia di sviluppo, non una ricostruzione a posteriori → utile il paragone coi commit.
 
 ---
 
@@ -152,7 +126,7 @@ Un solo **MCP Server** che espone un catalogo di tool: le capacità dell'ERP res
 
 <p class="ref">commit <code>2877dfa</code> — "Add Chat and MCP" · <code>.../AI/BrewUp.AI.McpServer/Tools/BrewUpMcpTools.cs:9</code></p>
 
-Note: DEMO checkout 2877dfa. Mostrare il McpServer unico e il tool catalog. È il punto di partenza: semplice e funzionante.
+Note: DEMO checkout 2877dfa → McpServer unico + tool catalog. Punto di partenza: semplice e funzionante.
 
 ---
 
@@ -167,13 +141,10 @@ Note: DEMO checkout 2877dfa. Mostrare il McpServer unico e il tool catalog. È i
 
 <p class="q">Abbiamo ricreato in AI il monolite <br> che il DDD ci aveva fatto evitare.</p>
 
-Note: Il problema non è tecnico ma di confini. Far vedere il catalogo cresciuto: è la stessa lezione del monolite, applicata all'AI.
+Note: Problema di confini, non tecnico. Mostrare il catalogo cresciuto: è la stessa lezione del monolite, applicata all'AI.
 
-**Intervento Nando (1 minuto, 9:00)**
-
-Domanda chiusa al pubblico: «Chi di voi ha un agente in produzione con più di venti tool?» Far alzare le mani, poi: «Che cosa lo chiamate, quel pezzo di codice?». Due-tre risposte e poi passi ad Alberto.
-
-Due regole per non fallire: fai la domanda, aspetta tre secondi in silenzio, poi chiama. Chi risponde per primo parla di nuovo per tutta la sessione.
+[Nando 9:00] Al pubblico: «Chi ha un agente in produzione con più di 20 tool?» (alzare le mani) → «E come lo chiamate quel pezzo di codice?» 2-3 risposte → passo ad Alberto.
+Regole: fai la domanda, 3s di silenzio, poi chiama; chi risponde per primo parlerà di nuovo.
 
 ---
 
@@ -199,15 +170,10 @@ Il catalogo torna a coincidere con i confini del **dominio**.
 
 <p class="ref">commit <code>39ada0d</code> — monolite rimosso, un MCP per contesto · <code>.../MasterData/BrewUp.MasterData.McpServer/Tools/MasterDataTools.cs:7</code></p>
 
-Note: DEMO checkout 39ada0d. Mostrare i tre McpServer separati. Messaggio: l'AI eredita gli stessi confini del dominio. Nessuna condivisione di DB o servizi, solo messaggi espliciti.
+Note: DEMO checkout 39ada0d → 3 McpServer separati. L'AI eredita gli stessi confini: nessun DB/servizio condiviso, solo messaggi espliciti.
 
-**Intervento Nando (30 secondi, 12:30)**
-
-La domanda che porta la tesi: «Il DDD l'avevate già prima degli agenti. Sono stati gli agenti a farvi scoprire che il confine serviva, o il DDD che ha reso possibile l'AI?»
-
-Se risponde «il DDD»: «E allora perché il primo tentativo è stato un monolite?»
-
-Chiudi facendo dire ad Alberto la frase, non mostrandola: «Bounded contexts don't just separate code, they separate knowledge».
+[Nando 12:30] «Il DDD c'era già: gli agenti vi hanno fatto scoprire il confine, o il DDD ha reso possibile l'AI?» se dice DDD: «E allora perché il primo tentativo è stato un monolite?»
+→ chiudi facendo DIRE ad Alberto: «Bounded contexts don't just separate code, they separate knowledge».
 
 ---
 
@@ -230,7 +196,7 @@ Chiudi facendo dire ad Alberto la frase, non mostrandola: «Bounded contexts don
 
 <p class="q">Un tool appartiene a un contesto, e a uno solo.</p>
 
-Note: Sottolineare l'ownership: ogni tool ha un proprietario chiaro. Questo abilita anche la scoperta selettiva: un agente vede solo i contesti che gli servono.
+Note: Ownership: ogni tool ha un proprietario chiaro → abilita la scoperta selettiva (l'agente vede solo i contesti che gli servono).
 
 ---
 
@@ -252,13 +218,9 @@ Un coordinatore che **delega**, non un super-agente che sa tutto.
 
 <p class="ref">commit <code>a889eb6</code> — "Introduce agent-based coordination for what-if analysis" · <code>.../Mother.Facade/Agents/MotherCoordinator.cs:63</code></p>
 
-Note: DEMO checkout a889eb6. Presentare il what-if come collaborazione tra contesti. La coordinazione è esplicita e tracciabile, non emergente.
+Note: DEMO checkout a889eb6 → what-if come collaborazione tra contesti. Coordinazione esplicita e tracciabile, non emergente.
 
-**Intervento Nando (30 secondi, 29:30)**
-
-«Mother ha un prompt. Chi lo scrive? Se lo scrive un umano, Mother non è un agente: è un product manager con un LLM.»
-
-Se Alberto risponde bene, chiedi il seguito: «E quando quel prompt sbaglia, di chi è il bug?».
+[Nando 29:30] «Mother ha un prompt: chi lo scrive? Se lo scrive un umano, Mother non è un agente, è un PM con un LLM.» se risponde bene: «E quando quel prompt sbaglia, di chi è il bug?»
 
 ---
 
@@ -282,13 +244,9 @@ Se Alberto risponde bene, chiedi il seguito: «E quando quel prompt sbaglia, di 
 
 <p class="q">Nessun agente risponde da solo: <br> il risultato è una composizione.</p>
 
-Note: Questo è il cuore dimostrativo. Mostrare che ogni contesto contribuisce con la propria autorità e che la risposta finale nasce dalla somma dei contributi, non da un unico modello onnisciente.
+Note: Cuore dimostrativo: ogni contesto contribuisce con la propria autorità; la risposta nasce dalla composizione, non da un modello onnisciente.
 
-**Intervento Nando (1 minuto, 30:30)**
-
-Chiedi al pubblico: «Secondo voi, quale contesto dovrebbe rispondere a "what if we sell 500 bottles of IPA"?». Fai alzare le mani e senti due risposte diverse, tipicamente Sales e Warehouse.
-
-Poi ad Alberto: «Perché nessuno dei due può rispondere da solo?». È la risposta che apre Mother.
+[Nando 30:30] Al pubblico: «Quale contesto dovrebbe rispondere a "what if we sell 500 bottles of IPA"?» (tipicamente Sales e Warehouse) → ad Alberto: «Perché nessuno dei due può rispondere da solo?» (apre Mother).
 
 ---
 
@@ -305,13 +263,9 @@ Contratti, procedure, PDF, wiki operative: conoscenza che non sta in una tabella
 
 <p class="ref">commit <code>324be2f</code> — "RAG completed" · tool <code>search_knowledge_base</code> · <code>.../Knowledge.McpServer/Tools/KnowledgeTools.cs:10</code></p>
 
-Note: DEMO checkout mother-with-mcp-and-rag. Qui nasce il Knowledge Context. RAG con confini di dominio, non un indice unico su tutto.
+Note: DEMO checkout mother-with-mcp-and-rag → nasce il Knowledge Context. RAG con confini di dominio, non un indice unico.
 
-**Intervento Nando (30 secondi, 14:30)**
-
-Leggi al pubblico la domanda: «Qual è la nostra politica di riordino per una IPA?». Lasciala in aria.
-
-Poi ad Alberto: «Cosa succede quando la risposta non esiste in nessun documento?». Sposta l'attenzione dal "come funziona" al "quando non funziona".
+[Nando 14:30] Al pubblico: «Qual è la nostra politica di riordino per una IPA?» (lascia in aria) → ad Alberto: «E quando la risposta non esiste in nessun documento?»
 
 ---
 
@@ -331,7 +285,7 @@ Poi ad Alberto: «Cosa succede quando la risposta non esiste in nessun documento
 <li class="fragment">Tutto dentro i confini del Knowledge Context</li>
 </ul>
 
-Note: Spiegare il funzionamento senza scendere nei dettagli implementativi. Enfatizzare che il retrieval è similarity, non verità.
+Note: Niente dettagli implementativi. Chiave: il retrieval è similarity, non verità.
 
 ---
 
@@ -347,7 +301,7 @@ Un chunk recuperato non è una risposta **giustificata**.
 
 <p class="q">Serve conoscenza derivata, con provenance.</p>
 
-Note: Ponte concettuale verso l'LLM Wiki. Far atterrare il problema prima della soluzione.
+Note: Ponte verso l'LLM Wiki: prima far atterrare il problema, poi la soluzione.
 
 ---
 
@@ -362,15 +316,9 @@ Il **Knowledge Agent**: dal tool al collaboratore.
 
 <p class="ref">commit <code>a2a-no-framework</code> — A2A senza framework · <code>.../BrewUp.Shared/Agents/AgentCard.cs:3</code> · <code>.../Knowledge.Facade/Agents/KnowledgeAgentCardProvider.cs:7</code></p>
 
-Note: DEMO checkout a2a-no-framework. Sottolineare: qui A2A è implementato a mano per capire il protocollo. Il framework arriverà dopo, quando il concetto è chiaro.
+Note: DEMO checkout a2a-no-framework → A2A fatto a mano per capire il protocollo; il framework Microsoft arriva dopo.
 
-**Intervento Nando (30 secondi, 25:30)**
-
-«Avete fatto A2A a mano quando il framework Microsoft esisteva già. Perché?»
-
-La risposta vera è nello storico del repository: prima il protocollo, poi lo strumento. Falla dire ad Alberto, non dirla tu.
-
-Poi: «Che cosa ha fatto il framework che il vostro codice non faceva?». Serve a mostrare che la scelta era deliberata.
+[Nando 25:30] «Avete fatto A2A a mano col framework MS già disponibile: perché?» (la risposta è nello storico: prima il protocollo, poi lo strumento) → poi: «Cosa ha fatto il framework che il vostro codice non faceva?»
 
 ---
 
@@ -386,7 +334,7 @@ Poi: «Che cosa ha fatto il framework che il vostro codice non faceva?». Serve 
 Il Knowledge Agent espone se stesso via A2A e a sua volta usa MCP per parlare col Knowledge Context.
 </div>
 
-Note: Chiarire i due protocolli complementari: MCP è verticale (agente→capacità), A2A è orizzontale (agente→agente). Questo è il passaggio da tool a collaboratore.
+Note: MCP è verticale (agente→capacità), A2A è orizzontale (agente→agente). Passaggio da tool a collaboratore.
 
 ---
 
@@ -402,7 +350,7 @@ Il protocollo stesso si evolve: l'aggiornamento a <b>MCP 2.0</b> arriva dopo, in
 
 <p class="ref"><code>a2a-no-framework</code> → <code>feature/a2a</code> → MCP 2.0 (<code>1694b58</code>, <code>feature/mcp-2</code>) · <code>.../Mother.Facade/Mcp/McpToolsProvider.cs:52</code> · <code>.../BrewUp.Shared/Agents/McpToolClient.cs:25</code></p>
 
-Note: Slide breve e opzionale. Serve a mostrare che il sistema diventa distribuito davvero: processi separati, comunicazione esplicita, orchestrazione dei servizi. Se qualcuno chiede della versione di MCP: l'introduzione è di maggio (2877dfa), l'update a 2.0 è di agosto (1694b58), quasi alla fine.
+Note: Opzionale. Il sistema diventa distribuito: processi separati, comunicazione esplicita, orchestrazione dei servizi. Se chiedono di MCP: intro a maggio (2877dfa), update 2.0 ad agosto (1694b58).
 
 ---
 
@@ -423,7 +371,7 @@ Note: Slide breve e opzionale. Serve a mostrare che il sistema diventa distribui
 
 <p class="ref">commit <code>88ba7ae</code> — telemetria semantica nel sistema finale · <code>.../Mother.Facade/Telemetry/MotherTelemetry.cs:28</code></p>
 
-Note: DEMO checkout main. Mostrare il trace: non solo i tempi, ma chi ha parlato con chi, quale capability è stata usata, quale handoff è avvenuto, con quale esito.
+Note: DEMO checkout main → apri il trace: non solo i tempi, ma chi ha parlato con chi, quale capability, quale handoff, con quale esito.
 
 ---
 
@@ -439,11 +387,9 @@ Note: DEMO checkout main. Mostrare il trace: non solo i tempi, ma chi ha parlato
 
 <p class="q">Osservabilità semantica = capire, non solo misurare.</p>
 
-Note: Qui si chiude il cerchio con la tesi: se l'intelligenza fluisce tra confini, dobbiamo poter vedere il flusso. La telemetria semantica è ciò che rende il sistema progettabile e migliorabile.
+Note: Chiude il cerchio con la tesi: se l'intelligenza fluisce tra confini, devi poter vedere il flusso.
 
-**Intervento Nando (20 secondi, 35:00)**
-
-Per chi non ha mai aperto un trace agentico: «Qui non vedete solo servizi che si chiamano. Vedete chi ha parlato con chi, quale capacità ha usato e con quale esito.».
+[Nando 35:00] Per chi non ha mai aperto un trace: «Non vedete solo servizi che si chiamano: vedete chi ha parlato con chi, quale capacità ha usato, con quale esito.»
 
 ---
 
@@ -460,7 +406,7 @@ Documenti → Wiki generata → risposta con **riferimenti alla fonte**.
 
 <p class="ref">commit <code>3e3e2f9</code> — il finale · KnowledgeTools · <code>.../Knowledge.McpServer/Tools/KnowledgeTools.cs:35,36</code></p>
 
-Note: DEMO checkout feature/mcp-2. Mostrare i quattro tool del Knowledge. Differenza chiave: ogni pagina wiki porta con sé l'evidenza delle fonti da cui è derivata.
+Note: DEMO checkout feature/mcp-2 → i 4 tool del Knowledge. Chiave: ogni pagina wiki porta l'evidenza delle fonti (provenance).
 
 ---
 
@@ -475,15 +421,9 @@ Note: DEMO checkout feature/mcp-2. Mostrare i quattro tool del Knowledge. Differ
 
 <p class="q">Una risposta senza fonte è un'opinione.</p>
 
-Note: Collegare al pattern LLM Wiki (Karpathy): costruire conoscenza strutturata e verificabile dai documenti, invece di affidarsi solo alla similarity. È il salto di qualità rispetto al RAG puro.
+Note: Pattern LLM Wiki (Karpathy): conoscenza strutturata e verificabile dai documenti, non solo similarity. Salto di qualità sul RAG puro.
 
-**Intervento Nando (30 secondi, 23:00)** — la domanda più ficcante del talk
-
-«La wiki la genera l'LLM. Chi approva una pagina? Se non c'è un umano che firma, come si distingue una pagina affidabile da una pagina inventata?»
-
-Proseguimento: «Derived knowledge is not operational truth. E se una pagina wiki contraddice lo stock?»
-
-Chiudi con la domanda al pubblico: «Chi vorrebbe trovarsi un sistema che risponde con una procedura che nessuno approva?».
+[Nando 23:00] «La wiki la genera l'LLM: chi approva una pagina? Se nessun umano firma, come distingui una pagina affidabile da una inventata?» → «Derived knowledge is not operational truth: e se una pagina wiki contraddice lo stock?» → al pubblico: «Chi vorrebbe un sistema che risponde con una procedura che nessuno approva?»
 
 ---
 
@@ -503,13 +443,9 @@ L'osservabilità dice <b>cosa</b> ha fatto il sistema. L'evaluation dice se <b>e
 
 <p class="ref"><code>.../Knowledge.Facade/Evaluation/KnowledgeRetrievalEvaluator.cs:10</code> · <code>.../Mother.Facade/Agents/WhatIfWorkflowEvaluator.cs:45</code></p>
 
-Note: Portare il discorso su come sappiamo che il sistema è migliorato. L'evaluation chiude il ciclo con l'osservabilità.
+Note: Come sappiamo che è migliorato? L'evaluation chiude il ciclo con l'osservabilità.
 
-**Intervento Nando (30 secondi, 37:30)**
-
-«L'evaluation la scrivete voi o la genera il modello? Se la genera il modello, non è un bias che il modello valuta sé stesso?»
-
-Chiudi con: «Osservability dice cosa ha fatto il sistema. Evaluation dice se bastava. Chi decide se bastava?».
+[Nando 37:30] «L'evaluation la scrivete voi o la genera il modello? Se la genera il modello, non è un bias che valuta sé stesso?» → «Osservability dice cosa ha fatto il sistema. Evaluation dice se bastava. Chi decide se bastava?»
 
 ---
 
@@ -530,7 +466,7 @@ Chiudi con: «Osservability dice cosa ha fatto il sistema. Evaluation dice se ba
 - **KnowledgeTools** con provenance
 - **Knowledge Agent**: Mother → A2A → Agent → MCP → Knowledge
 
-Note: Slide di sintesi dell'architettura. Qui si vede la tesi realizzata: l'intelligenza fluisce tra confini espliciti, non dentro un unico agente.
+Note: Sintesi: la tesi realizzata — l'intelligenza fluisce tra confini espliciti, non dentro un unico agente.
 
 ---
 
@@ -548,17 +484,12 @@ Demo end-to-end: **"What if we sell 500 bottles of IPA?"**
 <span class="node">Evaluation</span>
 </div>
 
-Note: DEMO finale. Lanciare il what-if, poi aprire il trace. Chiudere il cerchio con la tesi: ogni passo ha un confine, un'autorità e una traccia.
+Note: DEMO finale: lancia il what-if, poi apri il trace. Ogni passo ha un confine, un'autorità, una traccia.
 
-**Intervento Nando (10 minuti, la parte tua)**
-
-Leggi tu la domanda: «What if we sell 500 bottles of IPA?». Alberto esegue, tu non tocchi il mouse.
-
-Mentre gira, commenta ad alta voce cosa dovrebbe succedere: «adesso MasterData deve risolvere "IPA"... adesso Warehouse deve dirci se basta lo stock...». Serve a tenere il pubblico concentrato anche se qualcosa va storto.
-
-Se qualcosa si rompe, non nasconderlo: «vediamo come risponde il sistema» diventa un momento onesto, non un errore.
-
-Alla fine apri tu il trace: «Quale delle quattro risposte vi ha sorpreso?».
+[Nando 10 min] Leggi tu la domanda: «What if we sell 500 bottles of IPA?» (Alberto esegue, tu non tocchi il mouse).
+- Commenta ad alta voce l'atteso: «ora MasterData risolve "IPA"... ora Warehouse dice se basta lo stock...» (tiene il pubblico anche se qualcosa va storto).
+- Se si rompe: «vediamo come risponde il sistema» (momento onesto, non errore).
+- Alla fine apri tu il trace: «Quale delle quattro risposte vi ha sorpreso?».
 
 ---
 
@@ -571,20 +502,13 @@ alberto.acerbis@intre.it · ferdinando.santacroce@gmail.com<br>
 <code>https://github.com/BrewUp/BrewUpErp</code>
 </p>
 
-Note: Domande. Ringraziare. Indicare il repo per i dettagli.
+Note: Q&A. Ringraziare. Repo per i dettagli.
 
-**Domande di riserva**, se avanza tempo o c'è un vuoto:
-
-- «Qual è la parte che oggi definite sperimentale e che in un'azienda vera non passerebbe la review?»
+Riserva:
+- «Cosa definite sperimentale che in un'azienda vera non passerebbe la review?»
 - «Se ricominciassi oggi, cosa rifaresti diversamente?»
-- «Quanto vi è costato rifare l'AI layer quando il protocollo è passato a MCP 2.0?»
-- «Che cosa avete costruito che non userete mai in produzione?»
-- «Chi di voi ha un sistema agentico in produzione? Che cosa vi ha costato di più, costruirlo o convincerlo a restare?».
+- «Quanto è costato rifare l'AI layer col passaggio a MCP 2.0?»
+- «Cosa avete costruito che non userete mai in produzione?»
+- «Chi ha un sistema agentico in produzione? Cosa è costato di più: costruirlo o farlo restare?»
 
-**Intervento Nando — chiusura (49:00-50:00)**
-
-Torni all'immagine iniziale: `User → LLM → Tools`, e la confronti con lo schema finale. Poi la tesi, detta a memoria:
-
-"The real challenge isn't connecting an LLM to some APIs. It's designing how intelligence flows through the organization."
-
-Chiudi con una sola frase e tacere. Il silenzio finale vale più di un riassunto.
+[Nando 49:00] Chiusura: torna a `User → LLM → Tools` vs schema finale → tesi a memoria: "The real challenge isn't connecting an LLM to some APIs. It's designing how intelligence flows through the organization." → una frase e silenzio.
