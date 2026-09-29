@@ -10,9 +10,9 @@ Deck in **Reveal.js**. Tutto il contenuto vive in `slides.md`: l'HTML è solo il
 - `assets/bg-content.png` — sfondo slide di contenuto (bianco + barra sponsor).
 - `assets/bg-title.png` — sfondo slide di apertura/sezione (blu Inn0vAI 2026 + sponsor).
 
-Le slide di apertura e di sezione usano `data-background-image="assets/bg-title.png"`; tutte le altre
-mostrano `assets/bg-content.png` come sfondo dell'area slide 16:9 (`.reveal .slides`), non della
-finestra: così l'immagine non viene mai ritagliata e i loghi restano interi su qualunque
+Le slide di apertura e di sezione (`section.lead`) mostrano `assets/bg-title.png`; tutte le altre
+mostrano `assets/bg-content.png`. Lo sfondo è applicato all'area slide 16:9 (`.reveal .slides`), non
+alla finestra: così l'immagine non viene mai ritagliata e i loghi restano interi su qualunque
 proporzione di schermo. Per cambiare sfondo basta sostituire i due PNG.
 
 ## Avvio in locale
@@ -20,7 +20,7 @@ proporzione di schermo. Per cambiare sfondo basta sostituire i due PNG.
 `data-markdown` carica `slides.md` via `fetch`: serve un server HTTP (il `file://` è bloccato dai browser).
 
 ```bash
-cd tmp/slides
+cd conf/1nn0vAI-2026/slides
 python3 -m http.server 8799
 # apri http://localhost:8799/
 ```
@@ -28,7 +28,7 @@ python3 -m http.server 8799
 Oppure:
 
 ```bash
-npx serve tmp/slides
+npx serve conf/1nn0vAI-2026/slides
 ```
 
 Tasti utili: `S` presenter/speaker view, `ESC` overview, `F` fullscreen, `B` pausa.
@@ -44,9 +44,8 @@ http://localhost:8799/?print-pdf
 ## Export verso altri formati
 
 Il sorgente `slides.md` è Markdown quasi-standard (CommonMark + separatori `---`), quindi si può
-riusare con **Marp** o **Slidev** cambiando solo il renderer. Vedi `../Copione.md`.
+riusare con **Marp** o **Slidev** cambiando solo il renderer.
 
 ## Riferimenti demo
 
 Ogni slide operativa ha una nota con il tag `demo/NN-*` da fare checkout durante il talk.
-Sequenza completa dei tag in `../Copione.md`.
