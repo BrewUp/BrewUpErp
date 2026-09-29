@@ -233,6 +233,7 @@
   font-size: 16px;
   bottom: 74px;
 }
+.reveal.is-lead .slide-number { color: #cfe2f2; }
 .reveal .progress span { background: var(--accent); }
 
 /* Fragments */

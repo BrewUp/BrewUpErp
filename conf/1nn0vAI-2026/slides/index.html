@@ -43,7 +43,7 @@
       backgroundTransition: 'fade',
       width: 1280,
       height: 720,
-      margin: 0.06,
+      margin: 0,
       plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealZoom ]
     });
 
@@ -52,8 +52,10 @@
     // no-op here. The title background is applied to the 16:9 slide box instead.
     function syncLeadBackground() {
       var box = document.querySelector('.reveal .slides');
-      var current = Reveal.getCurrentSlide();
-      box.classList.toggle('is-lead', !!current && current.classList.contains('lead'));
+      var root = document.querySelector('.reveal');
+      var isLead = !!Reveal.getCurrentSlide() && Reveal.getCurrentSlide().classList.contains('lead');
+      box.classList.toggle('is-lead', isLead);
+      root.classList.toggle('is-lead', isLead);
     }
 
     Reveal.on('ready', syncLeadBackground);
